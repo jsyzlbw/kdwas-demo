@@ -1,0 +1,26 @@
+name,symbol,category,chain,tvl_usd,slug
+Lido,LDO,Liquid Staking,Ethereum,18939739256.02,lido
+SSV Network,SSV,Staking Pool,Ethereum,15737326162.13,ssv-network
+Aave V3,AAVE,Lending,Multi-Chain,14112311865.62,aave-v3
+Binance staked ETH,,Liquid Staking,Ethereum,7897423885.19,binance-staked-eth
+Morpho Blue,MORPHO,Lending,Multi-Chain,7433465806.93,morpho-blue
+EigenCloud,EIGEN,Restaking,Ethereum,6896339488.71,eigencloud
+Sky Lending,SKY,CDP,Ethereum,5665664251.75,sky-lending
+Uniswap,UNI,DEX,Multi-Chain,2419500000.0,uniswap
+Curve Finance,CRV,DEX,Multi-Chain,1600000000.0,curve-finance
+PancakeSwap,CAKE,DEX,Multi-Chain,1500000000.0,pancakeswap
+Spark,,CDP,Ethereum,5100000000.0,spark
+MakerDAO,MKR,CDP,Ethereum,4500000000.0,makerdao
+Ethena,ENA,Yield,Ethereum,4200000000.0,ethena
+Rocket Pool,RPL,Liquid Staking,Ethereum,2800000000.0,rocket-pool
+Pendle,PENDLE,Yield,Multi-Chain,1800000000.0,pendle
+Compound V3,COMP,Lending,Multi-Chain,1600000000.0,compound-v3
+Aerodrome,AERO,DEX,Base,1400000000.0,aerodrome
+GMX,GMX,Derivatives,Arbitrum,1200000000.0,gmx
+Liquity,LQTY,CDP,Ethereum,900000000.0,liquity
+Fluid,,DEX,Multi-Chain,800000000.0,fluid
+SushiSwap,SUSHI,DEX,Multi-Chain,500000000.0,sushiswap
+Balancer,BAL,DEX,Multi-Chain,500000000.0,balancer
+Velodrome,VELO,DEX,Optimism,400000000.0,velodrome
+Camelot,GRAIL,DEX,Arbitrum,300000000.0,camelot
+KyberSwap,KNC,DEX,Multi-Chain,150000000.0,kyberswap

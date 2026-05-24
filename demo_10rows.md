@@ -1,4 +1,4 @@
-# KDWAS Demo — 小规模原型（供老师审核格式）
+# KDWAS Demo — 小规模原型
 
 ---
 
@@ -270,9 +270,3 @@ Plan B: 若 Aave USDC 利率降至 <2.5%，保留 Compound 方案
 | Unavailable Transportation (Environment) | 无流动性 / 跨链桥拥堵 / 利率波动 |
 | 1,225 query-plan pairs | 目标 500+ pairs（先做 5 条 demo） |
 | 4 evaluation metrics | 4 评估指标 (Delivery/Commonsense/Hard/Final) |
-
-### 下一步
-
-1. 老师确认格式后，扩展至 50-100 条 query-plan pairs
-2. 每条 query 附加 on-chain 验证脚本（自动检查 plan 是否可在链上执行）
-3. 邀请 DeFi 领域专家进行人工标注 + 交叉验证（参考 TIM 的 10 人标注 + Cohen's kappa）

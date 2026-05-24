@@ -1,0 +1,21 @@
+name,symbol,category,chain,tvl,slug
+Binance CEX,BNB,CEX,Multi-Chain,154481516875.3659,binance-cex
+OKX,-,CEX,Multi-Chain,24682564117.760056,okx
+Lido,LDO,Liquid Staking,Multi-Chain,18939739256.02421,lido
+Bitfinex,-,CEX,Multi-Chain,18834412958.945297,bitfinex
+SSV Network,SSV,Staking Pool,Ethereum,15737326162.131948,ssv-network
+Bybit,-,CEX,Multi-Chain,15328188331.768585,bybit
+Aave V3,AAVE,Lending,Multi-Chain,14112311865.61699,aave-v3
+Robinhood,-,CEX,Multi-Chain,13745932660.726645,robinhood
+WBTC,-,Bridge,Bitcoin,8829020504.527637,wbtc
+Binance staked ETH,-,Liquid Staking,Multi-Chain,7897423885.191698,binance-staked-eth
+Morpho Blue,MORPHO,Lending,Multi-Chain,7433465806.934137,morpho-blue
+EigenCloud,EIGEN,Restaking,Ethereum,6896339488.71487,eigencloud
+Coinbase Bridge,-,Bridge,Multi-Chain,6275594874.776248,coinbase-bridge
+Sky Lending,SKY,CDP,Ethereum,5665664251.745661,sky-lending
+Bitget,-,CEX,Multi-Chain,5573193161.918405,bitget
+Gemini,-,CEX,Multi-Chain,5468758487.700468,gemini
+Binance Bitcoin,-,Bridge,Bitcoin,5262593472.164009,binance-bitcoin
+MEXC,-,CEX,Multi-Chain,5028186211.360061,mexc
+Hyperliquid Bridge,HYPE,Bridge,Multi-Chain,4969283908.568137,hyperliquid-bridge
+HTX,-,CEX,Multi-Chain,4909695504.017813,htx
