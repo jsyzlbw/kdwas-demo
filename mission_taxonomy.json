@@ -1,0 +1,122 @@
+{
+  "version": "1.0",
+  "description": "KDWAS Financial Mission Taxonomy",
+  "categories": [
+    {
+      "core_category": "Portfolio & Asset Management",
+      "axial_codings": [
+        {
+          "axial_coding": "1.1 Asset Allocation",
+          "secondary_codings": [
+            { "secondary_coding": "1.1.1 Single-Asset Rebalancing", "definition": "Adjusting a single asset position to maintain target allocation.", "example": "Swapping 5 ETH for USDC when ETH exposure exceeds 60%" },
+            { "secondary_coding": "1.1.2 Multi-Asset Portfolio Optimization", "definition": "Rebalancing multiple asset positions to achieve risk-adjusted optimal allocation.", "example": "Reducing ETH from 50% to 30% while increasing DAI from 20% to 40%" },
+            { "secondary_coding": "1.1.3 Yield Optimization", "definition": "Moving assets between yield sources to maximize risk-adjusted returns.", "example": "Moving USDC from Compound to Aave after comparing APYs" }
+          ]
+        },
+        {
+          "axial_coding": "1.2 Liquidity Management",
+          "secondary_codings": [
+            { "secondary_coding": "1.2.1 Cross-Chain Liquidity Migration", "definition": "Moving assets across blockchains to access better yields or lower fees.", "example": "Migrating 100k USDC from Ethereum Aave to Arbitrum via Hop" },
+            { "secondary_coding": "1.2.2 LP Position Management", "definition": "Managing concentrated liquidity positions in AMM pools.", "example": "Narrowing Uniswap V3 range from ±30% to ±10%" },
+            { "secondary_coding": "1.2.3 Emergency Liquidity Withdrawal", "definition": "Rapid withdrawal of funds in response to security threats or market crashes.", "example": "Withdrawing all USDC from Venus after detecting oracle deviation >5%" }
+          ]
+        },
+        {
+          "axial_coding": "1.3 Long-Term Holding Strategy",
+          "secondary_codings": [
+            { "secondary_coding": "1.3.1 HODL with Monitoring", "definition": "Passive holding with periodic health checks and alerts.", "example": "Holding 50 ETH with price alert at $2000" },
+            { "secondary_coding": "1.3.2 Staking/Locking Strategy", "definition": "Locking tokens for staking rewards or governance rights.", "example": "Staking ETH with Lido for stETH" },
+            { "secondary_coding": "1.3.3 Vesting Schedule Management", "definition": "Managing tokens released from vesting contracts with tax optimization.", "example": "Claiming vested UNI monthly with tax-aware timing" }
+          ]
+        }
+      ]
+    },
+    {
+      "core_category": "Risk Management",
+      "axial_codings": [
+        {
+          "axial_coding": "2.1 Risk Monitoring",
+          "secondary_codings": [
+            { "secondary_coding": "2.1.1 Protocol Security Monitoring", "definition": "Monitoring protocol-level security signals including TVL anomalies and vulnerabilities.", "example": "Detecting 40% TVL drop in Aave pool over 2 hours" },
+            { "secondary_coding": "2.1.2 Market Volatility Alert", "definition": "Monitoring market-wide volatility indicators and liquidation cascades.", "example": "Alerting when ETH 1h volatility exceeds 5% with >$1M liquidations" },
+            { "secondary_coding": "2.1.3 Position Health Monitoring", "definition": "Tracking individual position health metrics like collateralization and liquidation price.", "example": "Checking daily that all Aave positions maintain HF > 2.0" }
+          ]
+        },
+        {
+          "axial_coding": "2.2 Risk Mitigation",
+          "secondary_codings": [
+            { "secondary_coding": "2.2.1 Automated Hedging", "definition": "Executing hedging strategies to offset portfolio risk.", "example": "Opening short ETH perpetual on dYdX during high volatility" },
+            { "secondary_coding": "2.2.2 Stop-Loss Execution", "definition": "Automatic execution of predefined exit strategies when thresholds breach.", "example": "Repaying debt when health factor drops below 1.5" },
+            { "secondary_coding": "2.2.3 Collateral Top-Up / Deleveraging", "definition": "Adding collateral or reducing debt to prevent liquidation.", "example": "Depositing 5 ETH as collateral when health factor approaches 1.3" }
+          ]
+        },
+        {
+          "axial_coding": "2.3 Insurance & Protection",
+          "secondary_codings": [
+            { "secondary_coding": "2.3.1 DeFi Insurance Purchase", "definition": "Purchasing coverage for protocol deposits via DeFi insurance protocols.", "example": "Purchasing $50k coverage on Nexus Mutual for Aave deposits" },
+            { "secondary_coding": "2.3.2 Permission Revocation", "definition": "Audit and revocation of unnecessary token approvals.", "example": "Revoking UNI approval to a contract with 180d inactivity" },
+            { "secondary_coding": "2.3.3 Multi-Sig Migration", "definition": "Migrating assets from EOA to multi-sig wallets for enhanced security.", "example": "Deploying Gnosis Safe 2/3 and migrating all positions" }
+          ]
+        }
+      ]
+    },
+    {
+      "core_category": "Governance & Ecosystem Participation",
+      "axial_codings": [
+        {
+          "axial_coding": "3.1 Direct Governance",
+          "secondary_codings": [
+            { "secondary_coding": "3.1.1 Proposal Voting", "definition": "Casting votes on governance proposals using voting power.", "example": "Voting AGAINST Compound Proposal 118" },
+            { "secondary_coding": "3.1.2 Proposal Creation & Submission", "definition": "Creating and submitting on-chain governance proposals.", "example": "Submitting Uniswap proposal to add new fee tier" },
+            { "secondary_coding": "3.1.3 Governance Delegation", "definition": "Delegating voting power to trusted third parties.", "example": "Delegating 1000 COMP to a delegate with >90% participation" }
+          ]
+        },
+        {
+          "axial_coding": "3.2 Ecosystem Intelligence",
+          "secondary_codings": [
+            { "secondary_coding": "3.2.1 Protocol Dependency Analysis", "definition": "Mapping protocol dependencies to understand systemic risk.", "example": "Analyzing Curve stETH/ETH LP dependency on Lido and Chainlink" },
+            { "secondary_coding": "3.2.2 Governance Signal Aggregation", "definition": "Collecting governance signals across DAOs to identify trends.", "example": "Aggregating treasury diversification votes across 3 DAOs" },
+            { "secondary_coding": "3.2.3 Reputation & Trust Scoring", "definition": "Building reputation scores for protocols and delegates.", "example": "Reducing score for a protocol with 2 unresolved audit issues" }
+          ]
+        },
+        {
+          "axial_coding": "3.3 Treasury Operations",
+          "secondary_codings": [
+            { "secondary_coding": "3.3.1 DAO Treasury Rebalancing", "definition": "Managing DAO treasury asset allocation according to governance strategy.", "example": "Rebalancing from 80% ETH to 50% ETH / 30% USDC / 20% DAI" },
+            { "secondary_coding": "3.3.2 Grant Distribution Automation", "definition": "Automating recurring grant payments with milestone verification.", "example": "Distributing 5000 USDC monthly grant with price-aware timing" },
+            { "secondary_coding": "3.3.3 Revenue Distribution & Buyback", "definition": "Automating protocol revenue distribution or buyback programs.", "example": "Executing weekly UNI buyback across 4 DEXes" }
+          ]
+        }
+      ]
+    },
+    {
+      "core_category": "Multi-Agent Coordination",
+      "axial_codings": [
+        {
+          "axial_coding": "4.1 Cooperative Finance",
+          "secondary_codings": [
+            { "secondary_coding": "4.1.1 Joint Liquidity Provision", "definition": "Multiple agents pooling funds for joint liquidity provision.", "example": "Agent A (ETH) and Agent B (USDC) jointly provide LP, split fees 50/50" },
+            { "secondary_coding": "4.1.2 Coordinated Hedging", "definition": "Multiple agents coordinating hedging strategies.", "example": "Three treasury agents open short ETH to hedge 10k ETH exposure" },
+            { "secondary_coding": "4.1.3 Shared Treasury Management", "definition": "Multiple agents managing a shared treasury with different roles.", "example": "Risk agent proposes → treasury allocates → executor executes → shared KG log" }
+          ]
+        },
+        {
+          "axial_coding": "4.2 Agent-to-Agent Operations",
+          "secondary_codings": [
+            { "secondary_coding": "4.2.1 Machine-to-Machine Payment", "definition": "Automatic payment settlement between agents for services.", "example": "Data agent charges 0.1 ETH per analysis report consumed by trading agent" },
+            { "secondary_coding": "4.2.2 Cross-Agent Delegation", "definition": "One agent delegating tasks to another with defined constraints.", "example": "Treasury agent delegates execution with max 0.5% slippage" },
+            { "secondary_coding": "4.2.3 Agent Service Marketplace", "definition": "Agents discovering and contracting services from other agents.", "example": "Risk agent selects best data provider from 3 based on accuracy scores" }
+          ]
+        },
+        {
+          "axial_coding": "4.3 Collective Intelligence",
+          "secondary_codings": [
+            { "secondary_coding": "4.3.1 Shared Risk Signal Propagation", "definition": "Risk signals propagated through shared knowledge graph.", "example": "Risk agent detects abnormal liquidations → shared KG → 5 treasury agents alerted" },
+            { "secondary_coding": "4.3.2 Distributed Market Analysis", "definition": "Multiple agents analyzing different sectors in parallel.", "example": "3 agents analyze L1, DeFi lending, DEX volumes → synthesized market report" },
+            { "secondary_coding": "4.3.3 Collective Governance Coordination", "definition": "Multiple agents coordinating voting strategies across DAOs.", "example": "5 treasury agents coordinate to vote YES on cross-DAO proposal" }
+          ]
+        }
+      ]
+    }
+  ]
+}
