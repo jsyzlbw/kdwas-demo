@@ -1,0 +1,20 @@
+{
+  "test_run_id": "PERF-L10-001",
+  "load_level": "low",
+  "agent_count": 10,
+  "concurrent_tasks": 20,
+  "timestamp": "2026-05-31T10:00:00Z",
+  "metrics": {
+    "graph_update_latency": { "avg_ms": 12, "p50_ms": 8, "p95_ms": 28, "p99_ms": 45 },
+    "reasoning_latency": { "avg_ms": 1200, "p50_ms": 950, "p95_ms": 2800, "p99_ms": 4200 },
+    "sync_overhead": { "avg_ms": 35, "p50_ms": 25, "p95_ms": 80, "p99_ms": 150 },
+    "storage_mb": 12,
+    "throughput_tps": 45.2
+  },
+  "system_spec": {
+    "cpu": "Apple M3 Max",
+    "ram_gb": 64,
+    "kg_backend": "Neo4j 5.x",
+    "llm_model": "gpt-4o"
+  }
+}

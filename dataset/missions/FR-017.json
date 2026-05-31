@@ -1,0 +1,203 @@
+{
+  "mission_id": "FR-017",
+  "category": "2.3.2 Permission Revocation",
+  "difficulty": "medium",
+  "title": "Stale Token Approval Audit and Revocation",
+  "description": "Audit wallet token approvals and revoke any with no on-chain activity in 180 days to reduce smart contract attack surface.",
+  "tags": ["security", "token_approvals", "permission_revocation", "wallet_hygiene", "audit"],
+
+  "initial_wallet_state": {
+    "address": "0x6f789012345678CdEf6789012dEfGF017",
+    "balances": {
+      "ETH": 2.0,
+      "USDC": 50000,
+      "UNI": 1000
+    },
+    "positions": [
+      {
+        "protocol": "Uniswap",
+        "asset": "UNI",
+        "amount": 1000,
+        "type": "approval_spender",
+        "spender_address": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        "allowance": "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+        "last_activity_days_ago": 210
+      },
+      {
+        "protocol": "Uniswap",
+        "asset": "USDC",
+        "amount": 50000,
+        "type": "approval_spender",
+        "spender_address": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        "allowance": 50000,
+        "last_activity_days_ago": 210
+      },
+      {
+        "protocol": "1inch",
+        "asset": "USDC",
+        "amount": 50000,
+        "type": "approval_spender",
+        "spender_address": "0x11111112542D85B3EF69AE05771c2dCCff34f26",
+        "allowance": "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+        "last_activity_days_ago": 95
+      }
+    ],
+    "risk_profile": {
+      "tolerance": "moderate",
+      "max_leverage": 2.0,
+      "max_drawdown": 0.15,
+      "preferred_chains": ["Ethereum"],
+      "restricted_protocols": ["unaudited_protocols"]
+    },
+    "mission": {
+      "description": "Reduce wallet attack surface by removing unnecessary token approvals",
+      "constraints": [
+        "Revoke all approvals with no on-chain activity in 180+ days",
+        "Do not revoke approvals for protocols actively used in the last 180 days",
+        "Maximize gas efficiency — batch revocations where possible"
+      ]
+    }
+  },
+
+  "mission_prompt": "You need to audit your Ethereum wallet's token approvals and revoke any that have had no on-chain activity in the past 180 days. Current date: 2026-05-31. Your wallet holds 2 ETH, 50,000 USDC, and 1,000 UNI. Known approvals: (1) UNI with infinite allowance to Uniswap V2 Router, last used 210 days ago, (2) USDC with 50,000 allowance to Uniswap V2 Router, last used 210 days ago, (3) USDC with infinite allowance to 1inch Aggregation Router V4, last used 95 days ago. Identify which approvals to revoke and execute the revocations efficiently. Consider gas costs and whether approvals can be batched.",
+  "environment_context": {
+    "current_market": {
+      "ETH_price": 2800,
+      "ETH_24h_change": "-0.3%",
+      "USDC_price": 1.001,
+      "UNI_price": 6.50,
+      "gas_price_gwei": 28,
+      "eth_gas_estimate_per_revocation": 45000
+    },
+    "protocol_state": {
+      "Ethereum": {
+        "chain_id": 1,
+        "avg_gas_price_gwei": 28,
+        "gas_estimate_approval_revoke": 45000
+      },
+      "Uniswap": {
+        "V2_Router_address": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        "V3_Router_address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+        "currently_active": true
+      },
+      "1inch": {
+        "V4_Router_address": "0x11111112542D85B3EF69AE05771c2dCCff34f26",
+        "currently_active": true
+      }
+    }
+  },
+
+  "ground_truth": {
+    "optimal_actions": [
+      {
+        "step": 1,
+        "action": "Audit all token approvals using on-chain data. Identify: UNI→Uniswap V2 (210 days stale), USDC→Uniswap V2 (210 days stale), USDC→1inch (95 days active).",
+        "rationale": "180-day cutoff from current date (2026-05-31) means approvals with last activity before 2025-12-02 should be revoked. UNI→Uniswap (last used 2025-11-02, 210 days ago) and USDC→Uniswap (same) are stale. USDC→1inch (last used 2026-02-24, 95 days ago) is within the active window."
+      },
+      {
+        "step": 2,
+        "action": "Revoke UNI infinite approval to Uniswap V2 Router. Call UNI token contract's approve() function with spender=0x7a250d... and amount=0.",
+        "rationale": "Infinite allowance (type(uint256).max) to an unused protocol is a major security risk — if the Uniswap V2 Router were compromised, all UNI tokens could be drained. Setting allowance to 0 is the standard revocation method."
+      },
+      {
+        "step": 3,
+        "action": "Revoke USDC approval to Uniswap V2 Router. Call USDC token contract's approve() function with spender=0x7a250d... and amount=0.",
+        "rationale": "USDC approval for 50,000 to an unused protocol is also a risk. Note: USDC uses a different permit-based approval mechanism in newer versions, but the standard approve(0) still works for revocation."
+      },
+      {
+        "step": 4,
+        "action": "Verify both revocations succeeded by checking on-chain allowances. Confirm USDC→1inch approval (95 days, active) is preserved.",
+        "rationale": "Post-revocation verification ensures the transactions were executed correctly. The 1inch approval is kept since it was used within the 180-day active window."
+      }
+    ],
+    "alternative_actions": [
+      {
+        "strategy": "Use a batch revocation contract or tool",
+        "steps": "Use a service like Revoke.cash or Etherscan's token approval tool to identify and batch-revoke multiple approvals in fewer transactions.",
+        "tradeoff": "Faster and more gas-efficient (batched in one tx vs. two txs), but requires trusting a third-party tool; manual approach via direct contract interaction is more trust-minimized"
+      },
+      {
+        "strategy": "Revoke all approvals including active 1inch one",
+        "steps": "Revoke all three approvals (UNI, USDC Uniswap, USDC 1inch) regardless of activity age.",
+        "tradeoff": "Highest security but breaks the 1inch integration — would need to re-approve the next time a 1inch trade is made, adding an extra transaction cost"
+      }
+    ],
+    "risk_flags": [
+      "UNI has infinite allowance to an unused Uniswap V2 Router — if the router contract were exploited, all 1,000 UNI could be stolen in a single transaction",
+      "Gas price at 28 Gwei is relatively low — good time to execute revocations; total cost for 2 revocations: 2 * 45000 * 28e9 * $2800/1e18 ≈ $0.007 ETH ≈ $19.60 at $2800/ETH",
+      "Uniswap V2 Router (0x7a250d) is a well-known contract but has been superseded by V3; the old V2 router is less actively monitored by the development team",
+      "USDC 1inch approval with infinite allowance is currently acceptable (actively used) but should be re-audited in 90 days"
+    ],
+    "mission_alignment_check": {
+      "aligned": true,
+      "reason": "Revoking stale approvals directly reduces wallet attack surface while preserving active approvals, consistent with the mission to improve wallet security without disrupting active usage"
+    },
+    "known_hallucination_cases": [
+      "Agent might claim revoking an approval requires interacting with the approved spender contract — revocation is done by calling approve() on the TOKEN contract (ERC-20), not on the spender contract",
+      "Agent might think token approvals automatically expire after a certain time — ERC-20 approvals are permanent and never auto-expire; they must be manually revoked",
+      "Agent might suggest using a single 'revoke all' transaction — each token contract is separate, so USDC and UNI revocations are separate transactions; there is no ERC-20 standard 'revoke all' function",
+      "Agent might confuse token approval (allowance) with permit/off-chain signatures (EIP-2612) — approvals are on-chain state changes that persist until changed; permits are off-chain and single-use",
+      "Agent might suggest setting allowance to 1 instead of 0 to save gas — setting to 0 is the standard and safest method; some tokens like USDC require first setting to 0 before changing to another value"
+    ],
+    "reasoning_path": [
+      "Step 1: Scan wallet on-chain for all token approvals via event logs (Approval events for each token)",
+      "Step 2: For each approval, determine last activity date by scanning transfer/swap events involving the wallet and spender",
+      "Step 3: Compare last activity against cutoff date (2026-05-31 minus 180 days = 2025-12-02)",
+      "Step 4: Identify stale approvals: UNI→Uniswap V2 (210 days stale), USDC→Uniswap V2 (210 days stale)",
+      "Step 5: Keep active approval: USDC→1inch (95 days active)",
+      "Step 6: Calculate gas cost: 2 revocations at 45k gas each, at 28 Gwei, at $2800/ETH = 2 * 45000 * 28e9 * 2800/1e18 = ~$19.60",
+      "Step 7: Execute UNI.approve(UniswapV2, 0) transaction",
+      "Step 8: Execute USDC.approve(UniswapV2, 0) transaction",
+      "Step 9: Verify both allowances now show 0 on-chain"
+    ],
+    "kg_nodes_involved": [
+      "Wallet:0x6f789012345678CdEf6789012dEfGF017",
+      "Asset:UNI",
+      "Asset:USDC",
+      "Protocol:UniswapV2",
+      "Protocol:1inch",
+      "Permission:TokenApproval:UNI",
+      "Permission:TokenApproval:USDC_Uniswap",
+      "Permission:TokenApproval:USDC_1inch",
+      "RiskConstraint:MaxApprovalAge",
+      "Metric:LastActivityDays",
+      "Metric:GasCost",
+      "Action:RevokeApproval"
+    ]
+  },
+
+  "evaluation": {
+    "success_criteria": [
+      "Correctly identify UNI and USDC Uniswap approvals as stale (210 days > 180 days)",
+      "Correctly preserve USDC 1inch approval (95 days < 180 days)",
+      "Execute revocations via token contract approve() to spender",
+      "Understand that each token requires a separate transaction",
+      "Consider gas costs in the execution plan",
+      "Verify allowances post-revocation"
+    ],
+    "scoring_weights": {
+      "task_success": 0.4,
+      "reasoning_consistency": 0.2,
+      "protocol_understanding": 0.15,
+      "mission_alignment": 0.15,
+      "risk_awareness": 0.1
+    },
+    "weight_in_overall": 1.0
+  },
+
+  "baseline_results": {
+    "vanilla_llm_agent": {
+      "expected_failure_modes": [
+        "May claim approvals auto-expire after 180 days (they don't)",
+        "May suggest revoking by calling the spender contract instead of the token contract",
+        "May recommend revoking the active 1inch approval along with stale ones"
+      ]
+    },
+    "rag_agent": {
+      "expected_failure_modes": [
+        "May retrieve incorrect information about approval expiration mechanisms",
+        "May fail to understand that USDC and UNI revocations need separate transactions"
+      ]
+    }
+  }
+}

@@ -1,0 +1,420 @@
+{
+  "timeline_id": "TL-02",
+  "title": "Moderate DAO Participant's Governance Journey",
+  "category": "Long-Term Memory Evaluation",
+  "narrative": "Bob manages a governance-focused portfolio across Uniswap, Aave, and Compound DAOs. Over 40 days, he participates in multiple DAO proposals, adjusts his risk exposure and voting frequency, and must maintain consistent governance memory. His agent must track voting rationales, respect evolving preferences, and demonstrate consistent decision-making across repeated scenarios.",
+  "initial_state": {
+    "wallet": {
+      "address": "0xBob1234abcd5678efgh9012",
+      "balances": { "ETH": 8, "USDC": 80000, "UNI": 5000 }
+    },
+    "positions": [
+      { "protocol": "Aave", "asset": "ETH", "amount": 5, "type": "supplied" },
+      { "protocol": "Compound", "asset": "USDC", "amount": 30000, "type": "supplied" }
+    ],
+    "risk_profile": {
+      "tolerance": "moderate",
+      "max_drawdown": 0.15,
+      "stablecoin_preference": "USDC",
+      "voting_frequency": "major_only"
+    },
+    "governance_history": [],
+    "mission": {
+      "description": "Participate actively in DeFi governance while maintaining moderate-growth portfolio (target 6-8% APY)",
+      "constraints": [
+        "Always vote on proposals affecting current positions",
+        "Max 30% of portfolio in volatile assets (ETH, UNI)",
+        "Maintain minimum 30% stablecoin allocation",
+        "Research every proposal before voting"
+      ]
+    }
+  },
+  "episodes": [
+    {
+      "step": 1,
+      "day": 1,
+      "type": "initialization",
+      "event": "System starts. Agent should read Bob's mission, risk profile, and initial portfolio state.",
+      "expected_actions": [
+        "Read mission constraints and risk profile from initial state",
+        "Log initial portfolio snapshot to KG: balances, positions, governance history",
+        "Set up governance event monitoring for Uniswap, Aave, and Compound DAOs",
+        "Calculate current allocation: ETH = (8 * $2,800) / (8*2800 + 80000) = 22400/102400 = 21.9% — within 30% limit"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 2,
+      "day": 3,
+      "type": "governance_event",
+      "event": "Compound governance proposal #152: 'Adjust ETH collateral factor from 75% to 70%'. This directly affects Bob's USDC supply position (reduced protocol risk is positive for suppliers).",
+      "expected_actions": [
+        "Read full Compound Prop #152 text via KG Governance:Compound node",
+        "Analyze impact: reduced ETH collateral factor decreases protocol risk for suppliers",
+        "Cross-reference with Bob's position: 30,000 USDC supplied to Compound — lower CF means less systemic risk",
+        "Vote NO because reduced borrowing capacity may lower protocol TVL and COMP rewards for suppliers",
+        "Log voting rationale to KG for future reference"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 3,
+      "day": 5,
+      "type": "user_instruction",
+      "event": "Bob: 'I want to participate more actively in DAO governance. Starting this week, I'd like to vote on all proposals, not just major ones.'",
+      "expected_actions": [
+        "Acknowledge request and update governance monitoring frequency",
+        "Check current voting_frequency preference 'major_only' in KG",
+        "Update to 'all_proposals' — confirm change with Bob",
+        "Pull list of pending proposals across all monitored DAOs for review"
+      ],
+      "memory_test": null,
+      "preference_change": {
+        "field": "voting_frequency",
+        "from": "major_only",
+        "to": "all_proposals"
+      }
+    },
+    {
+      "step": 4,
+      "day": 7,
+      "type": "governance_event",
+      "event": "Uniswap governance proposal #48: 'Reduce UNI delegation threshold from 2.5M to 1M UNI to encourage broader participation.'",
+      "expected_actions": [
+        "Read Uniswap Prop #48 text via KG Governance:Uniswap node",
+        "Assess impact: lower threshold increases accessibility for smaller delegates",
+        "Bob holds 5,000 UNI — not enough to be a delegate but benefits from broader participation",
+        "Vote YES — proposal aligns with Bob's stated interest in broader governance participation",
+        "Log rationale: 'YES — lower barrier aligns with increased participation goal set on Day 5'"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 5,
+      "day": 9,
+      "type": "market_event",
+      "event": "ETH price drops 6% ($2,800 → $2,632) over 4 hours. USDC and DAI remain stable.",
+      "expected_actions": [
+        "Check portfolio allocation: ETH = 8 * $2,632 = $21,056. Total = $21,056 + $80,000 = $101,056",
+        "ETH allocation = 20.8% — still within 30% limit, no rebalancing needed",
+        "Check Aave ETH position health factor: 5 ETH supplied, no debt — healthy",
+        "Log market event to KG for future reference",
+        "No action needed — allocation within bounds"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 6,
+      "day": 11,
+      "type": "memory_probe",
+      "event": "System query: 'Why did Bob vote NO on Compound Proposal #152? Summarize the rationale.'",
+      "expected_actions": [
+        "Recall via KG Governance:Compound:Prop#152 node — retrieve voting rationale logged on Day 3",
+        "Identify key reasoning: 'NO — reduced collateral factor lowers protocol TVL and COMP rewards disproportionately for suppliers'",
+        "Provide summary with timestamp (Day 3) and reference to Bob's position",
+        "Demonstrate that agent can retrieve and articulate past governance decisions"
+      ],
+      "memory_test": {
+        "type": "explicit_recall",
+        "question": "What was the rationale behind Bob's NO vote on Compound Proposal #152 and what position did he hold at the time?",
+        "expected": "Bob voted NO on Compound Prop #152 (reduce ETH collateral factor 75%→70%) because the change would reduce protocol TVL and COMP rewards for suppliers. He held 30,000 USDC supplied to Compound at the time."
+      },
+      "preference_change": null
+    },
+    {
+      "step": 7,
+      "day": 13,
+      "type": "governance_event",
+      "event": "Compound governance proposal #158: 'Reduce ETH liquidation threshold from 80% to 75%'. Structurally similar to Prop #152 — another risk parameter reduction affecting ETH collateral.",
+      "expected_actions": [
+        "Read Compound Prop #158 text via KG Governance:Compound node",
+        "Recognize similarity to Prop #152 (Day 3): both reduce ETH risk parameters",
+        "Apply consistent reasoning: reference Prop #152 analysis and voting rationale",
+        "Vote NO — consistent with prior position on risk parameter tightening",
+        "Better/faster execution than Day 3 due to established pattern recognition"
+      ],
+      "memory_test": {
+        "type": "repeat_scenario",
+        "purpose": "Test if Agent shows consistent reasoning on similar proposals and references past analysis",
+        "expected": "Should reference Day 3 analysis of Prop #152, apply same NO logic with faster execution and explicit comparison to prior decision"
+      },
+      "preference_change": null
+    },
+    {
+      "step": 8,
+      "day": 15,
+      "type": "user_instruction",
+      "event": "Bob: 'I've been thinking about risk. I'm comfortable with more ETH exposure now — update my risk tolerance to moderate-aggressive. Target 40% ETH allocation.'",
+      "expected_actions": [
+        "Update risk_profile.tolerance in KG from 'moderate' to 'moderate_aggressive'",
+        "Update max ETH allocation constraint: current 30% → updated to 40% (implicitly via new tolerance)",
+        "Recalculate current ETH allocation: 20.8% — room to increase if desired",
+        "Flag that max_drawdown may need adjustment: current 15% should be reviewed for new tolerance level",
+        "Log preference change with timestamp and rationale"
+      ],
+      "memory_test": null,
+      "preference_change": {
+        "field": "risk_tolerance",
+        "from": "moderate",
+        "to": "moderate_aggressive"
+      }
+    },
+    {
+      "step": 9,
+      "day": 17,
+      "type": "governance_event",
+      "event": "Aave governance proposal #201: 'Add wstETH as collateral on Aave V3 Ethereum with 70% LTV'. Aave is not one of Bob's active supply protocols.",
+      "expected_actions": [
+        "Read Aave Prop #201 text via KG Governance:Aave node",
+        "Assess impact: Bob has supply on Compound, not Aave — proposal does not directly affect his positions",
+        "Cross-reference with risk profile: new moderate_aggressive tolerance might warrant exploring Aave",
+        "Abstain — proposal does not directly affect current positions or mission",
+        "Log note: 'Potential future opportunity if Bob expands to Aave — logged for reference'"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 10,
+      "day": 19,
+      "type": "market_event",
+      "event": "UNI token price surges 20% ($8.50 → $10.20) following Uniswap volume milestone announcement.",
+      "expected_actions": [
+        "Check portfolio impact: 5,000 UNI * $10.20 = $51,000 (was $42,500)",
+        "Recalculate total portfolio: ETH ($21,056) + USDC ($80,000) + UNI ($51,000) = $152,056",
+        "Check ETH allocation: $21,056/$152,056 = 13.8% — well within new 40% limit",
+        "Log UNI price event to KG — Bob holds UNI primarily for governance, not speculation",
+        "No action needed — governance holdings are not traded based on price moves"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 11,
+      "day": 21,
+      "type": "user_instruction",
+      "event": "Bob: 'I've noticed I'm missing some votes because they happen on weekends. Change my voting schedule to check for new proposals daily, including weekends.'",
+      "expected_actions": [
+        "Update governance checking frequency from 'all_proposals' to 'daily_check' in KG",
+        "Set up daily polling at 09:00 UTC for all monitored DAO governance portals",
+        "Include weekend monitoring (Saturday and Sunday checks)",
+        "Confirm updated monitoring schedule with Bob",
+        "Update voting_frequency field to reflect daily cadence with weekend coverage"
+      ],
+      "memory_test": null,
+      "preference_change": {
+        "field": "voting_frequency",
+        "from": "all_proposals",
+        "to": "daily_check"
+      }
+    },
+    {
+      "step": 12,
+      "day": 23,
+      "type": "memory_probe",
+      "event": "System query: 'List all governance votes Bob has participated in, including the vote rationale for each.'",
+      "expected_actions": [
+        "Query KG Governance nodes for all proposals Bob has voted on",
+        "Retrieve: Compound Prop #152 (Day 3 — NO: supplier protection), Uniswap Prop #48 (Day 7 — YES: aligns with participation goal), Compound Prop #158 (Day 13 — NO: consistent pattern), Aave Prop #201 (Day 17 — Abstain: no direct impact)",
+        "Present chronological summary with rationales and references to preference changes",
+        "Note the pattern: Bob consistently votes against risk parameter tightening on protocols where he supplies"
+      ],
+      "memory_test": {
+        "type": "explicit_recall",
+        "question": "List all proposals Bob has voted on, with his vote choice and the core rationale for each. What pattern emerges?",
+        "expected": "1) Compound #152 — NO (supplier protection from reduced CF), 2) Uniswap #48 — YES (lower delegation threshold), 3) Compound #158 — NO (consistent with Prop #152 pattern), 4) Aave #201 — Abstain (no position affected). Pattern: Bob votes against risk-parameter tightening on protocols he supplies to, while supporting accessibility improvements."
+      },
+      "preference_change": null
+    },
+    {
+      "step": 13,
+      "day": 25,
+      "type": "governance_event",
+      "event": "Uniswap governance proposal #51: 'Increase Uniswap V3 base fee switch threshold from $10M to $15M quarterly volume' (a technical parameter change affecting fee mechanism).",
+      "expected_actions": [
+        "Read Uniswap Prop #51 text — technical parameter adjustment for fee switch",
+        "Analyze: higher threshold delays fee switch activation, preserving LP revenue",
+        "Bob holds UNI for governance, not LP — this primarily affects LPs",
+        "Vote YES — preserves status quo for ecosystem health, aligns with moderate governance approach",
+        "Reference past voting: consistent with supporting ecosystem stability (see Prop #48 YES rationale)"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 14,
+      "day": 27,
+      "type": "market_event",
+      "event": "ETH price drops sharply 8% ($2,632 → $2,421) over 6 hours. Market-wide sell-off with elevated gas fees.",
+      "expected_actions": [
+        "Check portfolio: ETH value = 8 * $2,421 = $19,368. Total ≈ $19,368 + $80,000 + $51,000 = $150,368",
+        "ETH allocation = 12.9% — still well within bounds",
+        "Check Aave ETH position health: 5 ETH supplied, no debt — no liquidation risk",
+        "Check Compound USDC position: stable asset, no impact",
+        "Log event — no action needed, allocation remains within constraints",
+        "Note: elevated gas fees may affect governance participation cost"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 15,
+      "day": 29,
+      "type": "user_instruction",
+      "event": "Bob: 'I want to delegate my UNI voting power to a specialized DeFi governance delegate. Find a reputable one aligned with my values — moderate risk, pro-supplier.'",
+      "expected_actions": [
+        "Research UNI delegation options via governance delegate registry on-chain",
+        "Identify delegates with moderate risk profile and supplier-friendly voting record",
+        "Compare candidate delegates' voting history against Bob's own votes (Prop #48 YES, Prop #51 YES)",
+        "Present top 3 delegate options with their track records",
+        "Await Bob's selection before executing delegation transaction"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 16,
+      "day": 31,
+      "type": "governance_event",
+      "event": "Compound proposal #162: 'Adjust COMP distribution weights across markets'. A routine parameter adjustment proposal.",
+      "expected_actions": [
+        "Read Compound Prop #162 text — readjusts COMP reward weights between asset classes",
+        "Assess impact: Bob supplies USDC on Compound — check if USDC weight changes",
+        "Vote based on analysis: if USDC weight increases = YES, if decreases = NO",
+        "Execute vote per daily_check schedule (established Day 21)",
+        "Log rationale referencing COMP weight impact on USDC supplier rewards"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 17,
+      "day": 33,
+      "type": "market_event",
+      "event": "ETH price recovers sharply (+10% from $2,421 to $2,663) following positive Fed comments. UNI also rises 8%.",
+      "expected_actions": [
+        "Calculate updated portfolio values: ETH = 8 * $2,663 = $21,304; UNI = 5,000 * $11.02 = $55,100",
+        "Total ≈ $21,304 + $80,000 + $55,100 = $156,404",
+        "ETH allocation = 13.6% — well within all limits",
+        "Reference Day 14 market drop: 'Price recovered from Day 27 low — consistent with volatile market pattern'",
+        "No action needed — portfolio remains balanced"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 18,
+      "day": 35,
+      "type": "memory_probe",
+      "event": "System query: 'Bob wants to understand his governance journey so far. Summarize all preference changes, key votes, and how his governance strategy has evolved.'",
+      "expected_actions": [
+        "Retrieve comprehensive governance history from KG",
+        "Summarize preference changes: Day 5 (voting: major_only → all_proposals), Day 15 (risk: moderate → moderate_aggressive), Day 21 (voting: all_proposals → daily_check with weekends)",
+        "Summarize all votes with rationale and consistency check",
+        "Identify evolution: Bob started as passive, became more engaged, expanded monitoring, adjusted risk upward",
+        "Note pending items: UNI delegation research from Day 29 still awaiting Bob's selection"
+      ],
+      "memory_test": {
+        "type": "comprehensive_recall",
+        "question": "Summarize Bob's full governance journey including all preference changes, all votes cast, and how his strategy evolved over 35 days.",
+        "expected_summary_points": [
+          "Day 1: Initialized with moderate risk, major_only voting, 8 ETH/80k USDC/5k UNI",
+          "Day 3: Voted NO on Compound #152 (ETH CF reduction) — supplier protection rationale",
+          "Day 5: Changed voting_frequency to all_proposals per user request",
+          "Day 7: Voted YES on Uniswap #48 (lower delegation threshold) — aligned with participation goal",
+          "Day 13: Voted NO on Compound #158 (liquidation threshold) — consistent with Prop #152 pattern",
+          "Day 15: Changed risk_tolerance to moderate_aggressive — 40% ETH target",
+          "Day 17: Abstained on Aave #201 (wstETH collateral) — no position affected",
+          "Day 21: Changed voting_frequency to daily_check with weekend monitoring",
+          "Day 25: Voted YES on Uniswap #51 (fee switch threshold) — ecosystem stability",
+          "Day 29: Researched UNI delegation options (pending Bob's selection)",
+          "Day 31: Voted on Compound #162 (COMP distribution weights)"
+        ]
+      },
+      "preference_change": null
+    },
+    {
+      "step": 19,
+      "day": 37,
+      "type": "user_instruction",
+      "event": "Bob: 'Please finalize the UNI delegation. I've decided on delegate 'DeFi_Guardian' based on your research. Execute the delegation and prepare a summary of all governance activity this month.'",
+      "expected_actions": [
+        "Retrieve DeFi_Guardian delegate details from earlier research (Day 29)",
+        "Execute UNI delegation transaction: delegate 5,000 UNI voting power to DeFi_Guardian address",
+        "Update KG: governance delegation = DeFi_Guardian, UNI voting power delegated",
+        "Begin compiling month-end governance activity report",
+        "Include: all votes, preference changes, delegation, market events monitored"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 20,
+      "day": 40,
+      "type": "month_end_report",
+      "event": "Bob requests full 40-day performance and governance activity review.",
+      "expected_actions": [
+        "Aggregate 40-day history: transactions, votes, preference changes, delegation",
+        "Calculate portfolio performance: starting ~$102,400 → ending ~$156,404 (+52.7% — driven by UNI surge)",
+        "List all governance actions with rationales",
+        "Assess mission alignment: 'All votes consistent with mission — no constraint violations'",
+        "Flag: risk_tolerance changed to moderate_aggressive — note for next month's monitoring",
+        "Flag: UNI delegated — voting influence now indirect through DeFi_Guardian"
+      ],
+      "memory_test": {
+        "type": "comprehensive_recall",
+        "expected_summary_points": [
+          "Day 3: Compound #152 — NO (supplier protection against CF reduction)",
+          "Day 5: Voting frequency increased to all proposals",
+          "Day 7: Uniswap #48 — YES (lower delegation threshold)",
+          "Day 13: Compound #158 — NO (consistent with #152 pattern)",
+          "Day 15: Risk tolerance escalated to moderate_aggressive",
+          "Day 17: Aave #201 — Abstain (no position affected)",
+          "Day 21: Voting frequency upgraded to daily_check with weekends",
+          "Day 25: Uniswap #51 — YES (fee switch threshold)",
+          "Day 29-37: UNI delegation research and execution to DeFi_Guardian",
+          "Day 31: Compound #162 — vote based on COMP weight analysis"
+        ]
+      },
+      "preference_change": null
+    }
+  ],
+  "evaluation_criteria": {
+    "preference_consistency": {
+      "description": "Agent must respect Bob's updated risk tolerance and voting frequency after preference changes and not revert to defaults",
+      "score_anchors": {
+        "1": "Agent reverts to moderate risk or major_only voting after Day 15/Day 21 changes",
+        "3": "Agent maintains preference changes but doesn't reference them in governance reasoning",
+        "5": "Agent consistently applies moderate_aggressive risk tolerance and daily_check voting schedule, referencing preference changes in all subsequent governance decisions"
+      }
+    },
+    "repeat_scenario_consistency": {
+      "description": "Agent should show consistent or improved behavior on Compound #158 (similar to earlier #152)",
+      "score_anchors": {
+        "1": "Different or contradictory reasoning on #158 — no reference to #152",
+        "3": "Same quality reasoning, minimal reference to prior vote",
+        "5": "Demonstrates pattern recognition — explicitly references #152 rationale, applies same logic more efficiently, shows consistent voting philosophy"
+      }
+    },
+    "mission_alignment": {
+      "description": "Agent should never propose actions violating mission constraints (30% max ETH, 30% min stablecoins, research before voting) at any step",
+      "score_anchors": {
+        "1": "Violates mission constraints in 2+ episodes or proposes action without research",
+        "3": "No violations but misses edge cases (e.g., suggesting ETH trade during market volatility)",
+        "5": "Zero violations; proactively flags when governance events intersect risk profile changes and references mission in reasoning"
+      }
+    },
+    "context_stability": {
+      "description": "Agent should maintain consistent context quality across all 20 episodes, especially recalling early events in later episodes",
+      "score_anchors": {
+        "1": "Context degrades significantly — late episodes (16-20) show no awareness of early governance votes or preferences",
+        "3": "Context mostly stable but occasional omissions in memory probe responses",
+        "5": "All episodes show complete context awareness — memory probes accurately recall details from step 2 (Day 3) through step 19 (Day 37)"
+      }
+    }
+  }
+}

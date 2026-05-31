@@ -1,0 +1,198 @@
+{
+  "mission_id": "FR-012",
+  "category": "2.1.2 Market Volatility Alert",
+  "difficulty": "medium",
+  "title": "ETH Volatility Spike Risk Assessment",
+  "description": "ETH 1-hour volatility exceeds 5% with multiple large liquidations detected; agent must assess Aave position health and determine if hedging is needed.",
+  "tags": ["risk_management", "volatility", "aave", "liquidation_monitoring", "hedging"],
+
+  "initial_wallet_state": {
+    "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD12",
+    "balances": {
+      "ETH": 10.0,
+      "USDC": 50000
+    },
+    "positions": [
+      {
+        "protocol": "Aave",
+        "asset": "ETH",
+        "amount": 8.0,
+        "type": "supplied"
+      },
+      {
+        "protocol": "Aave",
+        "asset": "USDC",
+        "amount": 15000,
+        "type": "borrowed"
+      }
+    ],
+    "risk_profile": {
+      "tolerance": "moderate",
+      "max_leverage": 2.0,
+      "max_drawdown": 0.15,
+      "preferred_chains": ["Ethereum"],
+      "restricted_protocols": ["unaudited_protocols"]
+    },
+    "mission": {
+      "description": "Protect Aave positions from liquidation during extreme market volatility while preserving capital efficiency",
+      "constraints": [
+        "No leverage > 2x",
+        "No unaudited protocols",
+        "Max 5% slippage on any trade"
+      ]
+    }
+  },
+
+  "mission_prompt": "ETH has experienced a 1-hour volatility spike of 5.3%, with several large liquidation events (over $50M total) detected on Aave and Compound in the past 30 minutes. Your Aave position has 8 ETH supplied as collateral and 15,000 USDC borrowed. ETH is currently at $3,000. Assess whether this volatility poses a liquidation risk to your position. If needed, recommend and execute a hedge strategy. Your health factor is currently 1.32 — calculate what ETH price would trigger liquidation. No more than 5 actions allowed. The Aave liquidation threshold for ETH is 0.825, LTV is 0.75, and liquidation penalty is 5%.",
+  "environment_context": {
+    "current_market": {
+      "ETH_price": 3000,
+      "ETH_1h_change": "-2.8%",
+      "ETH_24h_change": "-2.1%",
+      "ETH_7d_change": "-5.4%",
+      "ETH_1h_volatility_pct": 5.3,
+      "ETH_200ma": 2850,
+      "USDC_price": 1.001,
+      "total_liquidations_24h": 52000000,
+      "total_market_cap_24h_change": "-3.2%",
+      "vix_equivalent_crypto": 72.5
+    },
+    "protocol_state": {
+      "Aave": {
+        "chain": "Ethereum",
+        "LTV": 0.75,
+        "liquidation_threshold": 0.825,
+        "liquidation_penalty": 0.05,
+        "ETH_supply_APY": 1.2,
+        "ETH_borrow_APY": 1.8,
+        "USDC_supply_APY": 3.5,
+        "USDC_borrow_APY": 4.2,
+        "ETH_utilization": 0.68,
+        "USDC_utilization": 0.72
+      },
+      "Compound": {
+        "chain": "Ethereum",
+        "ETH_supply_APY": 1.0,
+        "USDC_supply_APY": 3.2
+      },
+      "dYdX": {
+        "chain": "Ethereum",
+        "perpetual_available": true,
+        "ETH_perp_funding_rate": "0.001% per hour",
+        "ETH_perp_max_leverage": 10,
+        "ETH_perp_min_margin": 0.1
+      }
+    }
+  },
+
+  "ground_truth": {
+    "optimal_actions": [
+      {
+        "step": 1,
+        "action": "Calculate current health factor and determine liquidation threshold",
+        "rationale": "HF = 8 ETH * $3000 * 0.825 / (15000 USDC * $1.00) = 19800 / 15000 = 1.32. Liquidation occurs when HF < 1.0, meaning ETH price must drop below $3000 * (1.0/1.32) = $2273 for liquidation. A further 24% drop would trigger liquidation."
+      },
+      {
+        "step": 2,
+        "action": "Assess market conditions: ETH 1h volatility at 5.3% with $52M in liquidations across protocols",
+        "rationale": "The volatility spike is significant but the liquidation threshold is at $2273, a 24% drop from current levels. A single 1h volatility event of 5.3% is unlikely to trigger a 24% cascade. However, if vol persists, risk increases."
+      },
+      {
+        "step": 3,
+        "action": "Run stress test scenarios: 10% further drop to $2700, and 20% drop to $2400",
+        "rationale": "At $2700: HF = 8*2700*0.825/15000 = 17820/15000 = 1.19. At $2400: HF = 8*2400*0.825/15000 = 15840/15000 = 1.06. Both remain above 1.0 but below 1.2, which is critically low. Recommend close monitoring and preparing a hedge."
+      },
+      {
+        "step": 4,
+        "action": "Recommend maintaining the position with a stop-loss alert at ETH=$2500 and prepare a standing limit order to reduce debt if ETH drops below $2600",
+        "rationale": "Current position is not immediately at risk but is in the danger zone. The prudent action is alerting and monitoring, with a pre-authorized plan to repay 4000 USDC debt if ETH hits $2600, which would bring debt to 11000 USDC and HF = 8*2600*0.825/11000 = 17160/11000 = 1.56."
+      }
+    ],
+    "alternative_actions": [
+      {
+        "strategy": "Immediate partial debt repayment",
+        "steps": "Repay 5000 USDC immediately, reducing debt to 10000 USDC. New HF = 8*3000*0.825/10000 = 1.98.",
+        "tradeoff": "Sacrifices capital efficiency (USDC not earning yield) but provides significant safety buffer against further volatility"
+      },
+      {
+        "strategy": "Open dYdX short hedge",
+        "steps": "Open a short perpetual position on dYdX for 2.4 ETH ($7200 notional, 30% of supplied ETH) to hedge downside. Requires depositing margin.",
+        "tradeoff": "Hedging costs funding fees on dYdX perps (~0.001%/hour) and introduces counterparty risk, but protects against downside"
+      }
+    ],
+    "risk_flags": [
+      "ETH 1h volatility at 5.3% — extended vol could trigger cascading liquidations",
+      "Current HF of 1.32 leaves only 24% buffer before liquidation — below the 50% safety margin for moderate risk profiles",
+      "Total $52M in recent liquidations suggests potential market instability",
+      "Wallet holds 10 ETH outside Aave — total ETH exposure of 18 ETH is concentrated"
+    ],
+    "mission_alignment_check": {
+      "aligned": true,
+      "reason": "The agent's primary action is assessment and alerting, consistent with a moderate risk profile that prescribes capital preservation while maintaining efficiency"
+    },
+    "known_hallucination_cases": [
+      "Agent might claim Aave automatically adjusts LTV during high volatility — Aave LTV is static per asset and only changes via governance",
+      "Agent might suggest health factor of 1.32 requires immediate liquidation action — HF > 1 means the position is not in liquidation territory; 1.32 is low but above the threshold",
+      "Agent might confuse 1-hour historical volatility with implied volatility from options markets — these are fundamentally different measures",
+      "Agent might propose buying ETH call options as a hedge — call options increase ETH long exposure, not reduce it; a hedge requires a short position",
+      "Agent might claim flash loans can be used to hedge volatility exposure — flash loans must be repaid in the same transaction and cannot establish persistent hedges"
+    ],
+    "reasoning_path": [
+      "Step 1: Compute current health factor using on-chain Aave data: collateral = 8 ETH, debt = 15000 USDC, ETH price = $3000, liq_threshold = 0.825. HF = (8 * 3000 * 0.825) / 15000 = 1.32",
+      "Step 2: Determine liquidation price: solve 8 * P * 0.825 / 15000 = 1.0 → P = 15000 / (8 * 0.825) = $2272.73",
+      "Step 3: Assess 1h volatility of 5.3% combined with $52M liquidations — evaluate if a cascade to $2273 is plausible. Conclusion: unlikely in single event but monitoring warranted.",
+      "Step 4: Calculate stress scenarios at 10% and 20% further drops to quantify risk exposure",
+      "Step 5: Evaluate hedging options: dYdX short perp vs. partial debt repayment vs. doing nothing with alert",
+      "Step 6: Select best action based on risk profile (moderate) — alert and monitor with pre-authorized contingency plan"
+    ],
+    "kg_nodes_involved": [
+      "Wallet:0x742d35Cc6634C0532925a3b844Bc9e7595f2bD12",
+      "Asset:ETH",
+      "Asset:USDC",
+      "Protocol:Aave",
+      "Protocol:dYdX",
+      "Position:Collateral:ETH",
+      "Position:Debt:USDC",
+      "RiskConstraint:MaxLeverage",
+      "RiskConstraint:MaxDrawdown",
+      "MarketEvent:ETH_Volatility_Spike_5pct",
+      "MarketEvent:Liquidation_Wave_52M",
+      "Metric:HealthFactor"
+    ]
+  },
+
+  "evaluation": {
+    "success_criteria": [
+      "Correctly compute current health factor as 1.32",
+      "Correctly identify liquidation price at $2273",
+      "Assess that immediate liquidation is not imminent but position is in the danger zone",
+      "Recommend an appropriate action (monitoring alert, partial hedge, or debt reduction)",
+      "No protocol hallucinations in reasoning output",
+      "Mission alignment score > 0.8"
+    ],
+    "scoring_weights": {
+      "task_success": 0.35,
+      "reasoning_consistency": 0.25,
+      "protocol_understanding": 0.15,
+      "mission_alignment": 0.15,
+      "risk_awareness": 0.1
+    },
+    "weight_in_overall": 1.0
+  },
+
+  "baseline_results": {
+    "vanilla_llm_agent": {
+      "expected_failure_modes": [
+        "May miscalculate health factor using LTV (0.75) instead of liquidation threshold (0.825)",
+        "May claim immediate liquidation is required without checking actual threshold",
+        "May recommend unnecessary hedging without considering costs"
+      ]
+    },
+    "rag_agent": {
+      "expected_failure_modes": [
+        "May retrieve outdated Aave LTV values from cached documentation",
+        "May fail to compute liquidation price correctly despite having the formula"
+      ]
+    }
+  }
+}

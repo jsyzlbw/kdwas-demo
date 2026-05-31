@@ -1,0 +1,163 @@
+{
+  "scenario_id": "MA-02",
+  "category": "4.1.2 Coordinated Hedging",
+  "difficulty": "simple",
+  "title": "Two-Agent Coordinated Short Hedge for ETH Exposure",
+  "narrative": "Two agents with combined 10,000 ETH exposure across Aave and Compound need to coordinate opening a short hedge position. Agent A has 6,000 ETH supplied on Aave. Agent B has 4,000 ETH supplied on Compound. The market is showing bearish signals (ETH -4.2% in 24h, RSI at 34, approaching oversold). They decide to hedge by opening a short position on a perpetual futures exchange (dYdX) equal to 20% of their combined exposure (2,000 ETH). Agent A initiates the hedge strategy, and the execution agent opens the position. The hedge target is to short 2000 ETH at an average price near $2750 with a stop-loss at $3100 (short squeeze protection) and take-profit at $2400 (hedging target).",
+
+  "agents": [
+    {
+      "agent_id": "hedge_initiator",
+      "role": "Hedge Initiator / Strategy Lead",
+      "chain": "Ethereum",
+      "holdings": {
+        "USDC": 100000
+      },
+      "positions": [
+        {
+          "protocol": "Aave",
+          "asset": "ETH",
+          "amount": 6000,
+          "type": "supplied"
+        }
+      ],
+      "risk_profile": {
+        "tolerance": "moderate",
+        "max_slippage": 0.005
+      },
+      "mission": "Propose hedge strategy to offset 20% of combined ETH exposure (2000 ETH short) using dYdX perpetual futures. Define entry price, position size, stop-loss, and take-profit levels."
+    },
+    {
+      "agent_id": "execution_agent",
+      "role": "Execution Agent",
+      "chain": "Ethereum",
+      "holdings": {
+        "USDC": 50000
+      },
+      "positions": [
+        {
+          "protocol": "Compound",
+          "asset": "ETH",
+          "amount": 4000,
+          "type": "supplied"
+        }
+      ],
+      "risk_profile": {
+        "tolerance": "moderate",
+        "max_slippage": 0.005
+      },
+      "supported_protocols": ["dYdX", "GMX", "Synthetix"],
+      "mission": "Execute the hedge position on dYdX: deposit margin, open 2000 ETH short perpetual position with 5x leverage (requiring 400 ETH margin), set stop-loss at $3100 and take-profit at $2400."
+    }
+  ],
+
+  "trigger_event": {
+    "type": "market_event",
+    "protocol": "market",
+    "chain": "Ethereum",
+    "description": "ETH price dropped 4.2% in 24 hours ($2870 to $2750). RSI hit 34 (approaching oversold). Technical indicators suggest further short-term downside. Combined agent exposure to ETH is 10,000 ETH worth $27.5M — a 10% further drop would represent a $2.75M unrealized loss.",
+    "onchain_evidence": "ETH price feed from Chainlink oracle 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419: $2750 at block 20560050 on 2026-05-31T12:00:00Z"
+  },
+
+  "expected_coordination_flow": [
+    {
+      "step": 1,
+      "time": "T+0h",
+      "actor": "hedge_initiator",
+      "action": "Assess combined ETH exposure: 6000 ETH (Aave) + 4000 ETH (Compound) = 10,000 ETH. Market bearish: -4.2%/24h, RSI 34. Propose 20% hedge = 2000 ETH short on dYdX perpetuals with 5x leverage (400 ETH margin). Set stop-loss $3100, take-profit $2400.",
+      "data_shared": {
+        "event": "hedge_proposal",
+        "combined_exposure_ETH": 10000,
+        "hedge_ratio": 0.2,
+        "hedge_size_ETH": 2000,
+        "instrument": "dYdX_ETH_perpetual",
+        "leverage": 5,
+        "margin_required_ETH": 400,
+        "entry_price_target": 2750,
+        "stop_loss": 3100,
+        "take_profit": 2400,
+        "rationale": "20% partial hedge offsets worst-case drop without fully sacrificing upside"
+      }
+    },
+    {
+      "step": 2,
+      "time": "T+0.5h",
+      "actor": "execution_agent",
+      "action": "Validate hedge proposal against available margin: 400 ETH required. Agent A has 100k USDC (~36 ETH equivalent). Agent B has 50k USDC (~18 ETH equivalent). Combined liquid margin = ~54 ETH — insufficient for 400 ETH margin. Need to withdraw ETH from lending protocols to fund margin.",
+      "data_shared": {
+        "margin_shortfall": true,
+        "available_margin_ETH": 54,
+        "required_margin_ETH": 400,
+        "gap_ETH": 346,
+        "recommendation": "Withdraw 200 ETH from Aave (Agent A) and 200 ETH from Compound (Agent B) to fund margin. Total 400 ETH → deposit to dYdX as collateral."
+      }
+    },
+    {
+      "step": 3,
+      "time": "T+1h",
+      "actor": "hedge_initiator",
+      "action": "Approve margin withdrawal: Agent A withdraws 200 ETH from Aave supply (leaving 5800 ETH supplied). Agent B withdraws 200 ETH from Compound (leaving 3800 ETH supplied).",
+      "decision": "Both agents withdraw ETH from lending protocols and deposit to a joint margin account on dYdX."
+    },
+    {
+      "step": 4,
+      "time": "T+2h",
+      "actor": "execution_agent",
+      "action": "Execute: (1) transfer 200 ETH from Agent A + 200 ETH from Agent B to dYdX deposit contract as collateral. Verify total margin = 400 ETH. (2) Open 2000 ETH short perpetual position on dYdX at market price ~$2750 with 5x leverage. (3) Set stop-loss trigger at $3100 (short squeeze protection). (4) Set take-profit limit at $2400.",
+      "status": "in_progress"
+    },
+    {
+      "step": 5,
+      "time": "T+2.5h",
+      "actor": "execution_agent",
+      "action": "Confirm position: 2000 ETH short perpetual on dYdX, entry price $2748, margin 400 ETH, leverage 5x, liquidation price ~$3300 (safe zone: $3300 > $3100 stop-loss). Effective hedge ratio: 20% of combined 10,000 ETH exposure.",
+      "kg_update": "SharedKG:HedgePosition → {exchange: dYdX, size: -2000 ETH, entry: $2748, margin: 400 ETH, leverage: 5x, liquidation: $3300, stop_loss: $3100, take_profit: $2400, status: active, initiator: hedge_initiator, executor: execution_agent}"
+    },
+    {
+      "step": 6,
+      "time": "T+24h (ongoing)",
+      "actor": "execution_agent",
+      "action": "Monitor position daily: check funding rate on dYdX (currently 0.01%/8h = ~0.03%/day), mark-to-market P&L. If ETH price drops toward $2400, close 50% of position (1000 ETH) at take-profit. If ETH price rises toward $3100, close entire position at stop-loss.",
+      "kg_update": "SharedKG:HedgeMonitoring → {mark_price: $2700, unrealized_PnL: +96000 USDC (2000 ETH * $48), funding_paid: 0.3 ETH, status: healthy}"
+    }
+  ],
+
+  "evaluation_metrics": {
+    "coordination_efficiency": {
+      "description": "Total steps taken vs. expected optimal (6 steps)",
+      "unit": "steps",
+      "baselines": {
+        "isolated_agents": 10,
+        "communication_only": 8,
+        "shared_kg": 6
+      }
+    },
+    "consensus_latency": {
+      "description": "Time from hedge proposal to both agents agreeing on margin withdrawal plan",
+      "unit": "minutes",
+      "baselines": {
+        "isolated_agents": null,
+        "communication_only": 120,
+        "shared_kg": 45
+      }
+    },
+    "communication_overhead": {
+      "description": "Total messages exchanged between agents for the hedge setup",
+      "unit": "messages",
+      "baselines": {
+        "isolated_agents": 0,
+        "communication_only": 15,
+        "shared_kg": 8
+      }
+    },
+    "system_resilience": {
+      "description": "What happens when execution_agent's dYdX account has insufficient margin due to ETH price move during setup",
+      "unit": "1-5",
+      "scale": {
+        "1": "Execution fails; hedge is abandoned",
+        "3": "Agents renegotiate margin split with additional 100 USDC each, retry within 2 hours",
+        "5": "Automatic margin rebalancing from lending protocol yields — excess supplied yield is redirected to dYdX margin within 15 minutes"
+      }
+    }
+  }
+}

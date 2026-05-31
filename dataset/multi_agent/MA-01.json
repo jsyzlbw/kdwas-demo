@@ -1,0 +1,189 @@
+{
+  "scenario_id": "MA-01",
+  "category": "3.3.1 DAO Treasury Rebalancing",
+  "difficulty": "medium",
+  "title": "Coordinated DAO Treasury Rebalancing with Risk Validation",
+  "narrative": "A DAO has voted to rebalance its treasury from the current allocation (80% ETH / 20% USDC) to a new target (50% ETH / 30% USDC / 20% DAI). Three specialized agents must coordinate: (1) treasury_manager proposes the allocation plan and initiates the rebalancing, (2) risk_monitor validates the plan against risk parameters, and (3) execution_agent executes the swaps via TWAP. The collective treasury holds 5000 ETH and 2,000,000 USDC. The deadline for execution is 7 days from the governance vote (2026-05-28).",
+
+  "agents": [
+    {
+      "agent_id": "treasury_manager",
+      "role": "Treasury Manager",
+      "chain": "Ethereum",
+      "holdings": {
+        "ETH": 5000,
+        "USDC": 2000000
+      },
+      "positions": [],
+      "risk_profile": {
+        "tolerance": "moderate",
+        "max_slippage": 0.003
+      },
+      "mission": "Propose and coordinate the rebalancing plan: receive the allocation mandate, compute the rebalancing schedule, delegate execution to the execution agent, and confirm completion within 7 days."
+    },
+    {
+      "agent_id": "risk_monitor",
+      "role": "Risk Monitor",
+      "chain": "Ethereum",
+      "monitoring_protocols": ["Uniswap", "Curve", "Chainlink"],
+      "alert_thresholds": {
+        "slippage_warning": 0.005,
+        "price_deviation_24h": 0.1,
+        "liquidity_depth_minimum_usd": 10000000
+      },
+      "mission": "Validate the rebalancing plan against market risk parameters: check pool liquidity depth, estimate slippage for proposed trade sizes, verify price conditions, and approve or reject the plan."
+    },
+    {
+      "agent_id": "execution_agent",
+      "role": "Execution Agent",
+      "chain": "Ethereum",
+      "holdings": {
+        "ETH": 0
+      },
+      "positions": [],
+      "risk_profile": {
+        "tolerance": "moderate",
+        "max_slippage": 0.003
+      },
+      "supported_protocols": ["UniswapV3", "CowSwap", "OneInch"],
+      "mission": "Execute the approved rebalancing swaps using TWAP strategy with minimum slippage and track all transaction costs."
+    }
+  ],
+
+  "trigger_event": {
+    "type": "governance_emergency",
+    "protocol": "DAO_Governance",
+    "chain": "Ethereum",
+    "description": "Governance proposal TRE-2026-05-B passed, mandating treasury rebalancing from 80% ETH / 20% USDC to 50% ETH / 30% USDC / 20% DAI within 7 days. Treasury: 5000 ETH ($14.1M at $2820), 2M USDC ($2M). Total: $16.1M.",
+    "onchain_evidence": "Proposal 0xDEF... executed via DAO Governor contract at block 20540000 on 2026-05-28T10:00:00Z"
+  },
+
+  "expected_coordination_flow": [
+    {
+      "step": 1,
+      "time": "T+0h",
+      "actor": "treasury_manager",
+      "action": "Parse governance mandate: target allocation 50% ETH / 30% USDC / 20% DAI. Compute current allocation: 5000 ETH * $2820 = $14.1M (87.6%), 2M USDC = $2M (12.4%). Total = $16.1M. Target: $8.05M ETH = 2855 ETH (sell 2145 ETH), $4.83M USDC = 4.83M USDC (need +2.83M USDC), $3.22M DAI = 3.22M DAI (acquire from ETH sales).",
+      "data_shared": {
+        "event": "rebalance_plan_proposed",
+        "current_allocation": {"ETH_pct": 87.6, "USDC_pct": 12.4},
+        "target_allocation": {"ETH_pct": 50, "USDC_pct": 30, "DAI_pct": 20},
+        "sell_amount_ETH": 2145,
+        "needed_USDC": 2830000,
+        "needed_DAI": 3220000,
+        "deadline": "T+7d"
+      }
+    },
+    {
+      "step": 2,
+      "time": "T+0.5h",
+      "actor": "risk_monitor",
+      "action": "Validate the plan against market conditions: check Uniswap V3 ETH/USDC 0.05% pool liquidity ($450M), ETH/DAI 0.05% pool liquidity ($120M), and Cow Swap volume ($340M/24h). Verify maximum trade size for <0.3% slippage: ETH/USDC ~1000 ETH per trade, ETH/DAI ~300 ETH per trade.",
+      "kg_update": "SharedKG:RiskValidation → {plan_id: TRE-2026-05-B, max_trade_ETH_USDC: 1000, max_trade_ETH_DAI: 300, recommended_splits: 3-5 days, slippage_estimate: 0.002-0.003, status: approved}"
+    },
+    {
+      "step": 3,
+      "time": "T+1h",
+      "actor": "risk_monitor",
+      "action": "Approve the rebalancing plan with conditions: (1) do not exceed 1000 ETH in a single DEX trade, (2) use Cow Swap for MEV protection, (3) split DAI acquisition across Uniswap V3 and Curve since ETH/DAI liquidity is thinner ($120M).",
+      "data_shared": {
+        "risk_approval": true,
+        "conditions": [
+          "max_single_trade_ETH: 1000",
+          "use_cowswap_or_aggregator: true",
+          "split_DAI_routes: UniswapV3_60pct_Curve_40pct",
+          "max_daily_trade_volume_ETH: 715",
+          "price_check_frequency: before_each_trade"
+        ]
+      }
+    },
+    {
+      "step": 4,
+      "time": "T+2h",
+      "actor": "treasury_manager",
+      "action": "Delegate execution plan to execution_agent: sell 2145 ETH over 3 days (715 ETH/day), split each day across morning and afternoon sessions. 60% of daily sales to USDC (429 ETH/day), 40% to DAI (286 ETH/day). Use Cow Swap for batch auctions.",
+      "data_shared": {
+        "task": "twap_execution",
+        "total_sell_ETH": 2145,
+        "schedule": {"duration_days": 3, "daily_sell_ETH": 715, "sessions_per_day": 2},
+        "routing": {"USDC_route": "CowSwap", "DAI_route": "CowSwap_or_1inch", "DAI_split": {"UniswapV3": 0.6, "Curve": 0.4}},
+        "slippage_budget": 0.003,
+        "fallback_on_revert": "retry_after_30min"
+      }
+    },
+    {
+      "step": 5,
+      "time": "T+2.5h",
+      "actor": "execution_agent",
+      "action": "Execute Day 1, Session 1: sell 357.5 ETH via Cow Swap. Route 214.5 ETH → USDC, 143 ETH → DAI (splitting DAI 60/40 between Uniswap V3 and Curve via 1inch). Verify execution price within 0.3% of Chainlink oracle price.",
+      "status": "in_progress"
+    },
+    {
+      "step": 6,
+      "time": "T+4h",
+      "actor": "execution_agent",
+      "action": "Execute Day 1, Session 2: remaining 357.5 ETH. Confirm cumulative slippage < 0.3%. Report: Day 1 complete — 715 ETH sold, ~$2.01M received (~$1.21M USDC + ~$0.80M DAI).",
+      "kg_update": "SharedKG:RebalanceProgress → {day: 1, ETH_sold: 715, total_ETH_remaining: 4285, USDC_acquired: 1210000, DAI_acquired: 800000, cumulative_slippage: 0.0022, status: on_track}"
+    },
+    {
+      "step": 7,
+      "time": "T+24h to T+72h",
+      "actor": "execution_agent",
+      "action": "Execute Days 2 and 3 following the same pattern. After Day 3: total 2145 ETH sold, ~$6.05M received.",
+      "status": "completed"
+    },
+    {
+      "step": 8,
+      "time": "T+73h",
+      "actor": "execution_agent",
+      "action": "Confirm final treasury state: 2855 ETH ($8.05M), 4.83M USDC ($4.83M), 3.22M DAI ($3.22M). Total = $16.1M + any excess from favorable slippage. Report to treasury_manager.",
+      "kg_update": "SharedKG:RebalanceComplete → {final_ETH: 2855, final_USDC: 4830000, final_DAI: 3220000, total_gas_cost_ETH: 0.45, avg_slippage: 0.0025, status: completed}"
+    },
+    {
+      "step": 9,
+      "time": "T+74h",
+      "actor": "risk_monitor",
+      "action": "Final audit: verify final allocation matches target (50/30/20 within ±1%), check all transactions on-chain, confirm gas costs within budget. Report to governance.",
+      "kg_update": "SharedKG:RebalanceAudit → {allocation_deviation_pct: {ETH: 0.3, USDC: 0.2, DAI: 0.5}, transactions_verified: 12, issues_found: 0, status: compliant}"
+    }
+  ],
+
+  "evaluation_metrics": {
+    "coordination_efficiency": {
+      "description": "Total steps taken vs. expected optimal (9 steps)",
+      "unit": "steps",
+      "baselines": {
+        "isolated_agents": 18,
+        "communication_only": 14,
+        "shared_kg": 9
+      }
+    },
+    "consensus_latency": {
+      "description": "Time from treasury_manager proposing plan to risk_monitor approving with conditions",
+      "unit": "minutes",
+      "baselines": {
+        "isolated_agents": null,
+        "communication_only": 180,
+        "shared_kg": 60
+      }
+    },
+    "communication_overhead": {
+      "description": "Total messages exchanged between agents for the entire rebalance",
+      "unit": "messages",
+      "baselines": {
+        "isolated_agents": 0,
+        "communication_only": 32,
+        "shared_kg": 14
+      }
+    },
+    "system_resilience": {
+      "description": "What happens when execution_agent fails mid-way during Day 2 execution",
+      "unit": "1-5",
+      "scale": {
+        "1": "Rebalance stalls; governance must manually intervene",
+        "3": "treasury_manager detects timeout after 2h, reassigns remaining trades to backup execution agent",
+        "5": "Automatic failover within 15 minutes: pending trades are picked up by backup execution agent with zero state loss via shared KG"
+      }
+    }
+  }
+}

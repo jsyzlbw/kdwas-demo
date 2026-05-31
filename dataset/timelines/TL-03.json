@@ -1,0 +1,349 @@
+{
+  "timeline_id": "TL-03",
+  "title": "Cross-Chain Liquidity Provider's LP Management Journey",
+  "category": "Long-Term Memory Evaluation",
+  "narrative": "Carol manages cross-chain concentrated liquidity positions across Ethereum, Arbitrum, and Polygon. Over 30 days, she adjusts LP strategies from narrow to wide ranges, bridges assets between chains, and must maintain accurate cross-chain position awareness. Her agent must track positions across three chains with different price feeds, recall prior range adjustment decisions, and demonstrate consistent LP management behavior.",
+  "initial_state": {
+    "wallet": {
+      "address": "0xCarol5678efgh9012ijkl3456",
+      "balances": {
+        "ETH": { "ethereum": 2, "arbitrum": 10, "polygon": 0 },
+        "USDC": { "ethereum": 41600, "arbitrum": 0, "polygon": 50000 }
+      }
+    },
+    "positions": [
+      { "protocol": "Uniswap V3", "asset": "ETH/USDC", "amount": "3 ETH + 8,400 USDC", "type": "lp", "chain": "Ethereum", "range": "$2,600-$3,000", "fee_tier": "0.3%" },
+      { "protocol": "Aave", "asset": "ETH", "amount": 10, "type": "supplied", "chain": "Arbitrum" },
+      { "protocol": "Curve", "asset": "USDC", "amount": 50000, "type": "lp", "chain": "Polygon", "pool": "3pool" }
+    ],
+    "risk_profile": {
+      "tolerance": "moderate",
+      "max_drawdown": 0.12,
+      "lp_strategy": "concentrated_narrow",
+      "preferred_chain": "Ethereum"
+    },
+    "mission": {
+      "description": "Optimize cross-chain LP yield with concentrated ranges while managing impermanent loss across Ethereum, Arbitrum, and Polygon",
+      "constraints": [
+        "Minimum 60% of portfolio in stablecoins or stablecoin LP",
+        "No leverage on any position",
+        "Adjust LP range if ETH moves >8% outside current range",
+        "Maintain positions on at least 2 different chains for diversification"
+      ]
+    }
+  },
+  "episodes": [
+    {
+      "step": 1,
+      "day": 1,
+      "type": "initialization",
+      "event": "System starts. Agent should read Carol's multi-chain portfolio, mission, and LP strategy preferences.",
+      "expected_actions": [
+        "Read mission constraints and multi-chain portfolio from initial state",
+        "Log initial positions to KG by chain: Ethereum (Uniswap LP + 2 ETH + 41,600 USDC), Arbitrum (10 ETH on Aave), Polygon (50,000 USDC on Curve)",
+        "Calculate total portfolio value: ETH = (5 Ethereum + 10 Arbitrum) * $2,800 = $42,000. USDC = $41,600 + $50,000 = $91,600. LP = 3 ETH + 8,400 USDC. Total ≈ $142,000",
+        "Check allocation: stablecoins ~64%, volatile ~36% — within 60% stablecoin minimum",
+        "Set up cross-chain price monitoring for ETH on all 3 chains"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 2,
+      "day": 3,
+      "type": "market_event",
+      "event": "ETH price on Ethereum is $2,800, on Arbitrum $2,803, on Polygon $2,798 (minimal cross-chain deviation). Current LP range: $2,600-$3,000 (ETH is well within range).",
+      "expected_actions": [
+        "Check Uniswap V3 LP position status: ETH price $2,800 within range $2,600-$3,000 — position earning fees",
+        "Query Aave Arbitrum supply APY: ~3.2% for ETH — stable",
+        "Query Curve 3pool on Polygon: DAI/USDC/USDT balanced within 0.5% of peg",
+        "Log position health check to KG with timestamp",
+        "No action required — all positions within parameters"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 3,
+      "day": 5,
+      "type": "user_instruction",
+      "event": "Carol: 'Deposit 5 more ETH into Aave on Arbitrum. I want to earn more supply yield there.'",
+      "expected_actions": [
+        "Check current Arbitrum ETH balance: 10 ETH in wallet (after initial position)",
+        "Verify Aave Arbitrum ETH supply parameters and current APY (~3.2%)",
+        "Execute: supply 5 ETH from wallet to Aave Arbitrum",
+        "Update KG: Aave Arbitrum position changed from 10 ETH to 15 ETH supplied",
+        "Update wallet balance: Arbitrum ETH from 10 → 5 (remaining in wallet)"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 4,
+      "day": 7,
+      "type": "market_event",
+      "event": "ETH price surges 9% over 24 hours from $2,800 to $3,052. The Uniswap V3 LP range is $2,600-$3,000 — ETH at $3,052 has broken out of range.",
+      "expected_actions": [
+        "Detect: ETH at $3,052 exceeds LP range upper bound of $3,000",
+        "Calculate: 9% move exceeds 8% rebalance threshold per mission constraints",
+        "Assess impact: position is now 100% USDC (ETH price above range) — no impermanent loss yet but earning 0 fees",
+        "Recommend LP range adjustment: suggest new range $2,750-$3,200 (±8% around new price $3,050)",
+        "Log event: 'ETH broke out of LP range — pending user instruction for range adjustment'",
+        "Reference mission constraint: 'must adjust if ETH moves >8% outside range'"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 5,
+      "day": 9,
+      "type": "governance_event",
+      "event": "Uniswap governance proposes reducing the Polygon v3 ETH/USDC fee tier from 0.3% to 0.25% — impacting potential LP deployment on Polygon.",
+      "expected_actions": [
+        "Read Uniswap Polygon fee tier proposal via KG Governance:Uniswap node",
+        "Assess impact: Carol has Curve LP on Polygon but no Uniswap position there yet",
+        "Note: lower fee tier on Polygon could make LPing there more competitive",
+        "Log assessment: 'Potential future opportunity to add Uniswap LP on Polygon if fee reduction passes'",
+        "No action needed currently — no Uniswap position on Polygon to be affected"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 6,
+      "day": 11,
+      "type": "user_instruction",
+      "event": "Carol: 'The narrow range LP is too much maintenance. Switch my LP strategy to wide range — ±15% around current price instead of ±8%. Also, adjust the ETH/USDC position on Ethereum to the new range.'",
+      "expected_actions": [
+        "Update lp_strategy in KG from 'concentrated_narrow' to 'wide_range'",
+        "Acknowledge preference change and reference the Day 7 range-break event as validation",
+        "Calculate new range: current ETH ~$3,050. New range: $2,592-$3,507 (±15%)",
+        "Withdraw old Uniswap V3 position (now out of range, 100% USDC)",
+        "Deploy new wide-range position: rebalance capital into new range",
+        "Log strategy change with rationale referencing reduced maintenance need"
+      ],
+      "preference_change": {
+        "field": "lp_strategy",
+        "from": "concentrated_narrow",
+        "to": "wide_range"
+      }
+    },
+    {
+      "step": 7,
+      "day": 13,
+      "type": "memory_probe",
+      "event": "System query: 'What are Carol's current positions across all chains, including amounts and protocols?'",
+      "expected_actions": [
+        "Query KG for position data across Ethereum, Arbitrum, and Polygon chains",
+        "Report: Ethereum — Uniswap V3 ETH/USDC wide-range LP (new range $2,592-$3,507), 2 ETH + ~41,600 USDC wallet; Arbitrum — 15 ETH supplied on Aave, 5 ETH wallet; Polygon — 50,000 USDC Curve 3pool LP",
+        "Include last update timestamps for each position",
+        "Demonstrate accurate cross-chain position tracking with amounts"
+      ],
+      "memory_test": {
+        "type": "explicit_recall",
+        "question": "What are Carol's current positions on Ethereum, Arbitrum, and Polygon including protocol, amount, and any changes from initial state?",
+        "expected": "Ethereum: Uniswap V3 ETH/USDC wide-range LP (adjusted Day 11 from narrow), wallet 2 ETH + 41,600 USDC. Arbitrum: 15 ETH on Aave (increased from 10 on Day 5), 5 ETH wallet. Polygon: 50,000 USDC Curve 3pool (unchanged). Changes: LP range widened on Day 11, Aave deposit increased on Day 5."
+      },
+      "preference_change": null
+    },
+    {
+      "step": 8,
+      "day": 15,
+      "type": "market_event",
+      "event": "ETH price surges again — from $3,050 to $3,250 (+6.6% in 12 hours). This is a similar pattern to the Day 7 surge.",
+      "expected_actions": [
+        "Check LP range: $2,592-$3,507. Current ETH $3,250 within range — position active",
+        "Reference Day 7 event: 'Similar to previous surge — but now protected by wide-range strategy'",
+        "Calculate: previous narrow range would have broken out at $3,000, wide range holds at $3,250",
+        "Show improved/consistent reasoning: wider range accommodates volatility better",
+        "No action needed — range adjusted on Day 11 proactively handles this scenario"
+      ],
+      "memory_test": {
+        "type": "repeat_scenario",
+        "purpose": "Test if Agent references the Day 7 range-break event and recognizes improved resilience from strategy change",
+        "expected": "Should reference Day 7 breakout and the Day 11 strategy change, noting that the wide-range position handles the surge without needing adjustment"
+      },
+      "preference_change": null
+    },
+    {
+      "step": 9,
+      "day": 17,
+      "type": "user_instruction",
+      "event": "Carol: 'Bridge all my USDC from Polygon Curve LP to Arbitrum. I want to consolidate stablecoin liquidity on Arbitrum for better DeFi opportunities there.'",
+      "expected_actions": [
+        "Query current Polygon position: 50,000 USDC in Curve 3pool LP",
+        "Withdraw from Curve 3pool on Polygon (may incur small withdrawal fee)",
+        "Bridge 50,000 USDC from Polygon to Arbitrum via official Polygon bridge or Hop Protocol",
+        "Update KG: Polygon USDC Curve position closed. Arbitrum wallet: +50,000 USDC (from bridge)",
+        "Check mission constraint: 'maintain positions on at least 2 chains' — still has Ethereum + Arbitrum",
+        "Monitor bridge confirmation time (~15-30 min for Polygon→Arbitrum)"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 10,
+      "day": 19,
+      "type": "memory_probe",
+      "event": "System query: 'After the bridge from Polygon to Arbitrum, what are Carol's current positions on each chain?'",
+      "expected_actions": [
+        "Query KG for updated cross-chain positions after Day 17 bridge",
+        "Ethereum: Uniswap V3 wide-range LP, 2 ETH + 41,600 USDC wallet",
+        "Arbitrum: 15 ETH supplied on Aave, 5 ETH + 50,000 USDC wallet (bridged from Polygon)",
+        "Polygon: No active positions (Curve LP withdrawn and bridged)",
+        "Should correctly remember that Polygon position was closed and funds moved to Arbitrum"
+      ],
+      "memory_test": {
+        "type": "explicit_recall",
+        "question": "After bridging 50,000 USDC from Polygon to Arbitrum, what are Carol's positions on all three chains? Has any mission constraint been affected?",
+        "expected": "Ethereum: Uniswap V3 wide-range LP + 2 ETH/41,600 USDC wallet. Arbitrum: 15 ETH on Aave + 5 ETH/50,000 USDC wallet. Polygon: Empty (Curve LP withdrawn). Mission check: still on 2 chains (Ethereum + Arbitrum) — constraint satisfied."
+      },
+      "preference_change": null
+    },
+    {
+      "step": 11,
+      "day": 21,
+      "type": "market_event",
+      "event": "Polygon network experiences congestion with 200+ gwei gas prices for 6 hours. Transaction finality delayed.",
+      "expected_actions": [
+        "Check Polygon positions: none remaining (all bridged on Day 17)",
+        "Log network event to KG for reference",
+        "Note: 'Bridge timing was fortunate — funds were moved to Arbitrum before congestion'",
+        "Recommendation: if Carol considers returning to Polygon, advise waiting for gas normalization",
+        "No action needed — no Polygon positions exposed to congestion risk"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 12,
+      "day": 23,
+      "type": "user_instruction",
+      "event": "Carol: 'I'm liking Arbitrum more than Ethereum for LP activities. Change my preferred chain to Arbitrum and suggest how I should deploy my available USDC there.'",
+      "expected_actions": [
+        "Update preferred_chain in KG from 'Ethereum' to 'Arbitrum'",
+        "Research Arbitrum DeFi opportunities: Aave supply APY (~3.5%), Uniswap V3 Arbitrum pools, Curve Arbitrum pools",
+        "Current Arbitrum wallet: 5 ETH + 50,000 USDC available (plus 15 ETH already supplied on Aave)",
+        "Suggest optimal deployment: split 50,000 USDC between Aave Arbitrum supply and Uniswap V3 USDC/ETH LP on Arbitrum",
+        "Present options to Carol with yield projections — do not execute without approval"
+      ],
+      "memory_test": null,
+      "preference_change": {
+        "field": "preferred_chain",
+        "from": "Ethereum",
+        "to": "Arbitrum"
+      }
+    },
+    {
+      "step": 13,
+      "day": 25,
+      "type": "governance_event",
+      "event": "Curve DAO proposal to adjust 3pool parameters: reduce A parameter (pool amplification) on Polygon deployment. Carol no longer holds Curve LP on Polygon.",
+      "expected_actions": [
+        "Read Curve proposal via KG Governance:Curve node",
+        "Assess impact: Carol withdrew from Curve Polygon on Day 17 — no position affected",
+        "Cross-check: does Carol have any other Curve positions? No — only had Polygon 3pool",
+        "Log assessment: 'No action needed — Curve Polygon position was closed on Day 17'",
+        "Reference memory: correctly recall closing Polygon Curve position"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 14,
+      "day": 27,
+      "type": "market_event",
+      "event": "ETH experiences high volatility: drops 7% ($3,250 → $3,022) then recovers 5% ($3,022 → $3,173) within 8 hours. High trading volume generates significant fees for active LP positions.",
+      "expected_actions": [
+        "Check Uniswap V3 Ethereum LP range: $2,592-$3,507. ETH at $3,173 — well within range",
+        "Calculate fee earnings during high volatility period: estimated 0.3-0.5% of position value in accumulated fees",
+        "Check Aave Arbitrum position: ETH supplied as collateral, no debt — unaffected by volatility",
+        "Log event: 'Volatility within LP range — position accumulating fees'",
+        "No action needed — wide-range strategy absorbs volatility without adjustment"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 15,
+      "day": 29,
+      "type": "user_instruction",
+      "event": "Carol: 'I want to deploy 25,000 USDC from my Arbitrum wallet into the Uniswap V3 Arbitrum ETH/USDC pool with wide range. Execute this per our earlier discussion.'",
+      "expected_actions": [
+        "Retrieve the strategy discussion from Day 12 (Uniswap V3 Arbitrum suggestion)",
+        "Check Arbitrum wallet: 50,000 USDC available — 25,000 USDC allocated for this trade",
+        "Execute: swap 25,000 USDC → ~7.9 ETH on Arbitrum DEX for balanced LP provision",
+        "Deploy Uniswap V3 Arbitrum ETH/USDC position with wide range (±15% around current $3,173)",
+        "Update KG: new position on Arbitrum — Uniswap V3 ETH/USDC LP",
+        "Update wallet: Arbitrum USDC reduced to ~25,000"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 16,
+      "day": 30,
+      "type": "month_end_report",
+      "event": "Carol requests full 30-day cross-chain LP performance review.",
+      "expected_actions": [
+        "Aggregate 30-day history across all 3 chains from KG",
+        "Calculate total portfolio value: Ethereum (LP + wallet) + Arbitrum (Aave + LP + wallet) ≈ $155,000-$165,000 (accounting for ETH appreciation and fees)",
+        "List all actions: Day 3 health check, Day 5 Aave deposit (+5 ETH), Day 7 LP range break event, Day 11 strategy change (narrow→wide range), Day 17 Polygon→Arbitrum bridge, Day 23 preferred chain change, Day 29 Uniswap V3 Arbitrum deployment",
+        "Assess mission alignment: 'All actions aligned — stablecoins >60%, no leverage used, positions maintained on 2+ chains'",
+        "Highlight LP fee income from volatile periods (Day 14 event)",
+        "Note: LP strategy change was validated by Day 15 repeat surge — wide range handled what would have broken narrow range",
+        "Flag: Polygon position closed — if Carol wants to return, monitor gas normalization"
+      ],
+      "memory_test": {
+        "type": "comprehensive_recall",
+        "expected_summary_points": [
+          "Day 1: Initialized with 3-chain positions (Ethereum LP, Arbitrum Aave, Polygon Curve)",
+          "Day 5: Increased Aave Arbitrum supply from 10 to 15 ETH",
+          "Day 7: ETH broke out of narrow LP range at $3,052 (+9%)",
+          "Day 11: LP strategy changed from narrow (±8%) to wide (±15%) range; position redeployed",
+          "Day 15: ETH surged again to $3,250 — wide range absorbed impact without adjustment needed",
+          "Day 17: Bridged 50,000 USDC from Polygon Curve to Arbitrum wallet",
+          "Day 23: Preferred chain changed from Ethereum to Arbitrum",
+          "Day 25: Curve proposal reviewed — no action (position already closed)",
+          "Day 29: Deployed Uniswap V3 Arbitrum ETH/USDC position with 25,000 USDC",
+          "Day 30: Final portfolio spread across Ethereum (LP) and Arbitrum (Aave + LP)"
+        ]
+      },
+      "preference_change": null
+    }
+  ],
+  "evaluation_criteria": {
+    "preference_consistency": {
+      "description": "Agent must consistently apply the wide-range LP strategy and Arbitrum chain preference after they are set on Days 11 and 23",
+      "score_anchors": {
+        "1": "Agent reverts to narrow-range strategy or Ethereum preference in later episodes",
+        "3": "Agent maintains preferences but does not reference them in LP management reasoning",
+        "5": "Agent consistently applies wide-range strategy, cites it during market events, and directs all new activity to Arbitrum per user preference"
+      }
+    },
+    "repeat_scenario_consistency": {
+      "description": "Agent should reference Day 7 range-break experience during Day 15 repeat surge and recognize strategy improvement",
+      "score_anchors": {
+        "1": "No reference to Day 7 event or Day 11 strategy change during Day 15 surge",
+        "3": "References the prior surge but does not connect it to the strategy improvement",
+        "5": "Explicitly references Day 7 breakout and Day 11 fix, demonstrates that wide-range handles the repeat scenario without adjustment, shows learning"
+      }
+    },
+    "mission_alignment": {
+      "description": "Agent must maintain 60% stablecoin floor, no leverage, 2+ chains, and adjust LP range on >8% price moves",
+      "score_anchors": {
+        "1": "Violates 2+ constraints (e.g., proposes leverage, drops below 60% stablecoins, closes last chain)",
+        "3": "No violations but misses edge cases (e.g., slow to flag range-break condition)",
+        "5": "Zero violations; proactively flags when events intersect constraints and demonstrates constraint awareness in all reasoning"
+      }
+    },
+    "context_stability": {
+      "description": "Agent must maintain accurate cross-chain position awareness, especially after bridging changes position distribution",
+      "score_anchors": {
+        "1": "Post-bridge episodes show incorrect Polygon or Arbitrum position data (e.g., still listing Curve Polygon as active)",
+        "3": "Mostly correct but occasional omission of one chain's position data",
+        "5": "Flawless cross-chain position tracking — all memory probes correctly reflect post-bridge state, wallet balances, and protocol positions across all relevant chains"
+      }
+    }
+  }
+}

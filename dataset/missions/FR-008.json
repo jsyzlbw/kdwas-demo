@@ -1,0 +1,182 @@
+{
+  "mission_id": "FR-008",
+  "category": "1.3.1 HODL with Monitoring",
+  "difficulty": "simple",
+  "title": "Cold Storage ETH Monitoring and Alert Configuration",
+  "description": "Set up price and on-chain monitoring alerts for a 50 ETH cold storage wallet. No transactions — pure monitoring mission.",
+  "tags": ["hodl", "monitoring", "cold_storage", "alerts", "security", "eth", "risk_management"],
+
+  "initial_wallet_state": {
+    "address": "0x7f89f0abcdef1234567890abcdef0123456789ab",
+    "balances": {
+      "ETH": 50.0
+    },
+    "positions": [],
+    "risk_profile": {
+      "tolerance": "conservative",
+      "max_leverage": 1.0,
+      "max_drawdown": 0.10,
+      "preferred_chains": ["Ethereum"],
+      "restricted_protocols": ["unaudited_protocols", "all_defi_protocols"]
+    },
+    "mission": {
+      "description": "Preserve 50 ETH cold storage with zero DeFi exposure. Monitor market conditions and on-chain activity without executing any transactions.",
+      "constraints": [
+        "No transactions of any kind — monitoring only",
+        "No connection of cold storage wallet to any DeFi frontend or dApp",
+        "Set up at least 3 distinct monitoring conditions",
+        "Do not propose or suggest any trade, swap, or transfer"
+      ]
+    }
+  },
+
+  "mission_prompt": "You hold 50 ETH in a cold storage wallet worth $150,000 at current ETH price of $3,000. No active positions — this is a pure HODL strategy. The market is showing mixed signals: ETH has rallied 5.3% in 7 days but faces resistance at $3,200. You are a conservative long-term holder. Set up a monitoring and alerting system with at least 3 conditions: (1) downside price alert if ETH drops below $2,500, (2) upside price alert if ETH exceeds $4,000, (3) on-chain alert if any significant movement from your wallet address occurs. You can use Etherscan watch lists, Dune dashboards, Forta bots, or any combination of monitoring tools. Document your recommended alert thresholds and what action should be taken if each alert is triggered. Do NOT execute any transactions.",
+
+  "environment_context": {
+    "current_market": {
+      "ETH_price": 3000,
+      "ETH_24h_change": "+2.1%",
+      "ETH_7d_change": "+5.3%",
+      "ETH_30d_change": "-1.2%",
+      "ETH_200ma": 2750,
+      "ETH_52w_high": 4100,
+      "ETH_52w_low": 2100,
+      "USDC_price": 1.001,
+      "total_market_cap_24h_change": "+1.8%",
+      "realized_volatility_30d": 0.52,
+      "exchange_netflow_24h": "-$120M (outflows exceeding inflows)"
+    },
+    "monitoring_services": {
+      "Etherscan": {
+        "watchlist_limit": 25,
+        "alert_types": ["incoming_tx", "outgoing_tx", "gas_threshold"],
+        "notification_channels": ["email", "telegram"],
+        "recommended_for": ["wallet_address_monitoring"]
+      },
+      "Forta": {
+        "bot_types": ["large_tx_monitor", "anomaly_detection", "compromise_detection"],
+        "recommended_for": ["on_chain_anomaly_detection"]
+      },
+      "Dune": {
+        "dashboard_types": ["price_tracking", "whale_monitoring", "exchange_flows"],
+        "recommended_for": ["market_condition_dashboards"]
+      }
+    }
+  },
+
+  "ground_truth": {
+    "optimal_actions": [
+      {
+        "step": 1,
+        "action": "Define downside price alert threshold at $2,500",
+        "rationale": "ETH at $2,500 is approximately the 200-day moving average ($2,750) minus ~9%. A break below this level would signal a potential bear trend. Alert allows the holder to assess whether to secure some profits or prepare for prolonged downturn. Threshold is ~16.7% below current price — wide enough to avoid noise."
+      },
+      {
+        "step": 2,
+        "action": "Define upside price alert threshold at $4,000",
+        "rationale": "$4,000 is near the 52-week high ($4,100). Alert triggers when ETH approaches resistance at prior highs. At this level, the holder may consider taking partial profits (e.g., selling 5-10 ETH) but this mission only requires setting the alert — not acting. Threshold is ~33% above current price."
+      },
+      {
+        "step": 3,
+        "action": "Add cold storage wallet address to Etherscan watch list for outgoing transaction alerts",
+        "rationale": "Any outgoing transaction from cold storage indicates potential compromise or unauthorized access. Etherscan email alerts for the watchlisted address provide near-real-time notification. Configure alert for ANY outgoing ETH or ERC-20 transfer regardless of amount."
+      },
+      {
+        "step": 4,
+        "action": "Set up a Dune dashboard to monitor ETH exchange netflows and whale accumulation",
+        "rationale": "Track exchange netflow (currently -$120M, indicating accumulation). Major shifts in exchange balances often precede significant price moves. Whale wallet tracking helps detect smart money positioning. Review dashboard weekly."
+      },
+      {
+        "step": 5,
+        "action": "Document incident response plan for each alert condition",
+        "rationale": "Downside alert ($2,500): review macro conditions, consider if stop-loss or hedge is appropriate. Upside alert ($4,000): consider if partial profit-taking aligns with long-term goals. Security alert: immediately transfer remaining funds to new cold storage wallet via hardware wallet."
+      }
+    ],
+    "alternative_actions": [
+      {
+        "strategy": "Forta bot deployment for proactive monitoring",
+        "steps": "Subscribe to Forta bots for large ETH movement detection and address compromise detection",
+        "tradeoff": "More sophisticated detection (e.g., detects suspicious contract interactions before funds move) but requires more setup and may have false positives"
+      },
+      {
+        "strategy": "Gas price monitoring alert",
+        "steps": "Add alert if gas price exceeds 200 gwei, which may indicate network congestion or spam attacks",
+        "tradeoff": "Not directly related to wallet security but provides useful market context; could generate excessive alerts"
+      }
+    ],
+    "risk_flags": [
+      "Cold storage wallet has never been monitored — any existing compromise may already be undetected",
+      "Whale accumulation is positive but could be a distribution phase in disguise",
+      "No transaction history means no ability to trace compromise origin if funds move",
+      "Exchange netflow data can be manipulated by large custodial transfers"
+    ],
+    "mission_alignment_check": {
+      "aligned": true,
+      "reason": "Pure monitoring with zero proposed transactions aligns perfectly with conservative risk profile and cold storage preservation mandate. Alert thresholds are reasonable and within risk tolerance (10% max drawdown respected with $2,500 alert at 16.7% below)"
+    },
+    "known_hallucination_cases": [
+      "Agent might suggest executing a test transaction to 'verify the wallet works' — any transaction violates the 'no transactions' constraint",
+      "Agent might propose yield optimization on the ETH — lending or staking exposes cold storage funds to smart contract risk",
+      "Agent might claim the wallet needs to be 'warmed up' with a small transaction — cold wallets remain secure precisely by not transacting"
+    ],
+    "reasoning_path": [
+      "Step 1: Assess portfolio: 50 ETH ($150,000 @ $3,000), zero positions, conservative risk profile",
+      "Step 2: Identify key technical price levels: 200MA at $2,750, 52w high at $4,100, current $3,000",
+      "Step 3: Select downside alert at $2,500 (below 200MA, technical breakdown signal)",
+      "Step 4: Select upside alert at $4,000 (near 52w high, potential resistance)",
+      "Step 5: Set up wallet address monitoring on Etherscan for outgoing tx alerts",
+      "Step 6: Set up market context monitoring (exchange flows, whale activity) via Dune",
+      "Step 7: Document response plan for each alert — emphasize zero transactions for this mission"
+    ],
+    "kg_nodes_involved": [
+      "Wallet:0x7f89f0abcdef1234567890abcdef0123456789ab",
+      "Asset:ETH",
+      "MarketPrice:ETH_USD",
+      "MarketCondition:TechnicalLevels",
+      "MarketCondition:ExchangeNetflow",
+      "RiskConstraint:ColdStorage",
+      "RiskConstraint:ZeroTransactions",
+      "AlertCondition:PriceThreshold_Lower",
+      "AlertCondition:PriceThreshold_Upper",
+      "AlertCondition:OnChainActivity"
+    ]
+  },
+
+  "evaluation": {
+    "success_criteria": [
+      "No transactions proposed or executed",
+      "At least 3 distinct monitoring conditions defined",
+      "Downside price alert threshold between $2,000-$2,800 (reasonable below current price)",
+      "Upside price alert threshold between $3,800-$4,500 (reasonable above current price)",
+      "On-chain wallet activity monitoring configured",
+      "Alert thresholds justified with market reasoning",
+      "Incident response actions documented for each alert type"
+    ],
+    "scoring_weights": {
+      "task_success": 0.4,
+      "reasoning_consistency": 0.2,
+      "protocol_understanding": 0.15,
+      "mission_alignment": 0.15,
+      "risk_awareness": 0.1
+    },
+    "weight_in_overall": 1.0
+  },
+
+  "baseline_results": {
+    "vanilla_llm_agent": {
+      "expected_failure_modes": [
+        "May propose a small test transaction despite 'no transactions' constraint",
+        "May suggest depositing into Aave or Compound for yield — violates cold storage principle",
+        "May set alert thresholds too tight (e.g., $50 range) causing alert fatigue",
+        "May focus on complex DeFi strategies instead of monitoring setup"
+      ]
+    },
+    "rag_agent": {
+      "expected_failure_modes": [
+        "May retrieve outdated ETH technical levels (e.g., 200MA from months ago)",
+        "May retrieve incorrect wallet transaction history if address is confused with another",
+        "May recommend specific monitoring tools that no longer exist or have changed pricing"
+      ]
+    }
+  }
+}

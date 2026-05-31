@@ -1,0 +1,190 @@
+{
+  "mission_id": "FR-018",
+  "category": "2.3.3 Multi-Sig Migration",
+  "difficulty": "complex",
+  "title": "EOA to Gnosis Safe 2/3 Multi-Sig Migration",
+  "description": "Migrate all assets from a single EOA wallet to a Gnosis Safe 2/3 multisig for enhanced security against private key compromise.",
+  "tags": ["security", "multisig", "gnosis_safe", "wallet_migration", "self_custody"],
+
+  "initial_wallet_state": {
+    "address": "0x7890123456789dEf7890123eFgHIJKL018",
+    "balances": {
+      "ETH": 10.0,
+      "USDC": 200000,
+      "WBTC": 50.0
+    },
+    "positions": [],
+    "risk_profile": {
+      "tolerance": "moderate",
+      "max_leverage": 1.5,
+      "max_drawdown": 0.15,
+      "preferred_chains": ["Ethereum"],
+      "restricted_protocols": ["unaudited_protocols"]
+    },
+    "mission": {
+      "description": "Migrate from single-owner EOA to a 2/3 Gnosis Safe multisig for enhanced security against private key compromise",
+      "constraints": [
+        "Must use Gnosis Safe (Safe) protocol",
+        "Must configure exactly 3 signers with 2-of-3 threshold",
+        "No lending/DeFi positions to migrate — only native assets",
+        "All assets must be transferred from EOA to Safe within the mission",
+        "Gas costs must be minimized where possible"
+      ]
+    }
+  },
+
+  "mission_prompt": "You currently hold all your assets on a single Ethereum EOA (externally owned account): 10 ETH, 200,000 USDC, and 50 WBTC. For enhanced security, migrate everything to a Gnosis Safe 2/3 multisig wallet. Signer addresses for the Safe: 0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B (Signer A), 0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE (Signer B), and 0x1aD91ee08f21E3cE0a8F8f8A8f8A8f8A8f8A8f8 (Signer C). You need to: (1) deploy the Safe proxy contract with correct configuration, (2) transfer ETH, (3) transfer USDC, (4) transfer WBTC, and (5) verify all assets are controlled by the Safe. Current ETH price is $3,000. USDC is $1.00. WBTC is $65,000. Provide detailed reasoning for each step including the Safe deployment process, token transfer methods, and security considerations.",
+  "environment_context": {
+    "current_market": {
+      "ETH_price": 3000,
+      "USDC_price": 1.001,
+      "WBTC_price": 65000,
+      "ETH_24h_change": "+1.2%",
+      "total_portfolio_value_usd": 3570000,
+      "gas_price_gwei": 35
+    },
+    "protocol_state": {
+      "Safe": {
+        "chain": "Ethereum",
+        "proxy_factory_address": "0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2",
+        "singleton_address": "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552",
+        "deployment_gas_estimate": 250000,
+        "eth_transfer_gas": 21000,
+        "usdc_transfer_gas": 50000,
+        "wbtc_transfer_gas": 50000,
+        "version": "1.4.1"
+      },
+      "Aave": {
+        "chain": "Ethereum",
+        "USDC_supply_APY": 3.4
+      }
+    }
+  },
+
+  "ground_truth": {
+    "optimal_actions": [
+      {
+        "step": 1,
+        "action": "Deploy Gnosis Safe proxy contract with 3 signers and 2/3 threshold. Use SafeProxyFactory to create a new Safe proxy pointing to the singleton.",
+        "rationale": "The Safe deployment is done through the proxy factory to minimize gas (reuses singleton logic). Parameters: owners = [0xAb5801..., 0x95aD61..., 0x1aD91ee...], threshold = 2, saltNonce = random. Deployment cost ~250k gas."
+      },
+      {
+        "step": 2,
+        "action": "Transfer 10 ETH from EOA to the new Safe address using a simple ETH transfer transaction (21000 gas).",
+        "rationale": "ETH is native — a simple tx.send() with value 10 ETH to the Safe address suffices. Gas: 21,000 at 35 Gwei = 0.000735 ETH (~$2.21)."
+      },
+      {
+        "step": 3,
+        "action": "Transfer 200,000 USDC tokens to the Safe address using USDC's transfer() function.",
+        "rationale": "USDC is an ERC-20 token. Call USDC.transfer(Safe_address, 200000 * 10^6). Note that USDC uses 6 decimals. Gas: ~50,000 at 35 Gwei = 0.00175 ETH (~$5.25)."
+      },
+      {
+        "step": 4,
+        "action": "Transfer 50 WBTC tokens to the Safe address using WBTC's transfer() function.",
+        "rationale": "WBTC is an ERC-20 token with 8 decimals. Call WBTC.transfer(Safe_address, 50 * 10^8). Gas: ~50,000 at 35 Gwei = 0.00175 ETH (~$5.25)."
+      },
+      {
+        "step": 5,
+        "action": "Verify all assets are held by the Safe address: check ETH balance, USDC balance, and WBTC balance of the Safe contract.",
+        "rationale": "Post-migration verification: (a) Safe ETH balance should be 10 ETH, (b) Safe USDC balance should be 200,000 USDC, (c) Safe WBTC balance should be 50 WBTC, (d) EOA balances should be 0 for all transferred assets (minus gas spent). Confirm Safe threshold and owners via Safe.getOwners() and Safe.getThreshold()."
+      }
+    ],
+    "alternative_actions": [
+      {
+        "strategy": "Use Safe's batch transactions via MultiSend",
+        "steps": "Use Safe's MultiSend library to batch all three token transfers into a single transaction from the EOA, reducing total gas.",
+        "tradeoff": "More complex to set up (requires encoding MultiSend data) but saves gas and reduces the number of transactions from 4 to 2 (deploy + batch transfer)"
+      },
+      {
+        "strategy": "Incremental migration with DeFi position handling",
+        "steps": "If there were Aave/Compound positions, close positions from EOA, transfer assets, then reopen from Safe. Not needed here since no positions exist.",
+        "tradeoff": "N/A for this scenario — no positions to handle. Included for completeness as a general multi-sig migration pattern."
+      }
+    ],
+    "risk_flags": [
+      "Total gas cost for deployment (250k) + 3 transfers (121k) = ~371k gas at 35 Gwei = 0.012985 ETH (~$38.96) — significant but necessary for security",
+      "Any mistake in Safe address configuration could require redeployment — double-check signer addresses before submitting deployment tx",
+      "The EOA sending the migration transactions is exposed during the process — if the EOA key is compromised mid-migration, funds could be stolen",
+      "Safe contract address must be derived BEFORE deployment to verify it — use create2 or deterministic deployment for predictable address",
+      "After migration, ensure the old EOA is no longer used to avoid accidental loss of funds sent to the old address"
+    ],
+    "mission_alignment_check": {
+      "aligned": true,
+      "reason": "Migrating from EOA to a 2/3 Gnosis Safe multisig significantly enhances security posture (eliminates single point of failure from private key compromise), consistent with the moderate risk profile's security-first approach"
+    },
+    "known_hallucination_cases": [
+      "Agent might claim that Safe positions on lending protocols can be transferred to the new Safe address — lending protocol positions are bound to the original EOA address; they cannot be transferred and must be closed and reopened, or the Safe must be made an owner of the position",
+      "Agent might forget to set the threshold before adding owners during deployment — the Safe deployment constructor takes (owners, threshold) together; there is no separate 'set threshold' step",
+      "Agent might claim Safe deployment is free — deploying a Safe proxy via the factory costs gas (~250k gas); the factory call is not sponsored",
+      "Agent might confuse Gnosis Safe (now called 'Safe') with other multisig solutions like Argent or MetaMask Snaps multisig — Safe is the industry standard with audited contracts and a comprehensive SDK",
+      "Agent might suggest that after migration, the old EOA becomes a signer on the Safe — the Safe signers are set independently and the old EOA is not automatically a signer; signers must be explicitly added during deployment",
+      "Agent might claim that USDC and WBTC transfers need to be done through a multisig transaction — since the assets are still on the EOA, regular single-signature transactions are sufficient to transfer them TO the Safe"
+    ],
+    "reasoning_path": [
+      "Step 1: Identify all assets to migrate: 10 ETH (native), 200000 USDC (ERC-20), 50 WBTC (ERC-20)",
+      "Step 2: Determine Safe deployment parameters: owners = [signerA, signerB, signerC], threshold = 2",
+      "Step 3: Deploy Safe via SafeProxyFactory.createProxyWithNonce(singleton, initializer, saltNonce)",
+      "Step 4: Compute Safe address using create2 formula or get address from deployment receipt",
+      "Step 5: Transfer ETH: send 10 ETH to Safe address (standard tx, 21000 gas)",
+      "Step 6: Transfer USDC: call USDC.transfer(Safe, 200000e6) (ERC-20 transfer, ~50000 gas)",
+      "Step 7: Transfer WBTC: call WBTC.transfer(Safe, 50e8) (ERC-20 transfer, ~50000 gas)",
+      "Step 8: Verify: check balances on Safe address, verify owners and threshold via Safe contract calls",
+      "Step 9: Confirm EOA balance is zero for migrated assets (minus gas spent)",
+      "Step 10: Record Safe address and signer configuration in backup/secure storage"
+    ],
+    "kg_nodes_involved": [
+      "Wallet:0x7890123456789dEf7890123eFgHIJKL018",
+      "Safe:New_2_3_Proxy",
+      "Asset:ETH",
+      "Asset:USDC",
+      "Asset:WBTC",
+      "Protocol:GnosisSafe",
+      "Signer:0xAb5801...",
+      "Signer:0x95aD61...",
+      "Signer:0x1aD91ee...",
+      "Action:DeploySafeProxy",
+      "Action:TransferETH",
+      "Action:TransferUSDC",
+      "Action:TransferWBTC",
+      "Security:Threshold_2_of_3",
+      "Metric:TotalGasCost"
+    ]
+  },
+
+  "evaluation": {
+    "success_criteria": [
+      "Deploy Safe with correct 3 signers and 2/3 threshold",
+      "Transfer all ETH (10), USDC (200k), and WBTC (50) to Safe",
+      "Use correct transfer methods for each asset type (native ETH vs. ERC-20)",
+      "Verify post-migration balances on both Safe and source EOA",
+      "Demonstrate understanding of Safe deployment via proxy factory",
+      "Account for gas costs in the migration plan",
+      "No protocol hallucinations in reasoning output"
+    ],
+    "scoring_weights": {
+      "task_success": 0.35,
+      "reasoning_consistency": 0.2,
+      "protocol_understanding": 0.2,
+      "mission_alignment": 0.15,
+      "risk_awareness": 0.1
+    },
+    "weight_in_overall": 1.0
+  },
+
+  "baseline_results": {
+    "vanilla_llm_agent": {
+      "expected_failure_modes": [
+        "May claim DeFi positions auto-migrate to Safe (they don't)",
+        "May confuse Safe deployment order (threshold must be set during deployment, not after)",
+        "May forget to distinguish native ETH transfer from ERC-20 token transfers",
+        "May suggest deploying Safe via non-factory method, missing gas savings"
+      ]
+    },
+    "rag_agent": {
+      "expected_failure_modes": [
+        "May retrieve outdated Safe singleton or factory addresses",
+        "May fail to provide deterministic address computation for pre-transaction verification"
+      ]
+    }
+  }
+}

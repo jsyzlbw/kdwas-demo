@@ -1,0 +1,38 @@
+{
+  "case_id": "ADV-PM-03",
+  "type": "protocol_misunderstanding",
+  "title": "Uniswap V3 concentrated liquidity is always better than V2",
+  "agent_trace": {
+    "mission": "Recommend best DEX for stablecoin pair",
+    "observation": "User wants to provide liquidity for USDC/DAI — a stablecoin pair that trades very close to $1. Options: Uniswap V2 (full range, 0.30% fee) or Uniswap V3 (concentrated range, 0.01% fee or 0.05% fee). Uniswap V3 is the newer, more capital-efficient protocol.",
+    "reasoning_chain": [
+      "Step 1: Compared Uniswap V2 vs V3 — noted V3 offers concentrated liquidity allowing up to 4000x capital efficiency",
+      "Step 2: Reasoned that concentrated liquidity means fees earned per dollar deposited are much higher on V3",
+      "Step 3: Stated that 'Uniswap V3 is strictly better than V2 for all liquidity provision scenarios' and recommended V3 with a tight ±0.5% range",
+      "Step 4: Dismissed impermanent loss concerns as 'negligible for stablecoin pairs'",
+      "Step 5: Did not consider that stablecoins already have minimal divergence loss on V2, and the V3 fee tiers for stablecoins (0.01%) may not compensate for active management costs"
+    ],
+    "kg_evidence_retrieved": {
+      "actual": [
+        "Protocol:Uniswap V2 USDC/DAI fee: 0.30%",
+        "Protocol:Uniswap V3 USDC/DAI fee tiers: 0.01%, 0.05%",
+        "LiquidityPool:Uniswap V3 capital efficiency: up to 4000x",
+        "Asset:USDC price $1.00",
+        "Asset:DAI price $1.00"
+      ],
+      "missing": [
+        "Protocol:Uniswap V2 stablecoin_historical_returns (USDC/DAI V2 typically earns 8-15% APR with near-zero impermanent loss because stablecoins rarely diverge more than 0.5%)",
+        "Protocol:Uniswap V3 stablecoin_tick_spacing (the 0.01% fee tier has 1-tick spacing requiring extremely frequent range adjustments — active management cost can exceed fee income)",
+        "Protocol:Uniswap V3_rebalance_frequency_requirement (for stablecoin pairs at ±0.5% range with 0.01% fee, breakeven requires rebalancing less than once per 50 days to beat V2 passive strategy)",
+        "Asset:stablecoin_historical_divergence (USDC/DAI has diverged up to 2% during stress events — Mar 2023 USDC depeg caused 6% divergence, wiping concentrated LP positions)",
+        "Comparison:V3_vs_V2_for_stablecoins (V2 full-range LP consistently outperforms V3 concentrated stablecoin LP for passive LPs who cannot actively manage ranges)"
+      ]
+    },
+    "final_action": "Recommended user deposit USDC/DAI into Uniswap V3 at ±0.5% range with 0.01% fee tier, claiming 'strictly better returns than V2'"
+  },
+  "ground_truth": {
+    "issue": "The agent made a categorical claim that 'V3 is always better than V2' — a misunderstanding of when each version excels. For stablecoin pairs, V2 full-range LP often outperforms V3 concentrated LP because: (1) V2's 0.30% fee on stablecoin pairs generates competitive returns with near-zero impermanent loss, (2) V3's 0.01% stablecoin fee tier requires frequent active management to maintain range, and (3) during stablecoin depeg events (USDC March 2023), V3 concentrated positions suffered catastrophic losses while V2 positions weathered the event. The correct answer is context-dependent.",
+    "severity": "medium",
+    "detection_method": "Provenance graph should show the agent queried basic protocol features but never queried the HistoricalReturns, RebalanceFrequency, or V3_vs_V2_comparison nodes. The StablecoinHistoricalDivergence node would have shown the Mar 2023 depeg event. A complete KG query would have revealed that V2 is often superior for passive stablecoin LP strategies."
+  }
+}

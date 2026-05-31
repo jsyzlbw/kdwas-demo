@@ -1,0 +1,358 @@
+{
+  "timeline_id": "TL-05",
+  "title": "Multi-Task DAO Treasury Agent",
+  "category": "Long-Term Memory Evaluation",
+  "narrative": "The agent manages treasury operations for the 'ProtoDAO' — a decentralized autonomous organization funding early-stage DeFi research. The agent juggles four concurrent threads: (A) a grant distribution schedule with three applicants, (B) governance voting on two protocol proposals the DAO holds tokens in, (C) treasury yield optimization across Aave and Lido, and (D) end-of-month financial reporting. The mission is stable throughout — no preference changes — testing whether the agent can maintain context across multiple independent threads over 15 episodes.",
+  "initial_state": {
+    "wallet": {
+      "address": "0x9aF1Ca5941148eB6A3e9b9C741bF382A9d7C3E0b",
+      "balances": { "ETH": 50, "USDC": 500000, "DAI": 100000 },
+      "chains": ["Ethereum", "Arbitrum"]
+    },
+    "positions": [
+      { "protocol": "Aave", "asset": "ETH", "amount": 30, "type": "supplied" },
+      { "protocol": "Aave", "asset": "USDC", "amount": 200000, "type": "supplied" },
+      { "protocol": "Aave", "asset": "DAI", "amount": 100000, "type": "supplied" },
+      { "protocol": "Lido", "asset": "ETH", "amount": 20, "type": "staked" }
+    ],
+    "risk_profile": {
+      "tolerance": "moderate",
+      "max_leverage": 1.0,
+      "max_drawdown": 0.15,
+      "stablecoin_preference": "USDC_DAI",
+      "preferred_chains": ["Ethereum"],
+      "restricted_protocols": ["any_unverified_bridge"]
+    },
+    "governance_history": [
+      { "protocol": "Aave", "proposals_voted": [210, 225], "last_vote_date": "2026-04-15" },
+      { "protocol": "Compound", "proposals_voted": [82], "last_vote_date": "2026-03-28" }
+    ],
+    "mission": {
+      "description": "Manage ProtoDAO treasury: maintain stable yield on reserves (3-5% APY), execute grant distributions as approved by DAO vote, participate in governance of protocols where DAO holds significant positions, and produce monthly financial reports.",
+      "constraints": [
+        "Minimum 300000 USDC liquidity available at all times for grant distributions",
+        "Must vote on any governance proposal affecting protocols where DAO has >100k exposure",
+        "Lido staking yield target: 3-4% APY net",
+        "Aave supply target: 3-5% APY on stablecoins",
+        "No leverage on any position",
+        "Monthly reporting by Day 28"
+      ]
+    }
+  },
+  "episodes": [
+    {
+      "step": 1,
+      "day": 1,
+      "type": "initialization",
+      "event": "System starts. Agent reads ProtoDAO treasury mission: manage 650k in assets across Aave, Lido, and wallet. Four active threads initialized.",
+      "expected_actions": [
+        "Read mission constraints from KG",
+        "Log initial portfolio snapshot: Total = 50 ETH ($120,000) + 600,000 stablecoins = $720,000",
+        "Thread A: Initialize grant queue (0 pending requests)",
+        "Thread B: Initialize governance calendar — check upcoming proposals on Aave and Compound",
+        "Thread C: Record current yield rates: Aave USDC 4.2%, Aave DAI 3.8%, Lido stETH 3.5%",
+        "Thread D: Set month-end report reminder for Day 28",
+        "Log all four thread states to KG with thread IDs"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 2,
+      "day": 3,
+      "type": "user_instruction",
+      "event": "User (DAO multisig): 'Thread A — Grant #001 is approved: 50000 USDC to DeFi Research Collective for Q3 analysis. Please execute disbursement.'",
+      "expected_actions": [
+        "Thread A: Verify grant approval — check KG for DAO vote confirmation on Grant #001",
+        "Thread A: Execute 50000 USDC transfer from treasury wallet to 0x742d... (DeFi Research Collective)",
+        "Thread A: Log to KG: 'Grant #001 disbursed: 50000 USDC on Day 3'",
+        "Thread A: Update available liquidity: 500000 → 450000 USDC (still above 300k floor)",
+        "Thread C: Note: Aave USDC supply reduced by 0 (grant came from wallet, not Aave position — correct)",
+        "Return transaction hash as confirmation"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 3,
+      "day": 5,
+      "type": "governance_event",
+      "event": "Thread B — Aave governance proposes increasing DAI reserve factor from 10% to 15% (Proposal #280). Affects DAI suppliers. ProtoDAO has 100k DAI supplied on Aave.",
+      "expected_actions": [
+        "Thread B: Read Proposal #280 via KG Governance:Aave node",
+        "Thread B: Assess impact: reserve factor increase reduces DAI supply APY from 3.8% to ~3.3%",
+        "Thread B: 100k DAI × 0.5% reduction = ~$500/year impact — material for DAO",
+        "Thread B: Mission requires voting on proposals affecting >100k exposure — DAI = 100k exactly",
+        "Thread B: Vote AGAINST proposal (preserves yield) or ABSTAIN (neutral impact). Recommend AGAINST.",
+        "Thread B: Submit vote via Aave governance contract",
+        "Thread B: Log to KG: 'Proposal #280 — voted AGAINST on Day 5'"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 4,
+      "day": 7,
+      "type": "user_instruction",
+      "event": "User: 'Thread A — Grant #002 is approved: 75000 USDC to ChainSecurity for protocol audit reports. Also, check when Grant #001 was paid.'",
+      "expected_actions": [
+        "Thread A: Recall Grant #001 — disbursed 50000 USDC on Day 3 to DeFi Research Collective",
+        "Thread A: Verify Grant #002 approval from KG",
+        "Thread A: Execute 75000 USDC transfer to ChainSecurity wallet (0x3bF4...)",
+        "Thread A: Log: 'Grant #002 disbursed: 75000 USDC on Day 7'",
+        "Thread A: Update available liquidity: 450000 → 375000 USDC (still above 300k floor)",
+        "Return Grant #001 execution details (Day 3, 50000 USDC, tx hash) and Grant #002 confirmation"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 5,
+      "day": 9,
+      "type": "market_event",
+      "event": "Thread C — ETH price drops 6% ($2,400 → $2,256). Aave USDC supply rate drops from 4.2% to 3.5% due to decreased borrowing demand.",
+      "expected_actions": [
+        "Thread C: Check portfolio impact: 30 ETH on Aave ($67,680) + 20 stETH ($45,120) — paper loss of ~$8,640 on ETH portion",
+        "Thread C: Mission constraint: max drawdown 15% — current drawdown ~1.2% of total portfolio — within bounds",
+        "Thread C: Aave USDC rate drop: from 4.2% to 3.5% — below mission target of 3-5% floor but still in range",
+        "Thread C: Lido rate unchanged at 3.5%",
+        "Thread C: Log assessment to KG: 'Rates declining but within mission bounds. Monitor if USDC rate stays below 3.5% for >7 days.'",
+        "Thread A/B/D: No impact — continue monitoring"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 6,
+      "day": 11,
+      "type": "memory_probe",
+      "event": "System query: 'Thread A — Summarize all grant activity so far. Which grants have been paid, to whom, and how much liquidity remains available?'",
+      "expected_actions": [
+        "Thread A: Retrieve grant distribution history from KG",
+        "Grant #001: Day 3, 50000 USDC to DeFi Research Collective (0x742d...)",
+        "Grant #002: Day 7, 75000 USDC to ChainSecurity (0x3bF4...)",
+        "Total disbursed: 125000 USDC",
+        "Available wallet liquidity: 375000 USDC (100k DAI still on Aave)",
+        "Remaining Aave position: 200000 USDC + 100000 DAI + 30 ETH supplied",
+        "Confirm: 375k > 300k minimum — no liquidity concern"
+      ],
+      "memory_test": {
+        "type": "explicit_recall",
+        "question": "What grants have been paid from the treasury, to whom, and how much liquidity remains?",
+        "expected": "Grant #001: 50000 USDC to DeFi Research Collective on Day 3. Grant #002: 75000 USDC to ChainSecurity on Day 7. Total disbursed: 125000 USDC. Remaining liquidity: 375000 USDC wallet + 100000 DAI on Aave."
+      },
+      "preference_change": null
+    },
+    {
+      "step": 7,
+      "day": 13,
+      "type": "governance_event",
+      "event": "Thread B — Compound governance proposes reducing COMP rewards on USDC market by 40% (Proposal #95). ProtoDAO has no direct Compound USDC position but holds COMP tokens from previous farming.",
+      "expected_actions": [
+        "Thread B: Read Proposal #95 via KG Governance:Compound node",
+        "Thread B: Assess impact: ProtoDAO holds 500 COMP tokens from historical activities — proposal affects COMP value",
+        "Thread B: Decide: COMP holding is legacy, not core treasury — impact is indirect",
+        "Thread B: Mission constraint: 'Must vote on proposals affecting protocols where DAO has >100k exposure' — COMP value ~$25k, below threshold",
+        "Thread B: Optional: vote FOR or AGAINST based on analysis — recommend ABSTAIN as position is immaterial",
+        "Thread B: Log: 'Proposal #95 — ABSTAIN. COMP position below voting threshold.'"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 8,
+      "day": 15,
+      "type": "user_instruction",
+      "event": "User: 'Thread A — Grant #003 is approved: 60000 USDC to L2BEAT for Layer 2 risk research. Same payment terms as Grant #001.'",
+      "expected_actions": [
+        "Thread A: Recall Grant #001 payment details (Day 3, 50000 USDC, single payment)",
+        "Thread A: 'Same terms': apply single-payment structure from Grant #001",
+        "Thread A: Execute 60000 USDC transfer to L2BEAT (0x8F3C...)",
+        "Thread A: Log: 'Grant #003 disbursed: 60000 USDC on Day 15 — same terms as Grant #001'",
+        "Thread A: Update available liquidity: 375000 → 315000 USDC (still above 300k floor, but close)",
+        "Thread A: Note: remaining liquidity near minimum — alert user if next grant exceeds 15000 USDC"
+      ],
+      "memory_test": {
+        "type": "repeat_scenario",
+        "purpose": "Test if Agent handles similar grant requests consistently — Grant #003 should follow same process as Grant #001",
+        "expected": "Agent should recognize 'same terms as Grant #001', recall Grant #001's structure (single disbursement, 50000 USDC, no vesting), and apply identical execution pattern to Grant #003"
+      },
+      "preference_change": null
+    },
+    {
+      "step": 9,
+      "day": 17,
+      "type": "market_event",
+      "event": "Thread C — Lido introduces stETH withdrawal queue delay increasing from 24h to 48h due to high demand. ETH price $2,300.",
+      "expected_actions": [
+        "Thread C: Assess impact: 20 stETH on Lido = $46,000. Withdrawal now takes 48h instead of 24h.",
+        "Thread C: Check mission constraints: 'No leverage' — still compliant",
+        "Thread C: Evaluate liquidity risk: if emergency USDC needed, cannot convert stETH to ETH in <48h",
+        "Thread C: Report to user: 'Lido withdrawal queue delay doubled. Recommend maintaining minimum 300k USDC liquidity as buffer — currently at 315k, adequate.'",
+        "Thread C: Flag: ensure total stablecoin liquidity (315k wallet + 200k Aave USDC + 100k Aave DAI = 615k) is sufficient for 48h gap",
+        "Thread C: No action needed but monitoring increased"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 10,
+      "day": 19,
+      "type": "user_instruction",
+      "event": "User: 'Thread A — We need to adjust Grant #002 timing. ChainSecurity requested their payment be split: 50% now, 50% on Day 25. Also, has Grant #003 been paid yet?'",
+      "expected_actions": [
+        "Thread A: Recall Grant #002: 75000 USDC paid on Day 7 to ChainSecurity — already fully paid",
+        "Thread A: Correct user: 'Grant #002 was already disbursed in full on Day 7 as a single payment. The full 75000 USDC was sent to ChainSecurity.'",
+        "Thread A: Recall Grant #003: 60000 USDC paid on Day 15 to L2BEAT — single payment per 'same terms as Grant #001'",
+        "Thread A: Clarify: payment restructuring is not possible for Grant #002 as it has been settled",
+        "Thread A: Offer: 'For future grants, we can implement split payments. Shall I add this as a template option?'"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 11,
+      "day": 21,
+      "type": "memory_probe",
+      "event": "System query: 'Thread B — What governance votes has the DAO participated in this month, and what were the outcomes?'",
+      "expected_actions": [
+        "Thread B: Retrieve governance voting history from KG",
+        "Aave Proposal #280 (Day 5): Voted AGAINST — DAI reserve factor increase. Outcome: Proposal PASSED despite vote (52% FOR, 48% AGAINST)",
+        "Compound Proposal #95 (Day 13): ABSTAIN — COMP reduction. Outcome: Proposal PASSED",
+        "Reference previous month: 'DAO previously voted on Aave #210, #225 and Compound #82 in prior months'",
+        "Assess: voting record is 0-1-1 (0 wins, 1 loss, 1 abstain) for this month",
+        "Note: Aave #280 loss means DAI APY will decrease — track impact on Thread C"
+      ],
+      "memory_test": {
+        "type": "explicit_recall",
+        "question": "What governance votes did the DAO participate in this month, and what were the outcomes?",
+        "expected": "Aave Proposal #280 (Day 5): Voted AGAINST — proposal passed (52-48), DAI reserve factor increased. Compound Proposal #95 (Day 13): ABSTAIN — COMP rewards reduced, proposal passed. Previous month: Aave #210, #225 and Compound #82."
+      },
+      "preference_change": null
+    },
+    {
+      "step": 12,
+      "day": 23,
+      "type": "user_instruction",
+      "event": "User: 'Thread C — Aave rates are too low. Move 100000 DAI from Aave supply into the wallet. We might need it for the last grant this quarter.'",
+      "expected_actions": [
+        "Thread C: Withdraw 100000 DAI from Aave supply",
+        "Thread C: Confirm withdrawal: Aave DAI position reduced from 100000 to 0",
+        "Thread C: Update wallet: DAI balance increases from ~0 to 100000 USDC-equivalent",
+        "Thread C: Calculate yield impact: losing 3.3% APY on 100k DAI = ~$330/month foregone",
+        "Thread A: Note: available liquidity now = 315000 USDC + 100000 DAI = 415000 — well above 300k floor",
+        "Thread C: Log to KG: 'DAI withdrawn from Aave per treasury liquidity preference'"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 13,
+      "day": 25,
+      "type": "governance_event",
+      "event": "Thread B — Proposal #280 outcome confirmed: Aave DAI reserve factor increased to 15%. DAI supply APY drops from 3.8% to 3.2%.",
+      "expected_actions": [
+        "Thread B: Record final outcome of Proposal #280 in KG",
+        "Thread B: Cross-reference with Thread C: DAI was already withdrawn on Day 23 — no further impact",
+        "Thread C: Assess: if DAI was still on Aave, yield would drop from 3.8% to 3.2% — validates withdrawal timing",
+        "Log: 'Proposal #280 confirmed — DAI reserve factor increased. Withdrawal on Day 23 was well-timed.'",
+        "Thread B: Check if any follow-up proposals are needed to mitigate"
+      ],
+      "memory_test": null,
+      "preference_change": null
+    },
+    {
+      "step": 14,
+      "day": 27,
+      "type": "memory_probe",
+      "event": "System query: 'Provide a status update on all four threads. What has been accomplished, and what is pending?'",
+      "expected_actions": [
+        "Thread A: 3 grants processed (Grants #001, #002, #003). Total disbursed: 185000 USDC. Remaining: 315000 USDC + 100000 DAI = 415000. No pending grants.",
+        "Thread B: 2 proposals reviewed. Voted on Aave #280 (AGAINST — lost). ABSTAIN on Compound #95. No pending votes.",
+        "Thread C: Aave positions: 200000 USDC + 30 ETH supplied. Lido: 20 ETH staked. DAI withdrawn on Day 23. Yield rates declining but within mission bounds.",
+        "Thread D: Month-end report due Day 28 (tomorrow). All data collected, pending final portfolio valuation.",
+        "Cross-thread dependencies: None currently — all threads operating independently"
+      ],
+      "memory_test": {
+        "type": "comprehensive_recall",
+        "question": "Summarize the status of all four threads — what was accomplished and what is pending in each?",
+        "expected_summary_points": [
+          "Thread A: Grants #001 (50k USDC), #002 (75k USDC), #003 (60k USDC) all disbursed. 415k liquidity remaining. No pending.",
+          "Thread B: Voted Aave #280 (lost), ABSTAIN Compound #95. No pending votes.",
+          "Thread C: Aave: 200k USDC + 30 ETH supplied. Lido: 20 stETH. DAI withdrawn Day 23. Yields within bounds.",
+          "Thread D: Month-end report scheduled for Day 28."
+        ]
+      },
+      "preference_change": null
+    },
+    {
+      "step": 15,
+      "day": 28,
+      "type": "month_end_report",
+      "event": "Thread D — Automated month-end reporting trigger. User requests complete financial summary.",
+      "expected_actions": [
+        "Thread D: Aggregate all 28-day activity from KG across all threads",
+        "Thread D: Calculate portfolio summary:",
+        "  Starting value (Day 1): $720,000 (50 ETH=$120k + USDC=$500k + DAI=$100k)",
+        "  Grants disbursed: -$185,000 (three grants)",
+        "  Aave yield earned: ~$720 (30 days on 200k USDC at 4.2% avg + 100k DAI at 3.5% for 23 days)",
+        "  Lido staking yield: ~$580 (20 ETH staked at 3.5% APY for 28 days)",
+        "  ETH price change: $2,400 → $2,250 (-6.25%) → paper loss of $3,000 on 50 ETH",
+        "  Net change: -$185,000 (grants) + $720 + $580 - $3,000 = -$186,700",
+        "  Ending value: ~$533,300 (excluding grants = mission accomplished)",
+        "Thread D: Thread-by-thread assessment:",
+        "  Thread A: 3/3 grants executed successfully. 100% on schedule.",
+        "Thread B: 2/2 proposals reviewed. Voting participation maintained.",
+        "  Thread C: Yield averaged 3.9% — within 3-5% target. Liquidity floor maintained.",
+        "Thread D: Report generated on schedule.",
+        "Thread D: Mission alignment: '100% compliant — all constraints respected throughout month'",
+        "Save report to KG and present to user"
+      ],
+      "memory_test": {
+        "type": "comprehensive_recall",
+        "expected_summary_points": [
+          "Thread A: Grants #001 (50k, Day 3), #002 (75k, Day 7), #003 (60k, Day 15) — consistent execution",
+          "Thread B: Aave #280 voted AGAINST (passed anyway), Compound #95 ABSTAIN",
+          "Thread C: Average 3.9% yield across positions, DAI withdrawn Day 23",
+          "Thread D: Report on Day 28 — all data aggregated correctly",
+          "Mission: 100% compliant — no constraints violated, all deadlines met"
+        ]
+      },
+      "preference_change": null
+    }
+  ],
+  "evaluation_criteria": {
+    "preference_consistency": {
+      "description": "Mission is stable with 0 preference changes. Agent must maintain consistent adherence to the original constraints across all 15 episodes.",
+      "score_anchors": {
+        "1": "Agent deviates from mission constraints in 2+ episodes (e.g., proposing leverage, ignoring liquidity floor)",
+        "3": "Agent stays within constraints but doesn't reference them proactively in reasoning",
+        "5": "Agent consistently references mission constraints in every decision, proactively flags when actions approach limits (e.g., liquidity near 300k floor)"
+      }
+    },
+    "repeat_scenario_consistency": {
+      "description": "Two similar grant requests (Grant #001 and Grant #003) should be handled with identical execution patterns",
+      "score_anchors": {
+        "1": "Different handling for the two grants — different payment structure, different verification process",
+        "3": "Same outcome but noticeably different reasoning paths",
+        "5": "Agent references Grant #001 when processing Grant #003, explicitly applies 'same terms', produces identical execution pattern"
+      }
+    },
+    "mission_alignment": {
+      "description": "Agent must maintain alignment with all six mission constraints across four independent threads without any thread being neglected",
+      "score_anchors": {
+        "1": "Significant mission violations in 2+ threads (e.g., failing to vote on Aave proposal, letting liquidity drop below 300k)",
+        "3": "All threads managed but one constraint violated or nearly violated",
+        "5": "All four threads managed with zero violations; proactive cross-thread awareness (e.g., knowing Thread C rates affect Thread D reporting)"
+      }
+    },
+    "context_stability": {
+      "description": "Agent must track four independent threads across 15 episodes without confusing them or losing context from early episodes",
+      "score_anchors": {
+        "1": "Threads conflated in 2+ episodes (e.g., attributing grant payment to wrong grantee, forgetting vote outcome)",
+        "3": "All threads tracked correctly but cross-thread references are missing (e.g., doesn't connect governance outcome to yield impact)",
+        "5": "All four threads tracked with complete accuracy; natural cross-referencing between threads when relevant (e.g., Thread B outcome affecting Thread C yield calculation in Thread D report)"
+      }
+    }
+  }
+}

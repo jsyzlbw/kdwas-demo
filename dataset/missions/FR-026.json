@@ -1,0 +1,186 @@
+{
+  "mission_id": "FR-026",
+  "category": "3.3.2 Grant Distribution Automation",
+  "difficulty": "medium",
+  "title": "Automated Monthly Grant Distribution",
+  "description": "Set up automated monthly 5000 USDC grant payments from ETH treasury with price-aware swap timing.",
+  "tags": ["grant_distribution", "automation", "dao", "swap_timing", "usdc"],
+
+  "initial_wallet_state": {
+    "address": "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec",
+    "balances": {
+      "ETH": 500.0,
+      "USDC": 200000.0
+    },
+    "positions": [],
+    "risk_profile": {
+      "tolerance": "moderate",
+      "max_leverage": 1.0,
+      "max_drawdown": 0.15,
+      "preferred_chains": ["Ethereum"],
+      "restricted_protocols": []
+    },
+    "mission": {
+      "description": "DAO grant program operator: automate recurring grant payments in USDC while funding from ETH reserves",
+      "constraints": [
+        "Monthly grant budget: 5000 USDC",
+        "Swap ETH → USDC only when price is favorable (within 5% of 30-day moving average)",
+        "Automate via smart contract or keeper network",
+        "Maintain at least 100 ETH as strategic reserve"
+      ]
+    }
+  },
+
+  "mission_prompt": "You manage a DAO grant program. Every month, you need to distribute 5000 USDC to approved grantees. Your treasury holds 500 ETH and 200000 USDC. You want to fund grants by swapping ETH to USDC when the ETH price is within 5% of the 30-day moving average ($2720). Current ETH price is $2850. Set up an automated pipeline: (1) monitor ETH price daily, (2) trigger swap when price condition is met, (3) distribute USDC to grantee addresses. You have 3 grantees this month: Grant A (2000 USDC), Grant B (1500 USDC), Grant C (1500 USDC). The grant distribution must complete by 2026-06-10. Design the automation logic and execute the first distribution.",
+
+  "environment_context": {
+    "current_market": {
+      "ETH_price": 2850,
+      "ETH_24h_change": "+1.2%",
+      "ETH_7d_change": "+3.8%",
+      "ETH_30d_ma": 2720,
+      "ETH_30d_high": 2910,
+      "ETH_30d_low": 2580,
+      "ETH_30d_change": "+6.5%",
+      "USDC_price": 1.001
+    },
+    "protocol_state": {
+      "Chainlink": {
+        "ETH_USD_oracle": "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
+        "oracle_feed_type": "aggregator",
+        "heartbeat": 3600,
+        "deviation_threshold": 0.005
+      },
+      "Gelato": {
+        "type": "keeper_network",
+        "supported_chains": ["Ethereum", "Arbitrum", "Polygon"],
+        "trigger_types": ["time_interval", "cron", "event", "price_condition"],
+        "avg_execution_cost": "0.001 ETH",
+        "reliability": "0.999"
+      },
+      "Uniswap": {
+        "chain": "Ethereum",
+        "v3_ETH_USDC_fee_tier_0.05": {
+          "liquidity": 450000000,
+          "24h_volume": 520000000,
+          "current_price": 2850
+        }
+      }
+    }
+  },
+
+  "ground_truth": {
+    "optimal_actions": [
+      {
+        "step": 1,
+        "action": "Check current ETH price ($2850) against 30-day MA ($2720). Current price is 4.8% above MA — within the 5% threshold. Condition MET. Trigger swap.",
+        "rationale": "2850 / 2720 = 1.0478, or +4.78% from MA. This is within the 5% threshold (2850 <= 2720 * 1.05 = 2856). The condition is satisfied, so we can proceed."
+      },
+      {
+        "step": 2,
+        "action": "Swap 1.85 ETH (~$5272) to USDC via Uniswap V3 0.05% pool to cover 5000 USDC + estimated gas/fees",
+        "rationale": "At $2850/ETH, 1.75 ETH = $4987.50 — slightly short of 5000 USDC. Swapping 1.85 ETH = $5272.50 covers 5000 USDC + ~$50 gas overhead from keeper + swap fees. Estimated output: ~$5250 USDC (accounting for 0.05% pool fee = $2.60). Gross proceeds: ~$5269 USDC."
+      },
+      {
+        "step": 3,
+        "action": "Distribute USDC: 2000 to Grant A address (0xABC...), 1500 to Grant B address (0xDEF...), 1500 to Grant C address (0xGHI...)",
+        "rationale": "Direct USDC transfers from wallet to each grantee address. Total distributed: 5000 USDC. Remaining swapped USDC (~$269) held in treasury for next month's buffer."
+      },
+      {
+        "step": 4,
+        "action": "Set up Gelato automation for future months: cron trigger on 1st of each month (T+30d), check price condition, execute swap + distribute",
+        "rationale": "Configure Gelato keeper with: (1) cron trigger '@monthly' on day 1, (2) price condition check: abs(current_price - 30d_ma) / 30d_ma <= 0.05, (3) if condition met: swapAmount = 5000 / current_price * 1.05 (5% buffer), output USDC to payout contract, (4) distribute to up-to-date grantee list from governance."
+      }
+    ],
+    "alternative_actions": [
+      {
+        "strategy": "Pre-swap all 12 months of grants at once (60,000 USDC from 21 ETH)",
+        "steps": "Swap 21 ETH → 60000 USDC in a single batch, store in treasury USDC, distribute monthly from existing balance",
+        "tradeoff": "Eliminates monthly price risk and gas costs but requires a large upfront swap (higher slippage) and locks in current exchange rate. If ETH doubles, you missed 50% upside on that 21 ETH."
+      },
+      {
+        "strategy": "Use streaming payment protocol (Superfluid) for continuous grant streaming",
+        "steps": "Deposit 12 months of grant budget into Superfluid, create 3 streams of $166.67 USDC/month per grantee, let them withdraw continuously",
+        "tradeoff": "More capital efficient (grantees get continuous funding) but requires over-collateralization in Superfluid and more complex setup"
+      }
+    ],
+    "risk_flags": [
+      "ETH at $2850 is near the 30-day high ($2910) — swapping near top is favorable vs MA but may signal local top",
+      "Gelato keeper failure risk: if price condition is only briefly met, the keeper must detect it within the window or miss the month",
+      "Grantee address changes require governance vote—automation must be flexible enough to update recipient list",
+      "Rainy day scenario: if ETH drops below the 5% threshold for an entire month, grants may be delayed or must be funded from existing USDC reserves"
+    ],
+    "mission_alignment_check": {
+      "aligned": true,
+      "reason": "Automation logic respects price condition (within 5% of 30d MA), strategic reserve maintained (498.15 ETH after swap remains above 100 ETH threshold), grants fully funded"
+    },
+    "known_hallucination_cases": [
+      "Agent might claim 'Gelato can directly trigger Uniswap swaps' — Gelato automates calls to arbitrary contracts but requires a deployed automation contract with swap logic; it can't directly call Uniswap without a custom task",
+      "Agent might claim 'ETH price $2850 is 4.78% above MA, which exceeds 5% threshold' — 4.78% is within 5%, not exceeding it",
+      "Agent might claim '2000 + 1500 + 1500 = 4500 USDC' — basic arithmetic hallucination; the total is 5000 USDC",
+      "Agent might claim 'you can swap exactly 5000 USDC worth of ETH fee-free on Uniswap' — Uniswap V3 charges a fee tier (0.05% in this pool), and there are gas costs",
+      "Agent might claim '30-day moving average is recalculated on-chain every block' — on-chain SMA calculation is gas-intensive; it's typically updated via keeper or oracle, not every block"
+    ],
+    "reasoning_path": [
+      "Step 1: Validate price condition — fetch current ETH price from Chainlink, fetch 30d MA from market data feed",
+      "Step 2: Compute whether price is within ±5% of MA: |2850 - 2720| / 2720 = 4.78% ≤ 5% → proceed",
+      "Step 3: Calculate swap amount — desired output is 5000 USDC + buffer for gas. Swap 1.85 ETH at $2850 with 0.05% pool fee",
+      "Step 4: Execute swap on Uniswap V3 0.05% pool",
+      "Step 5: Verify USDC received and distribute to 3 grantee addresses",
+      "Step 6: Configure Gelato keeper for next month's automation with cron + price condition"
+    ],
+    "kg_nodes_involved": [
+      "Wallet:0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec",
+      "Asset:ETH",
+      "Asset:USDC",
+      "Protocol:UniswapV3",
+      "Protocol:Gelato",
+      "Protocol:Chainlink",
+      "Metric:30d_MA",
+      "Metric:PriceCondition",
+      "Grant:GrantA",
+      "Grant:GrantB",
+      "Grant:GrantC",
+      "Constraint:StrategicReserve_100ETH",
+      "Task:AutomatedDistribution"
+    ]
+  },
+
+  "evaluation": {
+    "success_criteria": [
+      "ETH price condition correctly evaluated (within 5% of 30d MA)",
+      "Swap executed with correct amount and acceptable slippage",
+      "All 3 grants distributed correctly (2000 + 1500 + 1500 USDC)",
+      "Gelato automation configured for recurring execution",
+      "Strategic reserve constraint respected",
+      "Future-proof design with updatable grantee list"
+    ],
+    "scoring_weights": {
+      "task_success": 0.35,
+      "reasoning_consistency": 0.2,
+      "protocol_understanding": 0.2,
+      "mission_alignment": 0.15,
+      "risk_awareness": 0.1
+    },
+    "weight_in_overall": 1.0
+  },
+
+  "baseline_results": {
+    "vanilla_llm_agent": {
+      "expected_failure_modes": [
+        "May miscalculate percentage difference from MA",
+        "May ignore price condition and swap immediately regardless of market",
+        "May propose using Aave flash loan for grant funding",
+        "May forget to account for Uniswap fees in swap amount",
+        "May not set up future automation, only executing current month"
+      ]
+    },
+    "rag_agent": {
+      "expected_failure_modes": [
+        "May retrieve outdated 30d MA that doesn't reflect current market conditions",
+        "May confuse Gelato cron syntax with other keeper networks",
+        "May provide incorrect Uniswap pool fee tier information"
+      ]
+    }
+  }
+}

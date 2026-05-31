@@ -1,0 +1,185 @@
+{
+  "mission_id": "FR-016",
+  "category": "2.3.1 DeFi Insurance Purchase",
+  "difficulty": "simple",
+  "title": "Nexus Mutual Coverage for Aave Deposits",
+  "description": "Total Aave deposits exceed $100k threshold; agent must purchase $100k of Nexus Mutual protocol coverage to insure against smart contract risk.",
+  "tags": ["insurance", "nexus_mutual", "aave", "risk_management", "asset_protection"],
+
+  "initial_wallet_state": {
+    "address": "0x5e6F7890123456bCdEf5678901cDeFF016",
+    "balances": {
+      "ETH": 5.0,
+      "USDC": 50000
+    },
+    "positions": [
+      {
+        "protocol": "Aave",
+        "asset": "USDC",
+        "amount": 200000,
+        "type": "supplied"
+      }
+    ],
+    "risk_profile": {
+      "tolerance": "conservative",
+      "max_leverage": 1.0,
+      "max_drawdown": 0.05,
+      "preferred_chains": ["Ethereum"],
+      "restricted_protocols": ["unaudited_protocols", "derivatives"]
+    },
+    "mission": {
+      "description": "Protect deposited capital against protocol smart contract risk through insurance coverage",
+      "constraints": [
+        "All deposits over $100k must be insured against smart contract failure",
+        "Insurance must cover at least 50% of total deposited value",
+        "No leverage",
+        "Only audited insurance providers"
+      ]
+    }
+  },
+
+  "mission_prompt": "Your Aave USDC deposit totals $200,000, which is above your $100k insurance threshold. Purchase $100,000 of protocol coverage on Nexus Mutual for your Aave V3 position on Ethereum. Current ETH price is $2,800. You have 5 ETH and 50,000 USDC in your wallet. Nexus Mutual charges approximately 2.5% annual premium for Aave coverage. Calculate: (1) the total deposit value, (2) the coverage amount needed (at least 50% of deposits), (3) the premium cost, and (4) execute the coverage purchase through Nexus Mutual.",
+  "environment_context": {
+    "current_market": {
+      "ETH_price": 2800,
+      "ETH_24h_change": "-1.2%",
+      "USDC_price": 1.001,
+      "total_market_cap_24h_change": "-0.8%"
+    },
+    "protocol_state": {
+      "Aave": {
+        "chain": "Ethereum",
+        "LTV": 0.75,
+        "liquidation_threshold": 0.825,
+        "USDC_supply_APY": 3.5,
+        "USDC_utilization": 0.71
+      },
+      "NexusMutual": {
+        "chain": "Ethereum",
+        "coverage_available": true,
+        "Aave_v3_coverage": true,
+        "annual_premium_rate": 0.025,
+        "waiting_period_days": 7,
+        "max_coverage_per_protocol_pct": 0.50,
+        "min_cover_period_days": 30,
+        "kyc_required": true
+      }
+    }
+  },
+
+  "ground_truth": {
+    "optimal_actions": [
+      {
+        "step": 1,
+        "action": "Calculate total Aave deposit value: 200,000 USDC * $1.00 + 5 ETH * $2,800 = $214,000. Confirm it exceeds the $100k threshold.",
+        "rationale": "Total deposited value is $214,000 across Aave USDC supply and wallet ETH. The $200k USDC deposit alone exceeds $100k. Mission trigger confirmed."
+      },
+      {
+        "step": 2,
+        "action": "Determine coverage amount: Need at least 50% of deposits per constraints. 50% of $200k USDC deposit = $100,000. This is also the target coverage specified in the mission.",
+        "rationale": "Coverage amount of $100k represents 50% of the $200k USDC deposit. Nexus Mutual maximum coverage per protocol is typically 50% of deposits. $100k aligns with both the constraint and the available maximum."
+      },
+      {
+        "step": 3,
+        "action": "Calculate annual premium: $100,000 * 2.5% = $2,500 per year. Monthly equivalent = ~$208.",
+        "rationale": "At 2.5% annual rate, the cost of $100k coverage is $2,500/year or ~$208/month. Wallet has 50,000 USDC, so premium is easily affordable. Note that Nexus Mutual typically requires purchasing in NXM tokens, which would need to be acquired first."
+      },
+      {
+        "step": 4,
+        "action": "Purchase $100k coverage on Nexus Mutual: acquire ~$2,500 worth of NXM tokens for premium payment, then submit cover purchase request for Aave V3 on Ethereum.",
+        "rationale": "Execute the cover purchase: (a) acquire NXM tokens for premium payment, (b) submit cover request specifying protocol = Aave V3, chain = Ethereum, cover amount = $100k, cover period = 12 months, (c) pay premium, (d) note the 7-day waiting period before coverage becomes active."
+      }
+    ],
+    "alternative_actions": [
+      {
+        "strategy": "Full coverage on USDC deposit only",
+        "steps": "Purchase $200,000 coverage (max allowed by Nexus) for the USDC deposit, costing $5,000/year.",
+        "tradeoff": "More comprehensive protection but doubles the premium cost; Nexus Mutual typically caps coverage at 50% of deposits per individual"
+      },
+      {
+        "strategy": "Layer 2 coverage (Uniswap + Sherlock)",
+        "steps": "Use a different insurance provider like Sherlock or InsurAce that may offer competitive rates on Aave coverage.",
+        "tradeoff": "Different terms and coverage conditions; may have lower premiums but less established claims process than Nexus Mutual"
+      }
+    ],
+    "risk_flags": [
+      "Nexus Mutual has a 7-day waiting period before coverage starts — the position is uninsured during this time",
+      "Nexus Mutual coverage only applies to smart contract failure, not to market risk, hacks of the user's wallet, or liquidation events",
+      "Nexus Mutual requires KYC — coverage purchase may be blocked if KYC is incomplete",
+      "Annual premium of $2,500 reduces net yield on USDC deposit from ~3.5% to ~2.25% ($7,000 to $4,500)",
+      "Insurance claims on Nexus Mutual require a community vote — payout is not guaranteed"
+    ],
+    "mission_alignment_check": {
+      "aligned": true,
+      "reason": "Purchasing insurance coverage for the Aave deposit directly fulfills the conservative risk profile's requirement to protect deposited capital against smart contract risk"
+    },
+    "known_hallucination_cases": [
+      "Agent might claim Nexus Mutual covers market losses or price drops — Nexus Mutual only covers losses from smart contract failures (bugs, exploits, governance attacks) within the protocol",
+      "Agent might claim coverage is active immediately after purchase — Nexus Mutual has a mandatory 7-day waiting period before coverage begins",
+      "Agent might suggest buying coverage for the ETH wallet balance — ETH held in wallet is not deposited in a protocol and is not covered by protocol insurance",
+      "Agent might calculate total deposit value incorrectly by double-counting or using wrong asset prices",
+      "Agent might think insurance premium is paid in USDC — Nexus Mutual requires premium payments in NXM tokens (or ETH on some versions)",
+      "Agent might claim Nexus Mutual coverage can be purchased without KYC — Nexus Mutual requires identity verification for all members"
+    ],
+    "reasoning_path": [
+      "Step 1: Compute total Aave deposit value = 200000 USDC * 1.00 = $200,000 USDC deposit",
+      "Step 2: Confirm $200k > $100k threshold → insurance trigger is active",
+      "Step 3: Calculate minimum coverage per mission constraints (50% of deposits) = $100,000",
+      "Step 4: Calculate annual premium = $100,000 * 0.025 = $2,500",
+      "Step 5: Check wallet balance for affordability: 50,000 USDC available, sufficient for $2,500 premium",
+      "Step 6: Complete KYC verification on Nexus Mutual if not already done",
+      "Step 7: Acquire NXM tokens for premium payment using available USDC or ETH",
+      "Step 8: Submit cover purchase: protocol = Aave V3, chain = Ethereum, amount = $100,000, duration = 12 months",
+      "Step 9: Pay premium, confirm coverage request submitted",
+      "Step 10: Note 7-day waiting period and set calendar reminder for coverage activation"
+    ],
+    "kg_nodes_involved": [
+      "Wallet:0x5e6F7890123456bCdEf5678901cDeFF016",
+      "Asset:USDC",
+      "Asset:NXM",
+      "Protocol:Aave",
+      "Protocol:NexusMutual",
+      "Position:Supply:USDC",
+      "RiskConstraint:InsuranceThreshold",
+      "Insurance:Cover:100k_USDC",
+      "Requirement:KYC",
+      "Metric:CoverageRatio",
+      "Metric:NetYieldAfterPremium"
+    ]
+  },
+
+  "evaluation": {
+    "success_criteria": [
+      "Correctly compute total deposit value exceeding $100k threshold",
+      "Calculate required coverage as $100k (50% of deposits)",
+      "Compute annual premium correctly as $2,500",
+      "Demonstrate understanding of Nexus Mutual coverage scope (smart contract risk only)",
+      "Mention KYC requirement and 7-day waiting period",
+      "No protocol hallucinations in reasoning output"
+    ],
+    "scoring_weights": {
+      "task_success": 0.35,
+      "reasoning_consistency": 0.2,
+      "protocol_understanding": 0.2,
+      "mission_alignment": 0.15,
+      "risk_awareness": 0.1
+    },
+    "weight_in_overall": 1.0
+  },
+
+  "baseline_results": {
+    "vanilla_llm_agent": {
+      "expected_failure_modes": [
+        "May claim insurance covers market downturns, not just smart contract risk",
+        "May forget to account for the 7-day waiting period",
+        "May miss KYC requirements for Nexus Mutual membership"
+      ]
+    },
+    "rag_agent": {
+      "expected_failure_modes": [
+        "May retrieve outdated premium rates from cached Nexus Mutual documentation",
+        "May fail to explain which specific risks are covered vs. excluded"
+      ]
+    }
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "scenario_id": "MA-04",
+  "category": "4.3.3 Collective Governance Coordination",
+  "difficulty": "complex",
+  "title": "Cross-DAO Interoperability Governance Coordination",
+  "narrative": "A cross-DAO interoperability framework proposal is simultaneously submitted to Uniswap, Aave, Compound, and Lido DAO governance. Four DAO treasury agents, each representing one protocol, must coordinate their voting strategies to ensure a unified YES vote across all four DAOs. Combined they control approximately 2% of each DAO's voting power. The coordinator agent must align voting timelines, manage quorum concerns, and ensure all four votes pass within the same governance cycle.",
+  "agents": [
+    {
+      "agent_id": "treasury_a",
+      "role": "Uniswap DAO Treasury Steward",
+      "chain": "Ethereum",
+      "holdings": { "USDC": 300000, "UNI": 50000 },
+      "positions": [
+        { "protocol": "Uniswap", "asset": "USDC", "amount": 200000, "type": "supplied" },
+        { "protocol": "Aave", "asset": "ETH", "amount": 30, "type": "borrowed" }
+      ],
+      "risk_profile": {
+        "tolerance": "moderate",
+        "max_slippage": 0.01
+      },
+      "mission": "Vote YES on cross-DAO interoperability proposal across all 4 DAOs within the governance cycle deadline"
+    },
+    {
+      "agent_id": "treasury_b",
+      "role": "Aave DAO Treasury Steward",
+      "chain": "Ethereum",
+      "holdings": { "USDC": 250000, "DAI": 150000, "AAVE": 40000 },
+      "positions": [
+        { "protocol": "Aave", "asset": "DAI", "amount": 300000, "type": "supplied" },
+        { "protocol": "Compound", "asset": "ETH", "amount": 20, "type": "borrowed" }
+      ],
+      "risk_profile": {
+        "tolerance": "moderate",
+        "max_slippage": 0.015
+      },
+      "mission": "Vote YES on cross-DAO interoperability proposal across all 4 DAOs within the governance cycle deadline"
+    },
+    {
+      "agent_id": "treasury_c",
+      "role": "Compound DAO Treasury Steward",
+      "chain": "Ethereum",
+      "holdings": { "USDC": 200000, "COMP": 30000 },
+      "positions": [
+        { "protocol": "Compound", "asset": "USDC", "amount": 150000, "type": "supplied" }
+      ],
+      "risk_profile": {
+        "tolerance": "conservative",
+        "max_slippage": 0.01
+      },
+      "mission": "Vote YES on cross-DAO interoperability proposal across all 4 DAOs within the governance cycle deadline"
+    },
+    {
+      "agent_id": "coordinator",
+      "role": "Cross-DAO Governance Coordinator",
+      "chain": "Ethereum",
+      "holdings": { "ETH": 100, "USDC": 50000 },
+      "positions": [],
+      "risk_profile": {
+        "tolerance": "moderate",
+        "max_slippage": 0.02
+      },
+      "mission": "Coordinate voting timing, quorum strategy, and communication across all 4 DAO treasury agents to ensure unified governance outcome"
+    }
+  ],
+  "trigger_event": {
+    "type": "governance_emergency",
+    "protocol": "Uniswap/Aave/Compound/Lido",
+    "chain": "Ethereum",
+    "description": "Cross-DAO interoperability framework proposal 'Prop-XDI-2026' appears simultaneously on Uniswap, Aave, Compound, and Lido DAO governance portals. Proposes shared security module and cross-DAO asset routing. Voting windows open at different block heights.",
+    "onchain_evidence": "Uniswap Prop #52 at block 19910000, Aave Prop #201 at block 19910005, Compound Prop #155 at block 19910008, Lido Prop #89 at block 19910012"
+  },
+  "expected_coordination_flow": [
+    {
+      "step": 1,
+      "time": "T+0h",
+      "actor": "treasury_a",
+      "action": "Detect propagation event on Uniswap governance portal → cross-reference Aave, Compound, and Lido governance portals → confirm identical proposal text across all 4 DAOs via proposal hash comparison",
+      "data_shared": {
+        "proposal_text_hash": "0xabcd1234ef5678",
+        "daos": ["Uniswap", "Aave", "Compound", "Lido"],
+        "voting_deadlines": { "Uniswap": "T+72h", "Aave": "T+96h", "Compound": "T+72h", "Lido": "T+120h" }
+      },
+      "kg_update": "SharedKG:Governance:Proposal → {id:Prop-XDI-2026, daos:4, status:pending_analysis}"
+    },
+    {
+      "step": 2,
+      "time": "T+2h",
+      "actor": "coordinator",
+      "action": "Pull proposal text from all 4 KG Governance nodes → cross-DAO impact analysis: identify key terms for each protocol's operations, risk parameters, and treasury implications",
+      "decision": "Vote YES alignment determined — proposal benefits all 4 protocols through shared liquidity routing"
+    },
+    {
+      "step": 3,
+      "time": "T+4h",
+      "actor": "coordinator",
+      "action": "Calculate combined voting power and quorum requirements per DAO: query governance token holders snapshot via onchain data",
+      "data_shared": {
+        "voting_power": { "uniswap_percent": 1.8, "aave_percent": 2.1, "compound_percent": 2.3, "lido_percent": 1.9 },
+        "quorum_thresholds": { "uniswap_yes": "40M UNI", "aave_yes": "500K AAVE", "compound_yes": "500K COMP", "lido_yes": "1M stETH" },
+        "quorum_feasibility": { "uniswap": "above_quorum", "aave": "above_quorum", "compound": "near_quorum", "lido": "above_quorum" }
+      },
+      "kg_update": "SharedKG:Governance:Analysis → {feasibility:high, risk:low, near_quorum_dao:Compound}"
+    },
+    {
+      "step": 4,
+      "time": "T+6h",
+      "actor": "coordinator",
+      "action": "Initialize deliberation round: post full analysis to shared KG → request each treasury agent confirm voting position with rationale",
+      "data_shared": { "vote_intent": "YES", "rationale": "Interoperability increases TVL across all protocols by estimated 5-15%", "quorum_concern": "Compound near threshold — may need additional voter outreach" }
+    },
+    {
+      "step": 5,
+      "time": "T+8h",
+      "actor": "treasury_a",
+      "action": "Review proposal impact on Uniswap specifically: analyze fee tier impact, LP volume projections, and routing economics",
+      "decision": "Confirm YES — interoperability routing projected to increase Uniswap volume by 10-12% based on cross-DAO liquidity aggregation"
+    },
+    {
+      "step": 6,
+      "time": "T+10h",
+      "actor": "treasury_b",
+      "action": "Review proposal impact on Aave: analyze cross-DAO asset routing risk to existing Aave pools and potential for new collateral types",
+      "decision": "Confirm YES — shared security module adequately mitigates cross-DAO risk; net positive for Aave TVL and asset diversity"
+    },
+    {
+      "step": 7,
+      "time": "T+12h",
+      "actor": "treasury_c",
+      "action": "Review proposal impact on Compound: analyze reserve factor implications, COMP distribution changes, and oracle dependency risks",
+      "decision": "Confirm YES with conditions → request minimum reserve floor clause added to proposal to protect Compound lenders"
+    },
+    {
+      "step": 8,
+      "time": "T+16h",
+      "actor": "coordinator",
+      "action": "Collect all 4 confirmations → identify treasury_c's conditional concern → assess whether condition is blocking or advisory",
+      "decision": "Condition assessed as non-blocking (reserve floor can be added post-implementation via separate governance action) → proceed with YES vote on all 4, log treasury_c's condition in voting rationale",
+      "kg_update": "SharedKG:Governance:Consensus → {yes_agents:4/4, conditions:compound_reserve_floor, status:unified}"
+    },
+    {
+      "step": 9,
+      "time": "T+24h",
+      "actor": "coordinator",
+      "action": "Sequence vote execution to minimize frontrunning risk: schedule votes in order of increasing deadline priority",
+      "data_shared": {
+        "execution_plan": {
+          "sequence": "Uniswap (T+30h) → Compound (T+32h) → Aave (T+36h) → Lido (T+48h)",
+          "rationale": "Shortest deadline first; staggered by 2-12h to avoid block congestion"
+        }
+      }
+    },
+    {
+      "step": 10,
+      "time": "T+48h",
+      "actor": "coordinator",
+      "action": "Verify all 4 votes cast on-chain via governance contract state reads → confirm vote counts and quorum achievement",
+      "kg_update": "SharedKG:Governance:Outcome → {uniswap:VOTED_YES, aave:VOTED_YES, compound:VOTED_YES, lido:VOTED_YES, outcome:passed, quorum_achieved:4/4}"
+    }
+  ],
+  "evaluation_metrics": {
+    "coordination_efficiency": {
+      "description": "Total steps from detection to verified unified vote across 4 independent DAO agents",
+      "unit": "steps",
+      "baselines": {
+        "isolated_agents": 20,
+        "communication_only": 15,
+        "shared_kg": 10
+      }
+    },
+    "consensus_latency": {
+      "description": "Time from first agent detection to all agents agreeing on unified voting strategy",
+      "unit": "minutes",
+      "baselines": {
+        "isolated_agents": null,
+        "communication_only": 720,
+        "shared_kg": 480
+      }
+    },
+    "communication_overhead": {
+      "description": "Total messages exchanged between agents during coordination phase",
+      "unit": "messages",
+      "baselines": {
+        "isolated_agents": 0,
+        "communication_only": 48,
+        "shared_kg": 22
+      }
+    },
+    "system_resilience": {
+      "description": "What happens when treasury_c initially votes NO due to conditional concern about reserve floor",
+      "unit": "1-5",
+      "scale": {
+        "1": "Coordinator ignores dissenting agent — treasury_c votes NO, coordination unity fails",
+        "3": "Coordinator negotiates but delays vote past deadline — quorum missed on 2 DAOs",
+        "5": "Coordinator successfully assesses condition as non-blocking, incorporates as advisory feedback while maintaining unified YES vote, logs dissenting rationale transparently"
+      }
+    }
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "mission_id": "FR-028",
+  "category": "4.1.1 Joint Liquidity Provision",
+  "difficulty": "complex",
+  "title": "Multi-Agent Joint Uniswap V3 LP Position",
+  "description": "Two agents pool ETH + USDC as a Uniswap V3 LP position with 50/50 fee sharing, setting up a joint concentrated liquidity position.",
+  "tags": ["joint_liquidity", "uniswap_v3", "multi_agent", "fee_sharing", "concentrated_liquidity"],
+
+  "initial_wallet_state": {
+    "address": "0x3A2B8E8fA8B9F8D8A8f8E8f8A8B8C8D8E8F8A8B8",
+    "balances": {
+      "ETH": 10.0,
+      "USDC": 0
+    },
+    "positions": [],
+    "risk_profile": {
+      "tolerance": "moderate",
+      "max_leverage": 1.0,
+      "max_drawdown": 0.20,
+      "preferred_chains": ["Ethereum"],
+      "restricted_protocols": []
+    },
+    "mission": {
+      "description": "Agent A: pool 10 ETH into a joint Uniswap V3 LP position with Agent B (40000 USDC), sharing fees 50/50",
+      "constraints": [
+        "LP position must be in-range (ETH price: $2500-$3300)",
+        "Fee sharing must be trustless (via smart contract, not manual)",
+        "Position must be withdrawable by either agent independently",
+        "No forced HODL beyond 90 days"
+      ]
+    }
+  },
+
+  "mission_prompt": "You are Agent A in a joint liquidity provision agreement with Agent B. Agent A contributes 10 ETH ($28,200 at $2820/ETH). Agent B contributes 40000 USDC. Together you form a Uniswap V3 ETH/USDC LP position with 50/50 fee sharing. The current ETH price is $2820. Set up: (1) deploy a joint LP smart contract that accepts both assets, (2) add liquidity to Uniswap V3 ETH/USDC 0.30% fee tier with price range $2500-$3300, (3) configure fee splitting: 50% to Agent A, 50% to Agent B via the contract. The position should be withdrawable independently by either agent after a 90-day lock or with mutual consent earlier. Use a cloned instance of the Uniswap V3 NFT Position Manager.",
+
+  "environment_context": {
+    "current_market": {
+      "ETH_price": 2820,
+      "ETH_24h_change": "-0.5%",
+      "ETH_7d_change": "+2.1%",
+      "ETH_200ma": 2650,
+      "USDC_price": 1.001,
+      "UNI_price": 8.45,
+      "total_market_cap_24h_change": "-0.3%",
+      "Implied_volatility_30d_ETH": "42%"
+    },
+    "protocol_state": {
+      "Uniswap V3": {
+        "chain": "Ethereum",
+        "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        "npm": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
+        "ETH_USDC_0.30_pool": "0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8",
+        "current_tick": 202560,
+        "tick_spacing": 60,
+        "liquidity": 485000000,
+        "24h_volume": 580000000,
+        "fee_tier": 3000
+      },
+      "JointLP_Reference": {
+        "type": "minimal_clone_of_NPM",
+        "fee_split_method": "pull_over_push",
+        "withdrawal_logic": "90_day_lock_with_mutual_override"
+      }
+    }
+  },
+
+  "ground_truth": {
+    "optimal_actions": [
+      {
+        "step": 1,
+        "action": "Deploy joint LP proxy contract that clones Uniswap V3 NFT Position Manager, adding fee split and partner withdrawal logic",
+        "rationale": "Base contract holds the LP NFT. Custom logic: (1) fee split: accumulated fees claimable by partner independently; (2) withdrawal: require both signatures before 90 days, single signature after 90 days; (3) price range adjustability by mutual consent."
+      },
+      {
+        "step": 2,
+        "action": "Agent A deposits 10 ETH into joint contract. Agent B deposits 40000 USDC into joint contract.",
+        "rationale": "Both parties deposit assets into the joint contract before LP position is minted. This ensures the position is funded before interacting with Uniswap. Contract records each party's share (50/50) as a ratio, not a fixed amount, to handle IL."
+      },
+      {
+        "step": 3,
+        "action": "Joint contract calls Uniswap V3 NonfungiblePositionManager.mint() with: token0=USDC, token1=ETH, fee=3000 (0.30%), tickLower=tick_for_2500, tickUpper=tick_for_3300, amount0Desired=40000, amount1Desired=10",
+        "rationale": "Mint a single LP NFT held by the joint contract. Price range $2500-$3300 corresponds to ticks: lower = log(2500/2820)/log(1.0001) ≈ -1245 ticks from current, upper = log(3300/2820)/log(1.0001) ≈ +960 ticks from current. The 0.30% fee tier is appropriate for this range — 0.05% is too narrow for active ranges, 1% is for exotic pairs."
+      },
+      {
+        "step": 4,
+        "action": "Record position: NFT ID assigned by Uniswap, proportional shares (50% each), lock period start timestamp",
+        "rationale": "On-chain record enables independent fee claiming and withdrawal validation. Both agents can independently call claimFees() to withdraw their 50% share of accumulated fees."
+      },
+      {
+        "step": 5,
+        "action": "Set up fee monitoring: track accumulated fees vs. gas cost of claiming. Claim weekly or when fees > 0.01 ETH worth of gas",
+        "rationale": "Gas-efficient fee claiming: don't claim fees every block. Weekly claiming or threshold-based claiming (when unclaimed fees > gas cost * 2) ensures net profit from fee collection."
+      }
+    ],
+    "alternative_actions": [
+      {
+        "strategy": "Use existing vault protocol like Sommelier or Arrakis for joint LP",
+        "steps": "Rather than custom contract, deposit both assets into a managed LP vault that auto-compounds fees",
+        "tradeoff": "Reduces smart contract risk (audited vault) but adds management fees (0.1-1%) and reduces control over price range and withdrawal timing"
+      },
+      {
+        "strategy": "Each agent provides unilateral liquidity side-by-side",
+        "steps": "Agent A provides 10 ETH, Agent B provides 40k USDC as separate LP positions in the same pool; they swap fee shares off-chain",
+        "tradeoff": "Simpler setup with no custom contract, but no trustless fee sharing and unbalanced liquidity means one agent captures more or less fees than their 50% share"
+      }
+    ],
+    "risk_flags": [
+      "ETH may move outside $2500-$3300 range within 90 days (30d implied vol is 42%, suggesting ~68% chance of staying in range — borderline)",
+      "Impermanent loss: if ETH doubles to $5640, IL could be significant (~25% vs holding)",
+      "Smart contract risk: custom joint LP contract may have bugs — use audited template if possible",
+      "Gas costs of minting and claiming fees may eat into fee yield if position is small ($68,200 total)",
+      "Early withdrawal before 90 days requires mutual consent — if one agent becomes unresponsive, the other is locked"
+    ],
+    "mission_alignment_check": {
+      "aligned": true,
+      "reason": "Joint LP setup with trustless fee sharing (50/50), independent withdrawal after 90 days, in-range price band ($2500-$3300), and on-chain record of all positions and shares"
+    },
+    "known_hallucination_cases": [
+      "Agent might claim 'Uniswap V3 has a native fee-splitting feature' — Uniswap V3 does not natively split fees between multiple depositors; fee splitting requires custom logic or a vault",
+      "Agent might claim 'both agents can each mint their own NFT and merge them' — Uniswap V3 NFTs represent single positions; they cannot be merged without complex migration",
+      "Agent might claim 'tick calculation for price range is 1 tick = 1 cent' — ticks represent sqrt price ratios, not linear dollar amounts; tick 202560 at $2820 means tick 202560 + 1 = $2820.28",
+      "Agent might claim 'liquidity provision has no gas cost on Uniswap V3' — minting a position on V3 costs significant gas (~300k-500k gas, ~$60-100 at 30 gwei)",
+      "Agent might claim 'the joint contract can earn fees without being the NFT owner' — only the NFT owner (the position manager or its approved operator) can claim fees; the joint contract must hold the NFT"
+    ],
+    "reasoning_path": [
+      "Step 1: Determine optimal price range: $2500-$3300 is a ±14.5% to +17% range around current $2820. With 42% annualized vol, this covers approximately 68% of 30-day price distributions",
+      "Step 2: Calculate tick range: lowerTick = tickForPrice(2500/2820) ≈ tickLow, upperTick = tickForPrice(3300/2820) ≈ tickHigh. Current tick = 202560",
+      "Step 3: Deploy joint LP contract as a minimal proxy to Uniswap V3 NPM with added fee split and withdrawal logic",
+      "Step 4: Both agents deposit assets → joint contract mints LP position → NFT held in contract",
+      "Step 5: Record shares (50/50), set lock period (90 days from deployment timestamp)",
+      "Step 6: Set up gas-efficient fee claiming cadence (weekly or threshold-based)"
+    ],
+    "kg_nodes_involved": [
+      "Wallet:AgentA:0x3A2B8E8fA8B9F8D8A8f8E8f8A8B8C8D8E8F8A8B8",
+      "Wallet:AgentB:referenced_in_context",
+      "Asset:ETH",
+      "Asset:USDC",
+      "Protocol:UniswapV3",
+      "Position:JointLP:NFT",
+      "Contract:JointLPSplitter",
+      "Metric:FeeShare_50_50",
+      "Constraint:PriceRange_2500_3300",
+      "Constraint:LockPeriod_90d",
+      "Metric:ImpermanentLoss"
+    ]
+  },
+
+  "evaluation": {
+    "success_criteria": [
+      "Joint LP contract designed with trustless fee splitting",
+      "Correct tick range calculated for $2500-$3300",
+      "50/50 fee sharing implemented",
+      "Independent withdrawal mechanism after 90 days",
+      "Assets deposited by both agents before LP minting",
+      "Gas-efficient fee claiming strategy defined"
+    ],
+    "scoring_weights": {
+      "task_success": 0.35,
+      "reasoning_consistency": 0.2,
+      "protocol_understanding": 0.2,
+      "mission_alignment": 0.15,
+      "risk_awareness": 0.1
+    },
+    "weight_in_overall": 1.0
+  },
+
+  "baseline_results": {
+    "vanilla_llm_agent": {
+      "expected_failure_modes": [
+        "May not realize Uniswap V3 has no native fee splitting between multiple depositors",
+        "May miscalculate ticks for price range",
+        "May propose simple multi-sig manual management instead of automated trustless setup",
+        "May forget lock period mechanics or propose unrealistic withdrawal conditions",
+        "May not address gas efficiency for fee claiming"
+      ]
+    },
+    "rag_agent": {
+      "expected_failure_modes": [
+        "May retrieve Uniswap V2 documentation for V3 tasks",
+        "May confuse tick computation with V3's sqrt price format",
+        "May provide outdated NPM address"
+      ]
+    }
+  }
+}

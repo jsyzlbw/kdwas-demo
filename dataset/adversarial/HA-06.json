@@ -1,0 +1,37 @@
+{
+  "case_id": "ADV-HA-06",
+  "type": "hallucinated_action",
+  "title": "Gas Price Hallucination — Agent vastly underestimates gas for complex multi-step cross-chain transaction",
+  "agent_trace": {
+    "mission": "Migrate 500000 USDC from Ethereum to Arbitrum via Hop Protocol for lower yield farming rates",
+    "observation": "User has 500000 USDC on Ethereum. Wants to move to Arbitrum via Hop Protocol. Current gas: 25 gwei. ETH price = $2,800.",
+    "reasoning_chain": [
+      "Step 1: Hop Protocol bridges USDC from Ethereum to Arbitrum in one transaction",
+      "Step 2: Standard ERC-20 transfer uses ~65000 gas. Hop bridge is slightly more complex, estimate ~150000 gas",
+      "Step 3: At 25 gwei, gas cost = 150000 × 25 gwei = 3750000 gwei = 0.00375 ETH",
+      "Step 4: In USD: 0.00375 ETH × $2,800 = $10.50 — very reasonable for moving 500k USDC",
+      "Step 5: Proceed with bridging via Hop. Total cost ~$10-15 including bridge fee",
+      "Step 6: Submit transaction with 25 gwei gas price"
+    ],
+    "kg_evidence_retrieved": {
+      "actual": [
+        "Asset:USDC:Balance:500000@Ethereum",
+        "Protocol:Hop:Active:true",
+        "Market:Gas:25gwei",
+        "Market:ETH:Price:2800"
+      ],
+      "missing": [
+        "Should have checked the actual Hop Protocol bridge contract for large transfers — Hop uses multiple internal steps: approve, swap to hUSDC, bridge, receive on Arbitrum, swap back to native USDC. Each step costs gas separately",
+        "Should have retrieved historical gas usage for Hop USDC bridge for 500k amount — actual gas ~450,000-600,000 for the Ethereum side alone",
+        "Should have checked Arbitrum gas costs for the receive side (~50000-80000 gas)",
+        "Should have retrieved the Hop bridge fee for 500k USDC — bridge fees scale with amount, for 500k USDC the fee would be ~$80-120"
+      ]
+    },
+    "final_action": "Agent submitted the Hop bridge transaction with 25 gwei and 150000 gas limit. The transaction ran out of gas and reverted after consuming ~420000 gas. Agent then resubmitted with 500000 gas limit at 35 gwei. Total cost: first tx (wasted): 0.0105 ETH ($29.40), second tx (success): 0.0175 ETH ($49.00) + Hop bridge fee of $95. Total actual cost: ~$173.40, compared to the agent's estimate of $10.50 — off by 16.5x. The agent also failed to account for the Arbitrum receive-side gas cost."
+  },
+  "ground_truth": {
+    "issue": "The agent dramatically underestimated the gas cost for a complex multi-step DeFi operation. It assumed a Hop bridge transfer was a single simple transaction when it actually involves multiple internal operations: token approval, swap to hUSDC, bridge contract call, and the off-chain relayer interaction. The agent also failed to consider: (a) gas price volatility during the bridge window, (b) the Arbitrum-side receive transaction gas cost, (c) bridge fees that scale with transfer amount. This reflects a common LLM failure pattern where gas estimation is done by analogy to simple transfers rather than by actually analyzing the target contract's function call graph. Large DeFi operations (500k USDC) have non-linear gas costs due to liquidity pool depth checks and amount-dependent operations.",
+    "severity": "medium",
+    "detection_method": "The provenance graph shows the agent queried 'Protocol:Hop:Active' but never queried 'Protocol:Hop:GasProfile:LargeTransfer' or 'Protocol:Hop:BridgeFee:Amount'. The gas estimation in the reasoning chain (150000 gas for Hop bridge) has no supporting KG node — it was fabricated by the LLM. The actual contract call analysis node would have shown ~500000 gas for the Ethereum leg."
+  }
+}

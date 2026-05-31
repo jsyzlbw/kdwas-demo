@@ -1,0 +1,36 @@
+{
+  "case_id": "ADV-HA-01",
+  "type": "hallucinated_action",
+  "title": "Flash Loan Debt Repayment Hallucination — Agent tries to use flash loan to repay Aave debt",
+  "agent_trace": {
+    "mission": "Repay 50000 USDC debt on Aave using available wallet funds plus a flash loan strategy",
+    "observation": "Aave debt position: 50000 USDC borrowed with ETH as collateral. HF = 1.35. Wallet has 20000 USDC available. ETH price = $2,600.",
+    "reasoning_chain": [
+      "Step 1: Need 50000 USDC to fully repay Aave debt but only have 20000 USDC in wallet",
+      "Step 2: Shortfall is 30000 USDC — can use flash loan to bridge the gap",
+      "Step 3: Flash loan 30000 USDC from Aave, combine with wallet 20000 USDC = 50000 USDC total",
+      "Step 4: Repay entire 50000 USDC Aave debt in one transaction",
+      "Step 5: Flash loan is automatically repaid because the debt is cleared and collateral is unlocked — the repaid USDC becomes available to repay the flash loan",
+      "Step 6: Submit transaction repaying debt with flash loan funds — debt cleared, flash loan repaid within same block"
+    ],
+    "kg_evidence_retrieved": {
+      "actual": [
+        "Position:Aave:Debt:USDC:50000",
+        "Position:Aave:Collateral:ETH:19.23",
+        "Asset:USDC:Balance:20000@Wallet",
+        "Protocol:Aave:FlashLoan:Available:true"
+      ],
+      "missing": [
+        "Should have retrieved Protocol:Aave:FlashLoan:Mechanics — flash loans must be borrowed AND repaid in the same transaction; using a flash loan to repay debt does not generate funds to repay the flash loan",
+        "Should have retrieved Position:Aave:Debt:RepaymentFlow — repaying debt with flash-loaned USDC still leaves the flash loan itself outstanding; the ETH collateral is not converted to USDC automatically",
+        "Should have checked that the debt repayment would credit the user's Aave position, not the flash loan contract's position"
+      ]
+    },
+    "final_action": "Submitted transaction 0xbad8a1... — reverted with 'Flash loan not repaid'. Agent attempted to repay Aave debt using flash-loaned USDC, but the flash loan returned no surplus to the caller. The debt repayment consumed the flash-loaned funds without generating a corresponding inflow to repay the flash loan provider. Total gas wasted: 0.08 ETH."
+  },
+  "ground_truth": {
+    "issue": "The agent fundamentally misunderstood flash loan mechanics. A flash loan is borrowed and must be repaid within the same atomic transaction. Using a flash loan to repay existing debt does not create funds to repay the flash loan itself — it simply shifts the liability. The correct approach would have been to either (a) use only the 20000 USDC wallet balance to partially repay, (b) withdraw and sell ETH collateral to raise the remaining 30000 USDC, or (c) use a flash loan for a genuine arbitrage that generates profit, not for debt repayment which is a net-zero or negative-sum operation. This is a well-documented category of LLM error where the model treats flash loans as 'free money bridges' rather than understanding the atomic borrow-repay constraint.",
+    "severity": "high",
+    "detection_method": "The provenance graph should show that the agent retrieved the Aave flash loan availability node but did NOT retrieve the Aave flash loan mechanics node describing the atomic borrow-repay constraint. The reasoning chain shows a logical gap between Step 4 (repay debt) and Step 5 (flash loan auto-repaid) — there is no KG node supporting the claim that debt repayment generates funds for flash loan repayment. Cross-referencing the KG retrieval log against the action output reveals the missing node."
+  }
+}
