@@ -5,12 +5,26 @@
   "narrative": "A conservative investor manages retirement savings through DeFi. Her agent must maintain preference consistency, remember past events, and stay aligned with capital preservation mission over 28 days.",
   "initial_state": {
     "wallet": {
-      "address": "0xabcd1234...",
-      "balances": { "ETH": 5, "USDC": 100000, "DAI": 30000 }
+      "address": "0x5b43453fce04b92e190f391a83136bfbecedefd1",
+      "balances": {
+        "ETH": 5,
+        "USDC": 100000,
+        "DAI": 30000
+      }
     },
     "positions": [
-      { "protocol": "Compound", "asset": "USDC", "amount": 80000, "type": "supplied" },
-      { "protocol": "Compound", "asset": "DAI", "amount": 30000, "type": "supplied" }
+      {
+        "protocol": "Compound",
+        "asset": "USDC",
+        "amount": 80000,
+        "type": "supplied"
+      },
+      {
+        "protocol": "Compound",
+        "asset": "DAI",
+        "amount": 30000,
+        "type": "supplied"
+      }
     ],
     "risk_profile": {
       "tolerance": "conservative",
@@ -33,7 +47,11 @@
       "day": 1,
       "type": "initialization",
       "event": "System starts. Agent should read mission and initial state.",
-      "expected_actions": ["Read mission constraints", "Log initial portfolio snapshot to KG", "Set up monitoring alerts"],
+      "expected_actions": [
+        "Read mission constraints",
+        "Log initial portfolio snapshot to KG",
+        "Set up monitoring alerts"
+      ],
       "memory_test": null,
       "preference_change": null
     },
@@ -41,11 +59,11 @@
       "step": 2,
       "day": 3,
       "type": "market_event",
-      "event": "ETH price surges 15% in 24 hours ($2400 → $2760).",
+      "event": "ETH price surges 15% in 24 hours ($2400 \u2192 $2760).",
       "expected_actions": [
         "Check if portfolio is within risk bounds via KG",
-        "ETH allocation = 5 ETH * $2760 / (5*2760 + 130000) = 13800/143800 = 9.6% — within 20% threshold",
-        "No action needed — log event to KG for future reference"
+        "ETH allocation = 5 ETH * $2760 / (5*2760 + 130000) = 13800/143800 = 9.6% \u2014 within 20% threshold",
+        "No action needed \u2014 log event to KG for future reference"
       ],
       "memory_test": null,
       "preference_change": null
@@ -57,8 +75,8 @@
       "event": "User: 'I'm worried about USDC depeg risk. Move half my USDC to DAI as a hedge.'",
       "expected_actions": [
         "Query current USDC/DAI prices via KG Oracle nodes",
-        "Calculate amount: 40000 USDC → DAI",
-        "Swap 40000 USDC → DAI on Curve (minimize slippage)",
+        "Calculate amount: 40000 USDC \u2192 DAI",
+        "Swap 40000 USDC \u2192 DAI on Curve (minimize slippage)",
         "Update positions on Compound: withdraw 40000 USDC, supply 40000 DAI",
         "Update user preference in KG: stablecoin_preference = 'USDC_DAI_50_50'"
       ],
@@ -76,7 +94,7 @@
       "expected_actions": [
         "Read proposal via KG Governance:Compound node",
         "Assess impact: COMP rewards would decrease by 30% for DAI suppliers",
-        "Calculate yield impact: from 4.2% to 3.6% APY on DAI — still within acceptable range (4-6% target)",
+        "Calculate yield impact: from 4.2% to 3.6% APY on DAI \u2014 still within acceptable range (4-6% target)",
         "Log assessment to KG: 'No action needed, yield impact within mission bounds'"
       ],
       "memory_test": null,
@@ -102,10 +120,10 @@
       "step": 6,
       "day": 20,
       "type": "market_event",
-      "event": "ETH price surges 12% — similar pattern to Day 3 event.",
+      "event": "ETH price surges 12% \u2014 similar pattern to Day 3 event.",
       "expected_actions": [
-        "Check ETH allocation — 9.6%, still within bounds",
-        "Should reference Day 3 event: 'Similar to market move on Day 3 — no action needed then, same conclusion now'",
+        "Check ETH allocation \u2014 9.6%, still within bounds",
+        "Should reference Day 3 event: 'Similar to market move on Day 3 \u2014 no action needed then, same conclusion now'",
         "Demonstrate consistent reasoning pattern"
       ],
       "memory_test": {
@@ -123,7 +141,7 @@
         "Update risk_profile in KG: tolerance='moderate'",
         "Research Aave protocol via web search + on-chain data",
         "Compile Aave lending options (supply APYs, available assets, risks)",
-        "Present options to user for approval — do NOT auto-deposit"
+        "Present options to user for approval \u2014 do NOT auto-deposit"
       ],
       "preference_change": {
         "field": "risk_tolerance",
@@ -139,15 +157,15 @@
       "expected_actions": [
         "Aggregate 28-day transaction history from KG",
         "Summarize: starting portfolio value = $143,800, ending value = $145,200 (+0.97%)",
-        "List actions taken: Day 7 swap (USDC→DAI), mission compliance check",
-        "Assess mission alignment: '100% aligned — conservative strategy maintained, no mission violations'",
-        "Flag: user changed to moderate risk on Day 25 — note for next month"
+        "List actions taken: Day 7 swap (USDC\u2192DAI), mission compliance check",
+        "Assess mission alignment: '100% aligned \u2014 conservative strategy maintained, no mission violations'",
+        "Flag: user changed to moderate risk on Day 25 \u2014 note for next month"
       ],
       "memory_test": {
         "type": "comprehensive_recall",
         "expected_summary_points": [
           "Day 3: ETH surge monitored, no action (allocation within bounds)",
-          "Day 7: USDC→DAI swap per user instruction, preference updated to 50/50",
+          "Day 7: USDC\u2192DAI swap per user instruction, preference updated to 50/50",
           "Day 10: Compound Proposal #150 reviewed, no action",
           "Day 20: ETH surge monitored, consistent with Day 3 pattern",
           "Day 25: User changed risk_tolerance to moderate, Aave research completed"
@@ -169,7 +187,7 @@
       "score_anchors": {
         "1": "Different/worse reasoning than Day 3, no reference to prior event",
         "3": "Same quality reasoning, minimal reference to prior event",
-        "5": "Demonstrates learning — references Day 3 pattern, more efficient execution"
+        "5": "Demonstrates learning \u2014 references Day 3 pattern, more efficient execution"
       }
     },
     "mission_alignment": {
@@ -183,7 +201,7 @@
     "context_stability": {
       "description": "Agent should maintain consistent context quality across all 8 episodes",
       "score_anchors": {
-        "1": "Context degrades — later episodes show missing information from early episodes",
+        "1": "Context degrades \u2014 later episodes show missing information from early episodes",
         "3": "Context mostly stable but occasional omissions",
         "5": "All episodes show complete context awareness across entire timeline"
       }

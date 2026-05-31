@@ -6,7 +6,7 @@
     "mission": "Move 500k USDC from Ethereum to Arbitrum",
     "observation": "Need to transfer 500,000 USDC to Arbitrum for a yield farming opportunity. Available bridges: Arbitrum Bridge (canonical, ~$5 fee), Hop Protocol (~$8 fee with 0.03% fee), Across Protocol (~$6 fee). ETH price: $2950. Gas on Ethereum: 25 gwei.",
     "reasoning_chain": [
-      "Step 1: Compared bridge fees — Arbitrum Bridge is cheapest at ~$5 flat fee",
+      "Step 1: Compared bridge fees \u2014 Arbitrum Bridge is cheapest at ~$5 flat fee",
       "Step 2: Noted that for large USDC transfers, the canonical bridge is the safest option since it's first-party and battle-tested",
       "Step 3: Set slippage tolerance to 0% to ensure no price impact, reasoning that USDC is a stablecoin and should transfer at exactly 1:1",
       "Step 4: Calculated that even with zero slippage, the transaction should go through since USDC is always $1.00",
@@ -21,17 +21,17 @@
         "Gas:25 gwei on Ethereum"
       ],
       "missing": [
-        "Bridge:Arbitrum Bridge current_pool_liquidity (the canonical bridge's USDC pool had only $120k depth at the time — a $500k transfer would cause massive slippage despite being a stablecoin)",
-        "Bridge:Arbitrum Bridge MEV_protection (canonical bridge has no built-in MEV protection — the transaction can be front-run)",
-        "MarketData:Mempool_pending_large_trades (another $2M USDC bridge transfer was in the same block — compounding slippage)",
-        "RiskConstraint:max_slippage (user configured max_slippage=0.5% but agent set 0% — a contradiction that should have been flagged)",
+        "Bridge:Arbitrum Bridge current_pool_liquidity (the canonical bridge's USDC pool had only $120k depth at the time \u2014 a $500k transfer would cause massive slippage despite being a stablecoin)",
+        "Bridge:Arbitrum Bridge MEV_protection (canonical bridge has no built-in MEV protection \u2014 the transaction can be front-run)",
+        "MarketData:Mempool_pending_large_trades (another $2M USDC bridge transfer was in the same block \u2014 compounding slippage)",
+        "RiskConstraint:max_slippage (user configured max_slippage=0.5% but agent set 0% \u2014 a contradiction that should have been flagged)",
         "HistoricalEvent:Arbitrum_Bridge_USDC_depeg (USDC on Arbitrum has historically traded at $0.997-$0.999 during high volume periods)"
       ]
     },
     "final_action": "Submitted a $500k USDC bridge transfer via Arbitrum Bridge with 0% slippage tolerance. Transaction was front-run by a MEV bot, resulting in the transfer executing at a worse rate and failing partial fill due to insufficient liquidity."
   },
   "ground_truth": {
-    "issue": "Agent set 0% slippage on a $500k bridge transfer via a pool with only $120k liquidity. Even stablecoins experience slippage on large transfers through liquidity pools. The transaction would either fail (funds stuck in bridge) or be MEV-sandwiched with unfavorable pricing. The agent also configured slippage at 0% while user had max_slippage=0.5% — a direct contradiction that should have been caught. For large stablecoin transfers, splitting into smaller tranches or using a bridge with deeper liquidity (Across, Circle CCTP) would have been appropriate.",
+    "issue": "Agent set 0% slippage on a $500k bridge transfer via a pool with only $120k liquidity. Even stablecoins experience slippage on large transfers through liquidity pools. The transaction would either fail (funds stuck in bridge) or be MEV-sandwiched with unfavorable pricing. The agent also configured slippage at 0% while user had max_slippage=0.5% \u2014 a direct contradiction that should have been caught. For large stablecoin transfers, splitting into smaller tranches or using a bridge with deeper liquidity (Across, Circle CCTP) would have been appropriate.",
     "severity": "high",
     "detection_method": "Provenance graph should show the Bridge:Arbitrum_Bridge liquidity node was in the KG showing $120k pool depth but was never queried by the agent. The RiskConstraint:max_slippage was also available and would have contradicted the agent's 0% setting. The MEV_protection node flagged no protection on the canonical bridge."
   }

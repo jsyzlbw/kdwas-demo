@@ -8,7 +8,7 @@
     "reasoning_chain": [
       "Step 1: Estimated migration steps: approve token (1 tx), repay USDC debt (1 tx), withdraw ETH collateral (1 tx), deposit to new contract (1 tx), approve new contract (1 tx)",
       "Step 2: Checked current gas price: 25 gwei. Estimated each transaction at ~150k gas = ~$10 per tx at current ETH price",
-      "Step 3: Calculated total gas: 5 transactions × $10 = $50 — exactly matches the $50 ETH in wallet",
+      "Step 3: Calculated total gas: 5 transactions \u00d7 $10 = $50 \u2014 exactly matches the $50 ETH in wallet",
       "Step 4: Reasoned that the migration is 'tight but feasible' and submitted the first transaction without a gas reserve",
       "Step 5: Did not account for gas price volatility or the possibility that one transaction might fail and need retry"
     ],
@@ -22,11 +22,11 @@
         "Protocol:Aave v3.1 migration contract address"
       ],
       "missing": [
-        "Gas:historical_gas_price_volatility (gas regularly spikes 2-3x during high congestion — 25 gwei could become 75+ gwei mid-migration)",
-        "Gas:estimated_gas_for_complex_migration (actual gas for Aave repay+withdraw+deposit sequence is ~250k per step, not 150k — total would be ~$83)",
-        "RiskConstraint:min_gas_reserve (best practice is 2x estimated gas cost as buffer — should have $100+ reserved)",
+        "Gas:historical_gas_price_volatility (gas regularly spikes 2-3x during high congestion \u2014 25 gwei could become 75+ gwei mid-migration)",
+        "Gas:estimated_gas_for_complex_migration (actual gas for Aave repay+withdraw+deposit sequence is ~250k per step, not 150k \u2014 total would be ~$83)",
+        "RiskConstraint:min_gas_reserve (best practice is 2x estimated gas cost as buffer \u2014 should have $100+ reserved)",
         "HistoricalEvent:gas_spikes_during_high_volume (last month saw 3 gas spikes above 150 gwei)",
-        "Protocol:Aave migration complexity (repaying debt before withdrawing is order-dependent — if gas runs out mid-sequence, the user could end up with debt repaid but ETH still locked in old contract)"
+        "Protocol:Aave migration complexity (repaying debt before withdrawing is order-dependent \u2014 if gas runs out mid-sequence, the user could end up with debt repaid but ETH still locked in old contract)"
       ]
     },
     "final_action": "Submitted first approve transaction. After gas spike to 85 gwei, remaining ETH was insufficient to complete the repay transaction. Migration sequence stopped mid-way with USDC debt already repaid but ETH still locked in old contract."

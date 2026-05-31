@@ -4,13 +4,18 @@
   "difficulty": "complex",
   "title": "EOA to Gnosis Safe 2/3 Multi-Sig Migration",
   "description": "Migrate all assets from a single EOA wallet to a Gnosis Safe 2/3 multisig for enhanced security against private key compromise.",
-  "tags": ["security", "multisig", "gnosis_safe", "wallet_migration", "self_custody"],
-
+  "tags": [
+    "security",
+    "multisig",
+    "gnosis_safe",
+    "wallet_migration",
+    "self_custody"
+  ],
   "initial_wallet_state": {
-    "address": "0x7890123456789dEf7890123eFgHIJKL018",
+    "address": "0x303b311daa1b104955d1ec2c5f90f76e920cb58d",
     "balances": {
-      "ETH": 10.0,
-      "USDC": 200000,
+      "ETH": 100.0,
+      "USDC": 500000,
       "WBTC": 50.0
     },
     "positions": [],
@@ -18,30 +23,37 @@
       "tolerance": "moderate",
       "max_leverage": 1.5,
       "max_drawdown": 0.15,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["unaudited_protocols"]
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols"
+      ]
     },
     "mission": {
       "description": "Migrate from single-owner EOA to a 2/3 Gnosis Safe multisig for enhanced security against private key compromise",
       "constraints": [
         "Must use Gnosis Safe (Safe) protocol",
         "Must configure exactly 3 signers with 2-of-3 threshold",
-        "No lending/DeFi positions to migrate — only native assets",
+        "No lending/DeFi positions to migrate \u2014 only native assets",
         "All assets must be transferred from EOA to Safe within the mission",
         "Gas costs must be minimized where possible"
       ]
     }
   },
-
   "mission_prompt": "You currently hold all your assets on a single Ethereum EOA (externally owned account): 10 ETH, 200,000 USDC, and 50 WBTC. For enhanced security, migrate everything to a Gnosis Safe 2/3 multisig wallet. Signer addresses for the Safe: 0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B (Signer A), 0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE (Signer B), and 0x1aD91ee08f21E3cE0a8F8f8A8f8A8f8A8f8A8f8 (Signer C). You need to: (1) deploy the Safe proxy contract with correct configuration, (2) transfer ETH, (3) transfer USDC, (4) transfer WBTC, and (5) verify all assets are controlled by the Safe. Current ETH price is $3,000. USDC is $1.00. WBTC is $65,000. Provide detailed reasoning for each step including the Safe deployment process, token transfer methods, and security considerations.",
   "environment_context": {
     "current_market": {
-      "ETH_price": 3000,
+      "ETH_price": 2019,
       "USDC_price": 1.001,
       "WBTC_price": 65000,
-      "ETH_24h_change": "+1.2%",
+      "ETH_24h_change": "-2.3%",
       "total_portfolio_value_usd": 3570000,
-      "gas_price_gwei": 35
+      "gas_price_gwei": 35,
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080,
+      "total_market_cap_24h_change": "-1.5%"
     },
     "protocol_state": {
       "Safe": {
@@ -60,7 +72,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -71,7 +82,7 @@
       {
         "step": 2,
         "action": "Transfer 10 ETH from EOA to the new Safe address using a simple ETH transfer transaction (21000 gas).",
-        "rationale": "ETH is native — a simple tx.send() with value 10 ETH to the Safe address suffices. Gas: 21,000 at 35 Gwei = 0.000735 ETH (~$2.21)."
+        "rationale": "ETH is native \u2014 a simple tx.send() with value 10 ETH to the Safe address suffices. Gas: 21,000 at 35 Gwei = 0.000735 ETH (~$2.21)."
       },
       {
         "step": 3,
@@ -98,14 +109,14 @@
       {
         "strategy": "Incremental migration with DeFi position handling",
         "steps": "If there were Aave/Compound positions, close positions from EOA, transfer assets, then reopen from Safe. Not needed here since no positions exist.",
-        "tradeoff": "N/A for this scenario — no positions to handle. Included for completeness as a general multi-sig migration pattern."
+        "tradeoff": "N/A for this scenario \u2014 no positions to handle. Included for completeness as a general multi-sig migration pattern."
       }
     ],
     "risk_flags": [
-      "Total gas cost for deployment (250k) + 3 transfers (121k) = ~371k gas at 35 Gwei = 0.012985 ETH (~$38.96) — significant but necessary for security",
-      "Any mistake in Safe address configuration could require redeployment — double-check signer addresses before submitting deployment tx",
-      "The EOA sending the migration transactions is exposed during the process — if the EOA key is compromised mid-migration, funds could be stolen",
-      "Safe contract address must be derived BEFORE deployment to verify it — use create2 or deterministic deployment for predictable address",
+      "Total gas cost for deployment (250k) + 3 transfers (121k) = ~371k gas at 35 Gwei = 0.012985 ETH (~$38.96) \u2014 significant but necessary for security",
+      "Any mistake in Safe address configuration could require redeployment \u2014 double-check signer addresses before submitting deployment tx",
+      "The EOA sending the migration transactions is exposed during the process \u2014 if the EOA key is compromised mid-migration, funds could be stolen",
+      "Safe contract address must be derived BEFORE deployment to verify it \u2014 use create2 or deterministic deployment for predictable address",
       "After migration, ensure the old EOA is no longer used to avoid accidental loss of funds sent to the old address"
     ],
     "mission_alignment_check": {
@@ -113,12 +124,12 @@
       "reason": "Migrating from EOA to a 2/3 Gnosis Safe multisig significantly enhances security posture (eliminates single point of failure from private key compromise), consistent with the moderate risk profile's security-first approach"
     },
     "known_hallucination_cases": [
-      "Agent might claim that Safe positions on lending protocols can be transferred to the new Safe address — lending protocol positions are bound to the original EOA address; they cannot be transferred and must be closed and reopened, or the Safe must be made an owner of the position",
-      "Agent might forget to set the threshold before adding owners during deployment — the Safe deployment constructor takes (owners, threshold) together; there is no separate 'set threshold' step",
-      "Agent might claim Safe deployment is free — deploying a Safe proxy via the factory costs gas (~250k gas); the factory call is not sponsored",
-      "Agent might confuse Gnosis Safe (now called 'Safe') with other multisig solutions like Argent or MetaMask Snaps multisig — Safe is the industry standard with audited contracts and a comprehensive SDK",
-      "Agent might suggest that after migration, the old EOA becomes a signer on the Safe — the Safe signers are set independently and the old EOA is not automatically a signer; signers must be explicitly added during deployment",
-      "Agent might claim that USDC and WBTC transfers need to be done through a multisig transaction — since the assets are still on the EOA, regular single-signature transactions are sufficient to transfer them TO the Safe"
+      "Agent might claim that Safe positions on lending protocols can be transferred to the new Safe address \u2014 lending protocol positions are bound to the original EOA address; they cannot be transferred and must be closed and reopened, or the Safe must be made an owner of the position",
+      "Agent might forget to set the threshold before adding owners during deployment \u2014 the Safe deployment constructor takes (owners, threshold) together; there is no separate 'set threshold' step",
+      "Agent might claim Safe deployment is free \u2014 deploying a Safe proxy via the factory costs gas (~250k gas); the factory call is not sponsored",
+      "Agent might confuse Gnosis Safe (now called 'Safe') with other multisig solutions like Argent or MetaMask Snaps multisig \u2014 Safe is the industry standard with audited contracts and a comprehensive SDK",
+      "Agent might suggest that after migration, the old EOA becomes a signer on the Safe \u2014 the Safe signers are set independently and the old EOA is not automatically a signer; signers must be explicitly added during deployment",
+      "Agent might claim that USDC and WBTC transfers need to be done through a multisig transaction \u2014 since the assets are still on the EOA, regular single-signature transactions are sufficient to transfer them TO the Safe"
     ],
     "reasoning_path": [
       "Step 1: Identify all assets to migrate: 10 ETH (native), 200000 USDC (ERC-20), 50 WBTC (ERC-20)",
@@ -150,7 +161,6 @@
       "Metric:TotalGasCost"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Deploy Safe with correct 3 signers and 2/3 threshold",
@@ -168,9 +178,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

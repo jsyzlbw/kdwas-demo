@@ -4,20 +4,31 @@
   "difficulty": "complex",
   "title": "DAO Treasury Rebalancing with TWAP Execution",
   "description": "Execute DAO treasury rebalancing from 80% ETH / 20% USDC to 50% ETH / 30% USDC / 20% DAI per governance vote, using TWAP to minimize market impact.",
-  "tags": ["dao", "treasury_rebalancing", "twap", "market_impact", "stablecoin", "governance"],
-
+  "tags": [
+    "dao",
+    "treasury_rebalancing",
+    "twap",
+    "market_impact",
+    "stablecoin",
+    "governance"
+  ],
   "initial_wallet_state": {
-    "address": "0x0D0707963952f2fBA59dD06f2b425ace40b492Fe",
+    "address": "0x303b311daa1b104955d1ec2c5f90f76e920cb58d",
     "balances": {
-      "ETH": 0
+      "ETH": 5000,
+      "USDC": 2000000
     },
     "positions": [],
     "risk_profile": {
       "tolerance": "moderate",
       "max_leverage": 1.0,
-      "max_drawdown": 0.20,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["unaudited_protocols"]
+      "max_drawdown": 0.2,
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols"
+      ]
     },
     "mission": {
       "description": "DAO treasury manager: execute governance-mandated treasury rebalancing with minimal market impact",
@@ -29,19 +40,18 @@
       ]
     }
   },
-
   "mission_prompt": "The DAO treasury holds 10000 ETH ($25.2M at $2520/ETH) and 5000000 USDC ($5M). Governance vote TRE-2026-05 passed on 2026-05-28 mandating a rebalance to 50% ETH / 30% USDC / 20% DAI. Current allocations: ~83.4% ETH / 16.6% USDC. Target: 50% ETH, 30% USDC, 20% DAI. Total treasury value at current prices: $30.2M. Target amounts: $15.1M in ETH (~5992 ETH), $9.06M in USDC, $6.04M in DAI. You must sell ~4008 ETH for USDC and DAI using TWAP over the next 5 days. The deadline is 2026-06-04. Use a DEX aggregator (1inch, Cow Swap) and split into daily TWAP slices. Max 0.3% slippage per trade.",
-
   "environment_context": {
     "current_market": {
-      "ETH_price": 2520,
-      "ETH_24h_change": "-3.1%",
-      "ETH_7d_change": "-8.5%",
-      "ETH_200ma": 2650,
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
+      "ETH_7d_change": "+1.8%",
+      "ETH_200ma": 2080,
       "USDC_price": 1.001,
       "DAI_price": 0.999,
-      "total_market_cap_24h_change": "-2.8%",
-      "DEX_volume_24h_ETH": "Uniswap: $1.2B, Curve: $680M, Cow Swap: $340M"
+      "total_market_cap_24h_change": "-1.5%",
+      "DEX_volume_24h_ETH": "Uniswap: $1.2B, Curve: $680M, Cow Swap: $340M",
+      "ETH_30d_change": "-5.1%"
     },
     "protocol_state": {
       "Uniswap": {
@@ -69,13 +79,17 @@
       "OneInch": {
         "chain": "Ethereum",
         "type": "aggregator",
-        "supported_dexes": ["UniswapV3", "Curve", "Balancer", "SushiSwap"],
+        "supported_dexes": [
+          "UniswapV3",
+          "Curve",
+          "Balancer",
+          "SushiSwap"
+        ],
         "avg_slippage_bps": 0.4,
         "gas_overhead": "15% above direct swap"
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -86,7 +100,7 @@
       {
         "step": 2,
         "action": "Design TWAP schedule: 5 days, sell ~801.6 ETH/day in 4 hourly trades of ~200.4 ETH each",
-        "rationale": "Split 4008 ETH across 5 days (Mon-Fri) = 801.6 ETH/day. Each day: 4 trades of ~200.4 ETH every 6 hours. 200.4 ETH at $2520 = ~$505K per trade. Uniswap V3 ETH/USDC 0.05% pool has $450M liquidity and $520M daily volume — a $505K trade represents ~0.1% of daily volume, well within the 0.3% slippage budget."
+        "rationale": "Split 4008 ETH across 5 days (Mon-Fri) = 801.6 ETH/day. Each day: 4 trades of ~200.4 ETH every 6 hours. 200.4 ETH at $2520 = ~$505K per trade. Uniswap V3 ETH/USDC 0.05% pool has $450M liquidity and $520M daily volume \u2014 a $505K trade represents ~0.1% of daily volume, well within the 0.3% slippage budget."
       },
       {
         "step": 3,
@@ -96,7 +110,7 @@
       {
         "step": 4,
         "action": "Execute via Cow Swap for MEV protection and 0.3% avg slippage",
-        "rationale": "Cow Swap's batch auction mechanism protects against MEV and frontrunning. With $340M 24h volume, our $505K per-trade orders represent 0.15% of daily volume — executed within market depth. Cow Swap also offers limit-order-like protection through its solver network."
+        "rationale": "Cow Swap's batch auction mechanism protects against MEV and frontrunning. With $340M 24h volume, our $505K per-trade orders represent 0.15% of daily volume \u2014 executed within market depth. Cow Swap also offers limit-order-like protection through its solver network."
       },
       {
         "step": 5,
@@ -112,35 +126,35 @@
       },
       {
         "strategy": "Single large OTC trade via institutional desk",
-        "steps": "Contact FalconX or Wintermute for an OTC swap of 4008 ETH → USDC + DAI at a fixed spread",
+        "steps": "Contact FalconX or Wintermute for an OTC swap of 4008 ETH \u2192 USDC + DAI at a fixed spread",
         "tradeoff": "Faster execution (1 trade), potentially lower total fees but requires KYC and trusted counterparty; misses the governance requirement for transparent on-chain execution"
       }
     ],
     "risk_flags": [
-      "ETH below 200-day MA ($2650) — selling into a downtrend may amplify losses if price rebounds",
-      "High correlation between all three assets in volatile market — stablecoins may depeg during stress",
+      "ETH below 200-day MA ($2650) \u2014 selling into a downtrend may amplify losses if price rebounds",
+      "High correlation between all three assets in volatile market \u2014 stablecoins may depeg during stress",
       "TWAP failure risk: if a single trade reverts (gas spike, pool manipulation), the schedule is disrupted",
-      "DAI has lower liquidity in ETH pair ($120M Uni V3) vs USDC ($450M) — DAI trades may experience higher slippage",
-      "Governance deadline (2026-06-04) is fixed — if market conditions prevent trading on any day, remaining days require larger slices (exceeding 0.3% slippage)"
+      "DAI has lower liquidity in ETH pair ($120M Uni V3) vs USDC ($450M) \u2014 DAI trades may experience higher slippage",
+      "Governance deadline (2026-06-04) is fixed \u2014 if market conditions prevent trading on any day, remaining days require larger slices (exceeding 0.3% slippage)"
     ],
     "mission_alignment_check": {
       "aligned": true,
       "reason": "TWAP execution respects governance mandate, slippage constraints, and deadline. Splitting into daily batches minimizes market impact while ensuring completion within 7 days."
     },
     "known_hallucination_cases": [
-      "Agent might claim 'TWAP guarantees zero slippage' — TWAP distributes but does not eliminate slippage; each individual trade still incurs price impact",
-      "Agent might claim 'Cow Swap has zero fees' — Cow Swap has settlement fees paid to solvers; there is no protocol fee but solvers earn spread",
-      "Agent might claim 'selling 4008 ETH in one trade on Uniswap V3 is safe' — a single trade of 4008 ETH (~$10.1M) on the 0.05% pool would cause ~2-3% slippage, far exceeding the 0.3% limit",
-      "Agent might claim 'DAI can be acquired directly from MakerDAO at $1' — the Peg Stability Module (PSM) allows 1:1 USDC-to-DAI but not ETH-to-DAI directly; ETH must first be swapped to USDC",
-      "Agent might claim 'TWAP is implemented natively in Cow Swap' — TWAP is a strategy pattern, not a native feature; it must be implemented as a series of limit orders or a custom smart contract"
+      "Agent might claim 'TWAP guarantees zero slippage' \u2014 TWAP distributes but does not eliminate slippage; each individual trade still incurs price impact",
+      "Agent might claim 'Cow Swap has zero fees' \u2014 Cow Swap has settlement fees paid to solvers; there is no protocol fee but solvers earn spread",
+      "Agent might claim 'selling 4008 ETH in one trade on Uniswap V3 is safe' \u2014 a single trade of 4008 ETH (~$10.1M) on the 0.05% pool would cause ~2-3% slippage, far exceeding the 0.3% limit",
+      "Agent might claim 'DAI can be acquired directly from MakerDAO at $1' \u2014 the Peg Stability Module (PSM) allows 1:1 USDC-to-DAI but not ETH-to-DAI directly; ETH must first be swapped to USDC",
+      "Agent might claim 'TWAP is implemented natively in Cow Swap' \u2014 TWAP is a strategy pattern, not a native feature; it must be implemented as a series of limit orders or a custom smart contract"
     ],
     "reasoning_path": [
-      "Step 1: Parse governance mandate — compute target allocations from passed proposal parameters",
-      "Step 2: Calculate current vs target: ETH 10000 (83.4%) → 5992 (50%) means sell 4008 ETH; USDC $5M (16.6%) → $9.06M (30%) means buy $4.06M more; DAI $0 → $6.04M (20%) means acquire",
-      "Step 3: Design TWAP schedule respecting slippage constraint — use pool liquidity data to size individual trades",
-      "Step 4: Select routing strategy — Cow Swap for MEV protection",
-      "Step 5: Implement monitoring — track cumulative progress, slippage, and gas costs daily",
-      "Step 6: Verify final allocation against governance mandate within acceptable tolerance (±1%)"
+      "Step 1: Parse governance mandate \u2014 compute target allocations from passed proposal parameters",
+      "Step 2: Calculate current vs target: ETH 10000 (83.4%) \u2192 5992 (50%) means sell 4008 ETH; USDC $5M (16.6%) \u2192 $9.06M (30%) means buy $4.06M more; DAI $0 \u2192 $6.04M (20%) means acquire",
+      "Step 3: Design TWAP schedule respecting slippage constraint \u2014 use pool liquidity data to size individual trades",
+      "Step 4: Select routing strategy \u2014 Cow Swap for MEV protection",
+      "Step 5: Implement monitoring \u2014 track cumulative progress, slippage, and gas costs daily",
+      "Step 6: Verify final allocation against governance mandate within acceptable tolerance (\u00b11%)"
     ],
     "kg_nodes_involved": [
       "Wallet:0x0D0707963952f2fBA59dD06f2b425ace40b492Fe",
@@ -158,10 +172,9 @@
       "Constraint:Deadline_2026-06-04"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
-      "Rebalanced to 50/30/20 ETH/USDC/DAI within ±1% tolerance",
+      "Rebalanced to 50/30/20 ETH/USDC/DAI within \u00b11% tolerance",
       "All individual trades within 0.3% slippage",
       "Complete within 7-day deadline",
       "TWAP strategy properly designed with trade sizing rationale",
@@ -175,9 +188,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

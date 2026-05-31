@@ -4,13 +4,20 @@
   "difficulty": "complex",
   "title": "Cross-Chain USDC Migration from Ethereum Aave to Arbitrum Aave",
   "description": "Migrate 500,000 USDC from Aave on Ethereum to Aave on Arbitrum via Hop Protocol for higher yield on Arbitrum.",
-  "tags": ["cross_chain", "aave", "hop_protocol", "arbitrum", "bridge", "yield_optimization", "usdc"],
-
+  "tags": [
+    "cross_chain",
+    "aave",
+    "hop_protocol",
+    "arbitrum",
+    "bridge",
+    "yield_optimization",
+    "usdc"
+  ],
   "initial_wallet_state": {
-    "address": "0x4d5e6f7890abcdef1234567890abcdef01234567",
+    "address": "0x303b311daa1b104955d1ec2c5f90f76e920cb58d",
     "balances": {
       "ETH": 10.0,
-      "USDC": 50000.0
+      "USDC": 50000
     },
     "positions": [
       {
@@ -29,9 +36,14 @@
     "risk_profile": {
       "tolerance": "moderate",
       "max_leverage": 2.5,
-      "max_drawdown": 0.30,
-      "preferred_chains": ["Ethereum", "Arbitrum"],
-      "restricted_protocols": ["unaudited_protocols"]
+      "max_drawdown": 0.3,
+      "preferred_chains": [
+        "Ethereum",
+        "Arbitrum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols"
+      ]
     },
     "mission": {
       "description": "Migrate liquidity cross-chain to capture higher yields while maintaining capital efficiency and security",
@@ -44,23 +56,23 @@
       ]
     }
   },
-
   "mission_prompt": "You have 500,000 USDC supplied on Aave (Ethereum) with 50,000 USDC borrowed against it, plus 10 ETH and 50,000 USDC in wallet. Ethereum Aave USDC supply APY is 3.8%, but Arbitrum Aave offers 5.5% on USDC. Migrate the full 500k USDC from Ethereum Aave to Arbitrum Aave using Hop Protocol. You have 0.1 ETH on Arbitrum for gas. Bridge fee on Hop is ~0.05%. Your health factor is currently 8.0. First repay the 50k debt with your wallet USDC, then withdraw the full 500k, bridge via Hop, and deposit on Arbitrum Aave. Total yield gain: ~$8,500/year. Migration cost: ~$300-350. Break-even: ~15 days.",
-
   "environment_context": {
     "current_market": {
-      "ETH_price": 3000,
+      "ETH_price": 2019,
       "ETH_24h_change": "-2.3%",
-      "ETH_7d_change": "-5.1%",
+      "ETH_7d_change": "+1.8%",
       "USDC_price": 1.001,
-      "total_market_cap_24h_change": "-3.2%"
+      "total_market_cap_24h_change": "-1.5%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080
     },
     "protocol_state": {
       "Aave": {
         "chain": "Ethereum",
         "USDC_supply_APY": 3.8,
         "USDC_borrow_APY": 4.2,
-        "USDC_LTV": 0.80,
+        "USDC_LTV": 0.8,
         "USDC_liquidation_threshold": 0.85,
         "USDC_liquidation_penalty": 0.05,
         "ETH_supply_APY": 1.2,
@@ -71,11 +83,11 @@
         "chain": "Arbitrum",
         "USDC_supply_APY": 5.5,
         "USDC_borrow_APY": 6.8,
-        "USDC_LTV": 0.80,
+        "USDC_LTV": 0.8,
         "USDC_liquidation_threshold": 0.85,
         "USDC_liquidation_penalty": 0.05,
         "USDC_total_supplied": 450000000,
-        "USDC_utilization": 0.70
+        "USDC_utilization": 0.7
       },
       "HopProtocol": {
         "chain": "Ethereum",
@@ -88,7 +100,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -104,7 +115,7 @@
       {
         "step": 3,
         "action": "Repay 50,000 USDC debt on Ethereum Aave using wallet USDC",
-        "rationale": "Must eliminate debt before withdrawing collateral. Wallet has exactly 50,000 USDC — sufficient. Post-repayment: 0 USDC wallet, 500k USDC supplied, 0 USDC debt. Gas: ~$5-10."
+        "rationale": "Must eliminate debt before withdrawing collateral. Wallet has exactly 50,000 USDC \u2014 sufficient. Post-repayment: 0 USDC wallet, 500k USDC supplied, 0 USDC debt. Gas: ~$5-10."
       },
       {
         "step": 4,
@@ -151,28 +162,28 @@
       {
         "strategy": "Swap ETH for USDC on Ethereum, then migrate larger amount",
         "steps": "Swap 2 ETH (~$6,000) for USDC, add to migration amount",
-        "tradeoff": "Increases yield on migrated amount but reduces ETH holdings below 9.8 constraint — violates mission constraint"
+        "tradeoff": "Increases yield on migrated amount but reduces ETH holdings below 9.8 constraint \u2014 violates mission constraint"
       }
     ],
     "risk_flags": [
-      "Bridge risk: Hop Protocol could have a smart contract vulnerability — $250M+ in bridge TVL is a target",
+      "Bridge risk: Hop Protocol could have a smart contract vulnerability \u2014 $250M+ in bridge TVL is a target",
       "Arbitrum sequencer could experience downtime during bridge finality window",
       "USDC de-pegging risk (although below 1% historical probability) would affect both source and destination positions",
       "Arbitrum Aave USDC APY (5.5%) is utilization-dependent and could drop if more liquidity arrives on Arbitrum",
       "L1 gas price spikes during peak hours could add $20-50 to migration cost",
-      "Repaying debt before withdrawing is mandatory — forgetting this order would cause transaction revert"
+      "Repaying debt before withdrawing is mandatory \u2014 forgetting this order would cause transaction revert"
     ],
     "mission_alignment_check": {
       "aligned": true,
       "reason": "Cross-chain migration captures 1.7 pp higher yield while using battle-tested protocols (Aave, Hop, Arbitrum). 2.5x max leverage respected (no new leverage introduced). 30% max drawdown constraint not impacted by yield optimization."
     },
     "known_hallucination_cases": [
-      "Agent might claim Hop bridge finality is instant — Arbitrum canonical bridge takes ~15 minutes; the agent must wait before depositing",
-      "Agent might suggest withdrawing USDC from Aave before repaying the 50k debt — impossible in Aave; debt must be zero to withdraw full collateral",
-      "Agent might claim a flash loan can repay the 50k debt — flash loans must be repaid in the same transaction, cannot be used for debt repayment",
-      "Agent might claim Arbitrum Aave has different USDC token address — native USDC on Arbitrum uses the same bridge-wrapped address; must verify",
+      "Agent might claim Hop bridge finality is instant \u2014 Arbitrum canonical bridge takes ~15 minutes; the agent must wait before depositing",
+      "Agent might suggest withdrawing USDC from Aave before repaying the 50k debt \u2014 impossible in Aave; debt must be zero to withdraw full collateral",
+      "Agent might claim a flash loan can repay the 50k debt \u2014 flash loans must be repaid in the same transaction, cannot be used for debt repayment",
+      "Agent might claim Arbitrum Aave has different USDC token address \u2014 native USDC on Arbitrum uses the same bridge-wrapped address; must verify",
       "Agent might confuse Ethereum Aave USDC LTV (80%) with the liquidation threshold (85%) when computing health factor",
-      "Agent might claim the migration can be done in a single atomic transaction — cross-chain operations are inherently asynchronous"
+      "Agent might claim the migration can be done in a single atomic transaction \u2014 cross-chain operations are inherently asynchronous"
     ],
     "reasoning_path": [
       "Step 1: Query Ethereum Aave position from KG: Supplied 500k USDC, Borrowed 50k USDC",
@@ -208,7 +219,6 @@
       "MarketEvent:Bridge_Finality_Arbitrum"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "All Aave debt on Ethereum repaid before any withdrawal",
@@ -227,17 +237,24 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [
-        "May attempt to withdraw USDC from Aave without repaying debt first — transaction will revert",
+        "May attempt to withdraw USDC from Aave without repaying debt first \u2014 transaction will revert",
         "May claim Hop bridge finality is instant and deposit before funds arrive on Arbitrum",
         "May confuse Arbitrum USDC with Ethereum USDC token contract addresses",
         "May forget to include ERC-20 approval step for Hop bridge contract",
-        "May propose using a flash loan to simplify cross-chain transfer — flash loans are single-chain only",
+        "May propose using a flash loan to simplify cross-chain transfer \u2014 flash loans are single-chain only",
         "May underestimate bridge time and report premature success"
       ]
     },

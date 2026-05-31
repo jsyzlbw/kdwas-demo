@@ -4,12 +4,12 @@
   "title": "Rebalancing LP position has no cost",
   "agent_trace": {
     "mission": "Maintain optimal LP position",
-    "observation": "User has a Uniswap V3 ETH/USDC LP position at ±10% range set 30 days ago. ETH has moved from $2500 to $2900 (+16%), and the position's range is now $2250-$2750. The position is entirely out of range (100% in USDC), earning no fees. User asks: 'Should I rebalance?'",
+    "observation": "User has a Uniswap V3 ETH/USDC LP position at \u00b110% range set 30 days ago. ETH has moved from $2500 to $2900 (+16%), and the position's range is now $2250-$2750. The position is entirely out of range (100% in USDC), earning no fees. User asks: 'Should I rebalance?'",
     "reasoning_chain": [
-      "Step 1: Checked the position and confirmed 100% of liquidity is out of range — currently all USDC, earning zero fees",
+      "Step 1: Checked the position and confirmed 100% of liquidity is out of range \u2014 currently all USDC, earning zero fees",
       "Step 2: Calculated that collecting fees and re-depositing at the current price range would reactivate the position",
-      "Step 3: Stated 'Rebalancing involves collecting your accumulated fees and opening a new position — this is free to do'",
-      "Step 4: Recommended immediate rebalancing to a new ±10% range around $2900",
+      "Step 3: Stated 'Rebalancing involves collecting your accumulated fees and opening a new position \u2014 this is free to do'",
+      "Step 4: Recommended immediate rebalancing to a new \u00b110% range around $2900",
       "Step 5: Did not account for the gas costs, fee collection costs, or swap costs involved in rebalancing"
     ],
     "kg_evidence_retrieved": {
@@ -22,17 +22,17 @@
         "Protocol:Uniswap V3 LP rebalancing process"
       ],
       "missing": [
-        "Cost:gas_for_fee_collection_transaction (~$15-25 at current gas prices to call collect() — agent assumed this is free)",
+        "Cost:gas_for_fee_collection_transaction (~$15-25 at current gas prices to call collect() \u2014 agent assumed this is free)",
         "Cost:gas_for_new_position_creation (~$20-30 to mint new LP position)",
-        "Cost:swap_cost_for_rebalancing (position is 100% USDC — to create a balanced ETH/USDC position at current price, some USDC must be swapped for ETH, incurring swap fees and slippage of ~$50-100)",
+        "Cost:swap_cost_for_rebalancing (position is 100% USDC \u2014 to create a balanced ETH/USDC position at current price, some USDC must be swapped for ETH, incurring swap fees and slippage of ~$50-100)",
         "Comparison:rebalance_cost_vs_fee_income (total rebalancing cost of ~$100-150 vs expected daily fees of ~$5 means it takes 20-30 days to break even on the rebalance)",
-        "BestPractice:LP_rebalance_threshold (industry standard is to only rebalance when expected fee income recovers the rebalancing cost within 7-14 days — this position doesn't meet that threshold)"
+        "BestPractice:LP_rebalance_threshold (industry standard is to only rebalance when expected fee income recovers the rebalancing cost within 7-14 days \u2014 this position doesn't meet that threshold)"
       ]
     },
     "final_action": "Advised user to immediately collect fees and re-deposit at new range around $2900, claiming 'rebalancing is cost-free'"
   },
   "ground_truth": {
-    "issue": "The agent claimed rebalancing an LP position has 'no cost' — a fundamental misunderstanding of Uniswap V3 mechanics. Rebalancing involves: (1) gas for collecting fees ($15-25), (2) gas for minting a new position ($20-30), and (3) swap costs to rebalance the asset ratio ($50-100 in fees and slippage since the position was 100% USDC). Total cost ~$100-150, which would take 20-30 days of fees to recover. The agent should have calculated whether rebalancing is economically justified before recommending it.",
+    "issue": "The agent claimed rebalancing an LP position has 'no cost' \u2014 a fundamental misunderstanding of Uniswap V3 mechanics. Rebalancing involves: (1) gas for collecting fees ($15-25), (2) gas for minting a new position ($20-30), and (3) swap costs to rebalance the asset ratio ($50-100 in fees and slippage since the position was 100% USDC). Total cost ~$100-150, which would take 20-30 days of fees to recover. The agent should have calculated whether rebalancing is economically justified before recommending it.",
     "severity": "medium",
     "detection_method": "Provenance graph should show the agent queried LP position status and the rebalancing process, but never queried GasCost nodes for any of the required transactions, nor SwapCost nodes for rebalancing the asset ratio. The Cost nodes for collect(), mint(), and swap() existed in the KG with current estimates but were never retrieved."
   }

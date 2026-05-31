@@ -9,35 +9,61 @@
       "agent_id": "treasury_agent",
       "role": "Treasury Manager",
       "chain": "Ethereum",
-      "holdings": { "USDC": 500000, "DAI": 200000 },
+      "holdings": {
+        "USDC": 500000,
+        "DAI": 200000
+      },
       "positions": [
-        { "protocol": "Aave", "asset": "USDC", "amount": 400000, "type": "supplied" },
-        { "protocol": "Aave", "asset": "ETH", "amount": 50, "type": "borrowed" }
+        {
+          "protocol": "Aave",
+          "asset": "USDC",
+          "amount": 400000,
+          "type": "supplied"
+        },
+        {
+          "protocol": "Aave",
+          "asset": "ETH",
+          "amount": 50,
+          "type": "borrowed"
+        }
       ],
       "risk_profile": {
         "tolerance": "moderate",
         "max_slippage": 0.02
       },
-      "mission": "Preserve capital and maintain stable yield across chain migration"
+      "mission": "Preserve capital and maintain stable yield across chain migration",
+      "address": "0xcfb8248cf9401db5c9a8069f28e19fdd008d8813"
     },
     {
       "agent_id": "risk_agent",
       "role": "Risk Monitor",
       "chain": "Ethereum",
-      "monitoring_protocols": ["Aave", "Compound"],
+      "monitoring_protocols": [
+        "Aave",
+        "Compound"
+      ],
       "alert_thresholds": {
         "ltv_change": 0.05,
         "health_factor_minimum": 1.5
       },
-      "mission": "Detect and alert on protocol-level risk changes in real-time"
+      "mission": "Detect and alert on protocol-level risk changes in real-time",
+      "address": "0x5b43453fce04b92e190f391a83136bfbecedefd1"
     },
     {
       "agent_id": "execution_agent",
       "role": "Cross-Chain Executor",
       "chain": "Arbitrum",
-      "supported_chains": ["Ethereum", "Arbitrum", "Optimism"],
-      "bridges": ["Arbitrum Bridge", "Hop Protocol"],
-      "mission": "Execute cross-chain transactions optimally with minimum slippage and gas"
+      "supported_chains": [
+        "Ethereum",
+        "Arbitrum",
+        "Optimism"
+      ],
+      "bridges": [
+        "Arbitrum Bridge",
+        "Hop Protocol"
+      ],
+      "mission": "Execute cross-chain transactions optimally with minimum slippage and gas",
+      "address": "0x200dc8d0c893064565a52b57e5bc489839d001f3"
     }
   ],
   "trigger_event": {
@@ -53,21 +79,26 @@
       "time": "T+0h",
       "actor": "risk_agent",
       "action": "Detect governance event via KG Governance:Aave node",
-      "data_shared": { "event_type": "LTV_change", "from": 0.80, "to": 0.70, "deadline": "48h" }
+      "data_shared": {
+        "event_type": "LTV_change",
+        "from": 0.8,
+        "to": 0.7,
+        "deadline": "48h"
+      }
     },
     {
       "step": 2,
       "time": "T+0.5h",
       "actor": "risk_agent",
       "action": "Assess impact: 50 ETH borrowed * ETH_price * (0.80-0.70) = liquidation risk increases by 12.5%",
-      "kg_update": "SharedKG:Alert:Risk → {severity:critical, protocol:Aave, deadline:T+48h}"
+      "kg_update": "SharedKG:Alert:Risk \u2192 {severity:critical, protocol:Aave, deadline:T+48h}"
     },
     {
       "step": 3,
       "time": "T+1h",
       "actor": "treasury_agent",
-      "action": "Pull alert from shared KG → query Aave position status",
-      "decision": "Decision: migrate 400,000 USDC supply + repay 50 ETH loan → move to Aave Arbitrum"
+      "action": "Pull alert from shared KG \u2192 query Aave position status",
+      "decision": "Decision: migrate 400,000 USDC supply + repay 50 ETH loan \u2192 move to Aave Arbitrum"
     },
     {
       "step": 4,
@@ -78,15 +109,23 @@
         "task": "migrate",
         "source_chain": "Ethereum",
         "target_chain": "Arbitrum",
-        "actions": ["repay 50 ETH on Aave Ethereum", "withdraw 400000 USDC", "bridge via Hop", "supply to Aave Arbitrum"],
-        "constraints": {"max_gas": "0.5 ETH", "max_time": "T+24h"}
+        "actions": [
+          "repay 50 ETH on Aave Ethereum",
+          "withdraw 400000 USDC",
+          "bridge via Hop",
+          "supply to Aave Arbitrum"
+        ],
+        "constraints": {
+          "max_gas": "0.5 ETH",
+          "max_time": "T+24h"
+        }
       }
     },
     {
       "step": 5,
       "time": "T+4h",
       "actor": "execution_agent",
-      "action": "Execute migration: repay ETH loan on Aave Ethereum (use 400000 USDC to swap → ETH → repay)",
+      "action": "Execute migration: repay ETH loan on Aave Ethereum (use 400000 USDC to swap \u2192 ETH \u2192 repay)",
       "status": "in_progress"
     },
     {
@@ -100,15 +139,15 @@
       "step": 7,
       "time": "T+7h",
       "actor": "execution_agent",
-      "action": "Supply USDC to Aave Arbitrum → confirm completion",
-      "kg_update": "SharedKG:Position → {protocol:Aave, chain:Arbitrum, asset:USDC, amount:390000}"
+      "action": "Supply USDC to Aave Arbitrum \u2192 confirm completion",
+      "kg_update": "SharedKG:Position \u2192 {protocol:Aave, chain:Arbitrum, asset:USDC, amount:390000}"
     },
     {
       "step": 8,
       "time": "T+7.5h",
       "actor": "risk_agent",
-      "action": "Verify new positions on Arbitrum are healthy → check Aave Arbitrum health factor",
-      "kg_update": "SharedKG:Alert:Risk → {status:resolved}"
+      "action": "Verify new positions on Arbitrum are healthy \u2192 check Aave Arbitrum health factor",
+      "kg_update": "SharedKG:Alert:Risk \u2192 {status:resolved}"
     }
   ],
   "evaluation_metrics": {

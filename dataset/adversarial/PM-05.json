@@ -22,11 +22,11 @@
         "Layer2:Optimism is an L2 rollup"
       ],
       "missing": [
-        "Bridge:Optimism_Gateway_withdrawal_period (Optimism's canonical bridge has a ~7 day challenge period for withdrawals — not 20 minutes. The 20-minute figure is for deposits only, which is not useful if the user might need to withdraw back)",
-        "Bridge:Arbitrum_bridge_withdrawal_period (Arbitrum's canonical bridge has ~8 hour dispute window for withdrawals — still much shorter than Optimism's 7 days but not 20 minutes)",
-        "Bridge:Optimism_Gateway_deposit_vs_withdrawal (the agent confused deposit time with total bridge round-trip time — a common misunderstanding)",
+        "Bridge:Optimism_Gateway_withdrawal_period (Optimism's canonical bridge has a ~7 day challenge period for withdrawals \u2014 not 20 minutes. The 20-minute figure is for deposits only, which is not useful if the user might need to withdraw back)",
+        "Bridge:Arbitrum_bridge_withdrawal_period (Arbitrum's canonical bridge has ~8 hour dispute window for withdrawals \u2014 still much shorter than Optimism's 7 days but not 20 minutes)",
+        "Bridge:Optimism_Gateway_deposit_vs_withdrawal (the agent confused deposit time with total bridge round-trip time \u2014 a common misunderstanding)",
         "Comparison:bridge_round_trip_times (Arbitrum: 8 hours for full finality; Optimism: 7 days for full finality; Across: ~2 minutes; Hop: ~5 minutes)",
-        "RiskConstraint:urgency_requirement (user needs funds settled within 6 hours — Optimism bridge's 7-day withdrawal window makes it unsuitable even if deposit is fast)"
+        "RiskConstraint:urgency_requirement (user needs funds settled within 6 hours \u2014 Optimism bridge's 7-day withdrawal window makes it unsuitable even if deposit is fast)"
       ]
     },
     "final_action": "Told user both Arbitrum and Optimism bridges take ~20 minutes, recommending they pick either chain"
@@ -34,6 +34,6 @@
   "ground_truth": {
     "issue": "The agent fundamentally confused bridge deposit time with total finality time. The canonical Optimism bridge requires a 7-day challenge period for withdrawals, not 20 minutes. The 20-minute figure only applies to deposits (L1 to L2). For a user who may need to move funds back, Optimism is unsuitable within a 6-hour window. Even Arbitrum's 8-hour withdrawal window is tight. The correct recommendation would have been a fast bridge like Across (~2 min) or Hop (~5 min), or at minimum clearly explaining the deposit vs withdrawal time asymmetry. This is a well-known point of confusion even among experienced DeFi users.",
     "severity": "medium",
-    "detection_method": "Provenance graph should show the agent queried the bridge existence nodes but only retrieved DepositTime data, not WithdrawalTime / FinalityPeriod data. The Bridge:Optimism_withdrawal_period node existed with a 7-day value but was never queried. The comparison table node with round-trip times was also available. Detection should flag: asymmetric retrieval — only deposit timing queried, withdrawal timing missing."
+    "detection_method": "Provenance graph should show the agent queried the bridge existence nodes but only retrieved DepositTime data, not WithdrawalTime / FinalityPeriod data. The Bridge:Optimism_withdrawal_period node existed with a 7-day value but was never queried. The comparison table node with round-trip times was also available. Detection should flag: asymmetric retrieval \u2014 only deposit timing queried, withdrawal timing missing."
   }
 }

@@ -3,60 +3,94 @@
   "category": "3.3.1 Multi-Treasury Rebalancing",
   "difficulty": "complex",
   "title": "Coordinated Multi-DAO Treasury Rebalancing with Market Impact Minimization",
-  "narrative": "Four DAO treasuries (Uniswap, Aave, Compound, and Lido) have independently passed rebalancing proposals on the same day — each needs to sell ETH and buy DAI to reduce ETH exposure following the recent rally to $3,100. If executed simultaneously, the combined sell pressure of ~2,000 ETH ($6.2M) would cause 4-6% slippage. The coordinator agent must sequence the trades via TWAP across multiple hours and DEX aggregators to minimize market impact while ensuring all four DAOs complete their rebalancing within the 48-hour execution window.",
+  "narrative": "Four DAO treasuries (Uniswap, Aave, Compound, and Lido) have independently passed rebalancing proposals on the same day \u2014 each needs to sell ETH and buy DAI to reduce ETH exposure following the recent rally to $3,100. If executed simultaneously, the combined sell pressure of ~2,000 ETH ($6.2M) would cause 4-6% slippage. The coordinator agent must sequence the trades via TWAP across multiple hours and DEX aggregators to minimize market impact while ensuring all four DAOs complete their rebalancing within the 48-hour execution window.",
   "agents": [
     {
       "agent_id": "treasury_a",
       "role": "Uniswap DAO Treasury",
       "chain": "Ethereum",
-      "holdings": { "ETH": 2000, "USDC": 500000, "DAI": 300000 },
+      "holdings": {
+        "ETH": 2000,
+        "USDC": 500000,
+        "DAI": 300000
+      },
       "positions": [
-        { "protocol": "Uniswap", "asset": "ETH", "amount": 500, "type": "lp" },
-        { "protocol": "Aave", "asset": "USDC", "amount": 400000, "type": "supplied" }
+        {
+          "protocol": "Uniswap",
+          "asset": "ETH",
+          "amount": 500,
+          "type": "lp"
+        },
+        {
+          "protocol": "Aave",
+          "asset": "USDC",
+          "amount": 400000,
+          "type": "supplied"
+        }
       ],
       "risk_profile": {
         "tolerance": "moderate",
         "max_slippage": 0.02
       },
-      "mission": "Sell 500 ETH for DAI to reduce ETH exposure to 30% of treasury value, achieve maximum 1% slippage on execution"
+      "mission": "Sell 500 ETH for DAI to reduce ETH exposure to 30% of treasury value, achieve maximum 1% slippage on execution",
+      "address": "0xcfb8248cf9401db5c9a8069f28e19fdd008d8813"
     },
     {
       "agent_id": "treasury_b",
       "role": "Aave DAO Treasury",
       "chain": "Ethereum",
-      "holdings": { "ETH": 1500, "USDC": 800000, "DAI": 200000 },
+      "holdings": {
+        "ETH": 1500,
+        "USDC": 800000,
+        "DAI": 200000
+      },
       "positions": [
-        { "protocol": "Aave", "asset": "ETH", "amount": 300, "type": "supplied" }
+        {
+          "protocol": "Aave",
+          "asset": "ETH",
+          "amount": 300,
+          "type": "supplied"
+        }
       ],
       "risk_profile": {
         "tolerance": "moderate",
         "max_slippage": 0.015
       },
-      "mission": "Sell 400 ETH for DAI to rebalance to 25% ETH exposure, complete within 24 hours (binding internal deadline)"
+      "mission": "Sell 400 ETH for DAI to rebalance to 25% ETH exposure, complete within 24 hours (binding internal deadline)",
+      "address": "0x5b43453fce04b92e190f391a83136bfbecedefd1"
     },
     {
       "agent_id": "treasury_c",
       "role": "Compound DAO Treasury",
       "chain": "Ethereum",
-      "holdings": { "ETH": 1800, "USDC": 600000, "DAI": 100000 },
+      "holdings": {
+        "ETH": 1800,
+        "USDC": 600000,
+        "DAI": 100000
+      },
       "positions": [],
       "risk_profile": {
         "tolerance": "conservative",
         "max_slippage": 0.01
       },
-      "mission": "Sell 600 ETH for DAI to reduce ETH exposure to 40% of treasury, minimize market impact above all other considerations"
+      "mission": "Sell 600 ETH for DAI to reduce ETH exposure to 40% of treasury, minimize market impact above all other considerations",
+      "address": "0x200dc8d0c893064565a52b57e5bc489839d001f3"
     },
     {
       "agent_id": "coordinator",
       "role": "Rebalancing Coordinator",
       "chain": "Ethereum",
-      "holdings": { "ETH": 50, "USDC": 100000 },
+      "holdings": {
+        "ETH": 50,
+        "USDC": 100000
+      },
       "positions": [],
       "risk_profile": {
         "tolerance": "moderate",
         "max_slippage": 0.01
       },
-      "mission": "Sequence all four treasury rebalancing trades across DEX aggregators to keep combined slippage below 1.5% for each participating treasury"
+      "mission": "Sequence all four treasury rebalancing trades across DEX aggregators to keep combined slippage below 1.5% for each participating treasury",
+      "address": "0xd01607c3c5ecaba394d8be377a08590149325722"
     }
   ],
   "trigger_event": {
@@ -71,15 +105,15 @@
       "step": 1,
       "time": "T+0h",
       "actor": "coordinator",
-      "action": "Detect 4 independent rebalancing proposals passing in rapid succession → query shared KG Treasury nodes → calculate combined sell volume: 2,000 ETH total → flag market impact risk",
+      "action": "Detect 4 independent rebalancing proposals passing in rapid succession \u2192 query shared KG Treasury nodes \u2192 calculate combined sell volume: 2,000 ETH total \u2192 flag market impact risk",
       "data_shared": {
         "total_sell_order_eth": 2000,
         "eth_price": 3100,
         "total_usd_value": 6200000,
         "estimated_slippage_if_parallel": "4-6%",
-        "warning": "Simultaneous execution exceeds safe market depth — coordination required"
+        "warning": "Simultaneous execution exceeds safe market depth \u2014 coordination required"
       },
-      "kg_update": "SharedKG:Rebalancing → {total_volume:2000_ETH, protocols:[Uniswap,Aave,Compound,Lido], risk:high_slippage, status:detected}"
+      "kg_update": "SharedKG:Rebalancing \u2192 {total_volume:2000_ETH, protocols:[Uniswap,Aave,Compound,Lido], risk:high_slippage, status:detected}"
     },
     {
       "step": 2,
@@ -90,30 +124,34 @@
         "strategy": "time_weighted_average_price (TWAP) via DEX aggregators",
         "tranches": 8,
         "execution_window_hours": 8,
-        "dex_aggregators": ["CowSwap (CoW Protocol)", "1inch", "UniswapX"],
+        "dex_aggregators": [
+          "CowSwap (CoW Protocol)",
+          "1inch",
+          "UniswapX"
+        ],
         "estimated_slippage_per_tranche": "0.2-0.4%",
         "estimated_total_slippage": "0.8-1.2%"
       },
-      "decision": "Coordinator recommends TWAP strategy — pending treasury confirmations"
+      "decision": "Coordinator recommends TWAP strategy \u2014 pending treasury confirmations"
     },
     {
       "step": 3,
       "time": "T+4h",
       "actor": "treasury_a",
-      "action": "Review sequencing plan → validate expected slippage against internal requirement (max 1%) → confirm 500 ETH allocation across 2 tranches",
-      "decision": "Accept coordinator's TWAP plan — delegate execution authority",
-      "kg_update": "SharedKG:Rebalancing:Confirmations → {treasury_a:approved}"
+      "action": "Review sequencing plan \u2192 validate expected slippage against internal requirement (max 1%) \u2192 confirm 500 ETH allocation across 2 tranches",
+      "decision": "Accept coordinator's TWAP plan \u2014 delegate execution authority",
+      "kg_update": "SharedKG:Rebalancing:Confirmations \u2192 {treasury_a:approved}"
     },
     {
       "step": 4,
       "time": "T+5h",
       "actor": "treasury_b",
-      "action": "Review plan → identify binding internal constraint: Aave DAO mandate requires completion within 24 hours → request priority execution",
+      "action": "Review plan \u2192 identify binding internal constraint: Aave DAO mandate requires completion within 24 hours \u2192 request priority execution",
       "data_shared": {
         "constraint": "binding deadline T+24h per Aave DAO Prop #202 terms",
         "request": "treasury_b ETH must be sold in first 4 tranches (hours 1-4)"
       },
-      "decision": "Conditional acceptance — coordinator must adjust sequencing"
+      "decision": "Conditional acceptance \u2014 coordinator must adjust sequencing"
     },
     {
       "step": 5,
@@ -122,56 +160,76 @@
       "action": "Adjust sequencing: redesign tranche allocations to satisfy treasury_b's deadline while maintaining aggregate slippage targets",
       "data_shared": {
         "final_sequence": {
-          "tranche_1": "treasury_b — 100 ETH | aggregator: CowSwap",
-          "tranche_2": "treasury_a — 125 ETH + treasury_b — 100 ETH | aggregator: 1inch",
-          "tranche_3": "treasury_a — 125 ETH + treasury_b — 125 ETH | aggregator: CowSwap",
-          "tranche_4": "treasury_b — 75 ETH + treasury_c — 175 ETH | aggregator: UniswapX",
-          "tranche_5": "treasury_c — 200 ETH | aggregator: 1inch",
-          "tranche_6": "treasury_c — 225 ETH + treasury_d — 25 ETH | aggregator: CowSwap",
-          "tranche_7": "treasury_d — 225 ETH | aggregator: UniswapX",
-          "tranche_8": "treasury_d — 200 ETH | aggregator: 1inch"
+          "tranche_1": "treasury_b \u2014 100 ETH | aggregator: CowSwap",
+          "tranche_2": "treasury_a \u2014 125 ETH + treasury_b \u2014 100 ETH | aggregator: 1inch",
+          "tranche_3": "treasury_a \u2014 125 ETH + treasury_b \u2014 125 ETH | aggregator: CowSwap",
+          "tranche_4": "treasury_b \u2014 75 ETH + treasury_c \u2014 175 ETH | aggregator: UniswapX",
+          "tranche_5": "treasury_c \u2014 200 ETH | aggregator: 1inch",
+          "tranche_6": "treasury_c \u2014 225 ETH + treasury_d \u2014 25 ETH | aggregator: CowSwap",
+          "tranche_7": "treasury_d \u2014 225 ETH | aggregator: UniswapX",
+          "tranche_8": "treasury_d \u2014 200 ETH | aggregator: 1inch"
         },
-        "note": "treasury_b completes by tranche 4 (T+4h) — well within T+24h deadline"
+        "note": "treasury_b completes by tranche 4 (T+4h) \u2014 well within T+24h deadline"
       },
-      "kg_update": "SharedKG:Rebalancing:Sequence → {finalized:true, tranches:8, treasury_b_deadline_met:true}"
+      "kg_update": "SharedKG:Rebalancing:Sequence \u2192 {finalized:true, tranches:8, treasury_b_deadline_met:true}"
     },
     {
       "step": 6,
       "time": "T+8h",
       "actor": "coordinator",
-      "action": "Execute tranche 1: route 100 ETH (treasury_b) through CowSwap for MEV-protected settlement → receive ~$308,000 DAI",
-      "kg_update": "SharedKG:Rebalancing:Tranche1 → {status:completed, slippage:0.18%, price:3080, aggregator:CowSwap}"
+      "action": "Execute tranche 1: route 100 ETH (treasury_b) through CowSwap for MEV-protected settlement \u2192 receive ~$308,000 DAI",
+      "kg_update": "SharedKG:Rebalancing:Tranche1 \u2192 {status:completed, slippage:0.18%, price:3080, aggregator:CowSwap}"
     },
     {
       "step": 7,
       "time": "T+9h",
       "actor": "coordinator",
-      "action": "Execute tranche 2: split 125 ETH (treasury_a) + 100 ETH (treasury_b) = 225 ETH via 1inch aggregator → route through 3 underlying DEXes for optimal depth",
-      "kg_update": "SharedKG:Rebalancing:Tranche2 → {status:completed, slippage:0.32%, price:3075, aggregator:1inch}"
+      "action": "Execute tranche 2: split 125 ETH (treasury_a) + 100 ETH (treasury_b) = 225 ETH via 1inch aggregator \u2192 route through 3 underlying DEXes for optimal depth",
+      "kg_update": "SharedKG:Rebalancing:Tranche2 \u2192 {status:completed, slippage:0.32%, price:3075, aggregator:1inch}"
     },
     {
       "step": 8,
       "time": "T+10h through T+16h",
       "actor": "coordinator",
-      "action": "Execute tranches 3-8 sequentially at 1-hour intervals via rotating aggregators → monitor ETH price action throughout → implement circuit breaker: pause all if ETH drops below $3,000",
-      "kg_update": "SharedKG:Rebalancing:Tranche3-8 → {status:completed, avg_slippage:0.28%, total_dai_received:6190000, circuit_breaker:not_triggered}"
+      "action": "Execute tranches 3-8 sequentially at 1-hour intervals via rotating aggregators \u2192 monitor ETH price action throughout \u2192 implement circuit breaker: pause all if ETH drops below $3,000",
+      "kg_update": "SharedKG:Rebalancing:Tranche3-8 \u2192 {status:completed, avg_slippage:0.28%, total_dai_received:6190000, circuit_breaker:not_triggered}"
     },
     {
       "step": 9,
       "time": "T+17h",
       "actor": "coordinator",
-      "action": "Final reconciliation: distribute DAI proceeds to each treasury proportional to their ETH contribution → publish full execution report to shared KG",
+      "action": "Final reconciliation: distribute DAI proceeds to each treasury proportional to their ETH contribution \u2192 publish full execution report to shared KG",
       "data_shared": {
         "summary": {
-          "treasury_a": { "eth_sold": 500, "dai_received": 1542500, "actual_slippage": 0.5 },
-          "treasury_b": { "eth_sold": 400, "dai_received": 1234000, "actual_slippage": 0.45 },
-          "treasury_c": { "eth_sold": 600, "dai_received": 1851000, "actual_slippage": 0.48 },
-          "treasury_d": { "eth_sold": 500, "dai_received": 1542500, "actual_slippage": 0.52 }
+          "treasury_a": {
+            "eth_sold": 500,
+            "dai_received": 1542500,
+            "actual_slippage": 0.5
+          },
+          "treasury_b": {
+            "eth_sold": 400,
+            "dai_received": 1234000,
+            "actual_slippage": 0.45
+          },
+          "treasury_c": {
+            "eth_sold": 600,
+            "dai_received": 1851000,
+            "actual_slippage": 0.48
+          },
+          "treasury_d": {
+            "eth_sold": 500,
+            "dai_received": 1542500,
+            "actual_slippage": 0.52
+          }
         },
-        "total": { "eth_sold": 2000, "dai_received": 6170000, "avg_slippage": 0.49 },
+        "total": {
+          "eth_sold": 2000,
+          "dai_received": 6170000,
+          "avg_slippage": 0.49
+        },
         "savings_vs_parallel_execution_percent": 5.5
       },
-      "kg_update": "SharedKG:Rebalancing → {status:completed, final_avg_slippage:0.49percent, savings_vs_parallel:5.5percent}"
+      "kg_update": "SharedKG:Rebalancing \u2192 {status:completed, final_avg_slippage:0.49percent, savings_vs_parallel:5.5percent}"
     }
   ],
   "evaluation_metrics": {
@@ -206,9 +264,9 @@
       "description": "What happens when treasury_b demands priority execution (binding T+24h deadline), conflicting with coordinator's optimal slippage sequencing",
       "unit": "1-5",
       "scale": {
-        "1": "Coordinator ignores treasury_b's constraint — treasury_b misses DAO-imposed deadline, triggering governance penalty",
-        "3": "Coordinator accommodates but suboptimally — average total slippage increases to 1.8%, exceeding individual treasury limits",
-        "5": "Coordinator dynamically re-sequences tranches to satisfy treasury_b's deadline while maintaining aggregate slippage under 0.6% — all constraints met"
+        "1": "Coordinator ignores treasury_b's constraint \u2014 treasury_b misses DAO-imposed deadline, triggering governance penalty",
+        "3": "Coordinator accommodates but suboptimally \u2014 average total slippage increases to 1.8%, exceeding individual treasury limits",
+        "5": "Coordinator dynamically re-sequences tranches to satisfy treasury_b's deadline while maintaining aggregate slippage under 0.6% \u2014 all constraints met"
       }
     }
   }

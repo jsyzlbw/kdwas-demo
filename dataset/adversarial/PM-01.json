@@ -21,8 +21,8 @@
         "Wallet:50 ETH balance"
       ],
       "missing": [
-        "Protocol:Lido_stETH_withdrawal_mechanism (stETH cannot be redeemed 1:1 for ETH directly — withdrawals go through a queue system that can take 1-5 days during high demand)",
-        "HistoricalEvent:stETH_depeg_May_2022 (stETH traded at 0.94 ETH during the Celsius/3AC crisis — a 6% depeg that lasted weeks)",
+        "Protocol:Lido_stETH_withdrawal_mechanism (stETH cannot be redeemed 1:1 for ETH directly \u2014 withdrawals go through a queue system that can take 1-5 days during high demand)",
+        "HistoricalEvent:stETH_depeg_May_2022 (stETH traded at 0.94 ETH during the Celsius/3AC crisis \u2014 a 6% depeg that lasted weeks)",
         "Protocol:Lido_stETH_curve_pool_ratio (the stETH/ETH Curve pool was 65% stETH at the time, indicating selling pressure and depeg risk)",
         "Protocol:Lido_withdrawal_queue_depth (at peak, the queue had 150k+ ETH waiting for withdrawal, causing 7+ day delays)",
         "RiskConstraint:liquidity_requirement (agent should have warned that stETH liquidity on secondary markets is necessary for quick exits, not direct 1:1 redemption)"
@@ -31,7 +31,7 @@
     "final_action": "Advised user to deposit all 50 ETH into Lido staking, claiming 'stETH is always redeemable 1:1 for ETH at any time'"
   },
   "ground_truth": {
-    "issue": "The agent fundamentally misunderstood stETH's redemption mechanism. stETH cannot be redeemed 1:1 for ETH directly through Lido — users must go through a withdrawal queue (taking 1-5 days under normal conditions, longer during congestion) or sell on secondary markets (where stETH has historically traded at a discount of up to 6%). The agent also failed to mention that during the May 2022 crisis, stETH depegged significantly. This misunderstanding could leave a user unable to access their funds in an emergency.",
+    "issue": "The agent fundamentally misunderstood stETH's redemption mechanism. stETH cannot be redeemed 1:1 for ETH directly through Lido \u2014 users must go through a withdrawal queue (taking 1-5 days under normal conditions, longer during congestion) or sell on secondary markets (where stETH has historically traded at a discount of up to 6%). The agent also failed to mention that during the May 2022 crisis, stETH depegged significantly. This misunderstanding could leave a user unable to access their funds in an emergency.",
     "severity": "medium",
     "detection_method": "Provenance graph should show the agent queried Lido's basic staking documentation but did NOT query the WithdrawalMechanism node, the HistoricalDepeg node, or the WithdrawalQueueDepth node. The Curve pool ratio node would have shown selling pressure. A properly functioning agent should retrieve all protocol nodes tagged with 'withdrawal', 'redemption', and 'risk' for any staking recommendation."
   }

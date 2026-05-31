@@ -4,7 +4,7 @@
   "title": "Ignoring oracle deviation alert",
   "agent_trace": {
     "mission": "Swap 100 ETH for USDC on Curve",
-    "observation": "ETH price on major CEXes: ~$2900. Need to swap 100 ETH for USDC. Curve ETH/USDC pool offers deep liquidity. Chainlink ETH/USD oracle shows price: $2750 — a 5.2% deviation from CEX prices.",
+    "observation": "ETH price on major CEXes: ~$2900. Need to swap 100 ETH for USDC. Curve ETH/USDC pool offers deep liquidity. Chainlink ETH/USD oracle shows price: $2750 \u2014 a 5.2% deviation from CEX prices.",
     "reasoning_chain": [
       "Step 1: Noted that the Chainlink oracle shows $2750 while CEX prices show ~$2900, a 5.2% deviation",
       "Step 2: Reasoned that the Chainlink oracle is the 'canonical source of truth for DeFi' and CEX prices may be inflated",
@@ -21,14 +21,14 @@
         "LiquidityPool:ETH/USDC Curve pool depth: ~$50M"
       ],
       "missing": [
-        "Oracle:Chainlink ETH/USD deviation_threshold (Chainlink's own configuration triggers a deviation alert at 3% — a 5.2% deviation means the oracle is stale or manipulated)",
-        "Oracle:Chainlink ETH/USD last_update_timestamp (last updated 3 hours ago — unusually stale for a major pair)",
-        "Oracle:Chainlink ETH/USD health_status (multiple nodes reported invalid data during last round — partial consensus failure)",
+        "Oracle:Chainlink ETH/USD deviation_threshold (Chainlink's own configuration triggers a deviation alert at 3% \u2014 a 5.2% deviation means the oracle is stale or manipulated)",
+        "Oracle:Chainlink ETH/USD last_update_timestamp (last updated 3 hours ago \u2014 unusually stale for a major pair)",
+        "Oracle:Chainlink ETH/USD health_status (multiple nodes reported invalid data during last round \u2014 partial consensus failure)",
         "HistoricalEvent:oracle_manipulation_attacks (similar deviations preceded the 2023 Exactly Protocol exploit and the 2024 Mango Markets incident)",
-        "MarketData:CEX_ETH_volume_last_hour ($2B+ traded on Binance at $2900 — indicating the CEX price is the accurate one, not the stale oracle)"
+        "MarketData:CEX_ETH_volume_last_hour ($2B+ traded on Binance at $2900 \u2014 indicating the CEX price is the accurate one, not the stale oracle)"
       ]
     },
-    "final_action": "Swapped 100 ETH on Curve using the stale Chainlink oracle price of $2750, receiving $275,000 USDC instead of ~$290,000 — a loss of ~$15,000"
+    "final_action": "Swapped 100 ETH on Curve using the stale Chainlink oracle price of $2750, receiving $275,000 USDC instead of ~$290,000 \u2014 a loss of ~$15,000"
   },
   "ground_truth": {
     "issue": "Agent proceeded with a large swap despite a 5.2% deviation between the oracle price and all major CEX prices. A 5.2% deviation exceeds Chainlink's own 3% deviation threshold, indicating the oracle was stale or under manipulation. The agent should have: (1) paused and investigated the deviation, (2) checked the oracle's last update timestamp, (3) cross-referenced multiple oracles (MakerDAO's median oracle, Uniswap TWAP), and (4) refused to trade until price convergence. The agent instead accepted the unfavorable oracle price, losing ~$15,000.",

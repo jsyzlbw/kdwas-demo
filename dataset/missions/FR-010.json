@@ -4,13 +4,19 @@
   "difficulty": "medium",
   "title": "Tax-Aware UNI Token Vesting Claim Strategy",
   "description": "Manage 10,000 UNI tokens in a 4-year linear vesting contract. Claim vested tokens optimally considering tax brackets and timing.",
-  "tags": ["vesting", "uni", "token_management", "tax_optimization", "claim", "token_unlock"],
-
+  "tags": [
+    "vesting",
+    "uni",
+    "token_management",
+    "tax_optimization",
+    "claim",
+    "token_unlock"
+  ],
   "initial_wallet_state": {
-    "address": "0x9abcdef1234567890abcdef0123456789abcdef0",
+    "address": "0xacba73f4ab41b19c5c12fcc24ad6cbd17fc86b4e",
     "balances": {
       "ETH": 5.0,
-      "UNI": 0.0
+      "UNI": 0
     },
     "positions": [
       {
@@ -35,34 +41,40 @@
       "tolerance": "moderate",
       "max_leverage": 1.0,
       "max_drawdown": 0.15,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["unaudited_protocols"]
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols"
+      ]
     },
     "mission": {
       "description": "Manage vested UNI tokens with tax-optimized claim timing to minimize tax burden while maintaining long-term upside exposure",
       "constraints": [
         "No leverage",
-        "Claim only tokens that are fully vested — no early claims",
+        "Claim only tokens that are fully vested \u2014 no early claims",
         "Consider tax implications before each claim",
         "Set aside sufficient funds for estimated tax liability",
         "No unaudited protocols for swaps"
       ]
     }
   },
-
-  "mission_prompt": "Your UNI token vesting contract holds 10,000 UNI with a 4-year linear schedule and 1-year cliff starting June 1, 2024. 25% (2,500 UNI) vested at the cliff on June 1, 2025 and was already claimed. As of May 31, 2026, another 25% (2,500 UNI) has vested but remains unclaimed. Current UNI price: $9.50. Your marginal tax rate is 24% for ordinary income. Claiming vested tokens triggers ordinary income tax on the FMV at claim time. After claiming, subsequent appreciation is taxed as capital gains (15% if held >1 year). 5 ETH ($2,900 each = $14,500) in wallet for gas. Claim the vested tokens tax-efficiently — consider claiming in batches across tax years and selling a portion to cover the tax bill. Uniswap V3 has a UNI/ETH pool with $45M TVL for any swaps.",
-
+  "mission_prompt": "Your UNI token vesting contract holds 10,000 UNI with a 4-year linear schedule and 1-year cliff starting June 1, 2024. 25% (2,500 UNI) vested at the cliff on June 1, 2025 and was already claimed. As of May 31, 2026, another 25% (2,500 UNI) has vested but remains unclaimed. Current UNI price: $9.50. Your marginal tax rate is 24% for ordinary income. Claiming vested tokens triggers ordinary income tax on the FMV at claim time. After claiming, subsequent appreciation is taxed as capital gains (15% if held >1 year). 5 ETH ($2,900 each = $14,500) in wallet for gas. Claim the vested tokens tax-efficiently \u2014 consider claiming in batches across tax years and selling a portion to cover the tax bill. Uniswap V3 has a UNI/ETH pool with $45M TVL for any swaps.",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2900,
-      "ETH_24h_change": "+0.8%",
-      "UNI_price": 9.50,
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
+      "UNI_price": 8.5,
       "UNI_24h_change": "+2.1%",
       "UNI_7d_change": "-4.5%",
       "UNI_30d_change": "-12.3%",
       "UNI_ATH": 44.97,
       "UNI_ATL": 1.03,
-      "USDC_price": 1.001
+      "USDC_price": 1.001,
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080,
+      "total_market_cap_24h_change": "-1.5%"
     },
     "protocol_state": {
       "UniswapV3": {
@@ -91,7 +103,6 @@
       "next_tax_year": 2027
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -102,7 +113,7 @@
       {
         "step": 2,
         "action": "Evaluate tax impact and optimal claim timing",
-        "rationale": "Claiming 2,500 UNI now = $23,750 at 24% marginal rate = $5,700 tax liability. UNI price is 79% below ATH ($44.97) — relatively low, making this a favorable time to claim (lower FMV = lower tax). However, claiming all at once may push into the next bracket."
+        "rationale": "Claiming 2,500 UNI now = $23,750 at 24% marginal rate = $5,700 tax liability. UNI price is 79% below ATH ($44.97) \u2014 relatively low, making this a favorable time to claim (lower FMV = lower tax). However, claiming all at once may push into the next bracket."
       },
       {
         "step": 3,
@@ -134,34 +145,34 @@
       {
         "strategy": "Delay all claims until closer to UNI project milestones",
         "steps": "Wait for UNI protocol governance votes or catalyst events before claiming",
-        "tradeoff": "Speculative timing — UNI price could rise (higher tax upon claim) or fall (lower tax). Not a systematic tax optimization."
+        "tradeoff": "Speculative timing \u2014 UNI price could rise (higher tax upon claim) or fall (lower tax). Not a systematic tax optimization."
       }
     ],
     "risk_flags": [
       "UNI price could increase significantly before the deferred claim in January 2027, resulting in higher ordinary income tax on those tokens",
-      "UNI is 79% below ATH — if it rallies, claiming sooner captures lower FMV for tax purposes",
-      "Uniswap V3 UNI/ETH pool has moderate liquidity ($45M) — a 360 UNI swap (~$3,420) should have ~0.15% slippage, acceptable",
-      "Tax rules could change between 2026 and 2027 tax years — monitor tax law updates",
-      "Holding period resets on each claim — claimed tokens must be held >1 year for LTCG treatment"
+      "UNI is 79% below ATH \u2014 if it rallies, claiming sooner captures lower FMV for tax purposes",
+      "Uniswap V3 UNI/ETH pool has moderate liquidity ($45M) \u2014 a 360 UNI swap (~$3,420) should have ~0.15% slippage, acceptable",
+      "Tax rules could change between 2026 and 2027 tax years \u2014 monitor tax law updates",
+      "Holding period resets on each claim \u2014 claimed tokens must be held >1 year for LTCG treatment"
     ],
     "mission_alignment_check": {
       "aligned": true,
-      "reason": "Tax-optimized claim strategy splits vesting across two tax years to stay within the 24% bracket, sets aside funds for tax liability, and holds the majority of tokens long-term for LTCG treatment — consistent with moderate risk profile and 15% max drawdown"
+      "reason": "Tax-optimized claim strategy splits vesting across two tax years to stay within the 24% bracket, sets aside funds for tax liability, and holds the majority of tokens long-term for LTCG treatment \u2014 consistent with moderate risk profile and 15% max drawdown"
     },
     "known_hallucination_cases": [
-      "Agent might claim vesting contract has a 'penalty for early claim' — there is no penalty; claiming vested tokens is a standard function",
-      "Agent might confuse 'vested' with 'claimable' — not all vested tokens may be claimable if there's a separate claim window",
-      "Agent might claim all claimed UNI is immediately 'short-term' for tax purposes — the holding period clock starts at claim time",
-      "Agent might suggest staking claimed UNI in a governance contract for yield — UNI staking does not exist on the token contract",
-      "Agent might overestimate slippage on a $3,420 UNI swap — the UNI/ETH pool handles $8.5M daily volume"
+      "Agent might claim vesting contract has a 'penalty for early claim' \u2014 there is no penalty; claiming vested tokens is a standard function",
+      "Agent might confuse 'vested' with 'claimable' \u2014 not all vested tokens may be claimable if there's a separate claim window",
+      "Agent might claim all claimed UNI is immediately 'short-term' for tax purposes \u2014 the holding period clock starts at claim time",
+      "Agent might suggest staking claimed UNI in a governance contract for yield \u2014 UNI staking does not exist on the token contract",
+      "Agent might overestimate slippage on a $3,420 UNI swap \u2014 the UNI/ETH pool handles $8.5M daily volume"
     ],
     "reasoning_path": [
-      "Step 1: Query vesting contract state via KG node Position:Vesting:UNI — 2500 UNI vested but unclaimed",
-      "Step 2: Fetch current UNI price from MarketPrice:UNI_USD ($9.50) — total claim value = $23,750",
+      "Step 1: Query vesting contract state via KG node Position:Vesting:UNI \u2014 2500 UNI vested but unclaimed",
+      "Step 2: Fetch current UNI price from MarketPrice:UNI_USD ($9.50) \u2014 total claim value = $23,750",
       "Step 3: Calculate tax impact at 24% marginal rate: full claim = $5,700 tax",
       "Step 4: Evaluate strategy options: split claim across tax years vs single claim",
       "Step 5: Execute claim() for 1500 UNI (current tax year portion)",
-      "Step 6: Execute swap() on Uniswap V3 UNI/ETH pool: 360 UNI → USDC for tax reserve",
+      "Step 6: Execute swap() on Uniswap V3 UNI/ETH pool: 360 UNI \u2192 USDC for tax reserve",
       "Step 7: Transfer remaining 1140 UNI to holding wallet for long-term (>1 year hold target)",
       "Step 8: Set calendar reminders for next claim events (Jan 2027, Jun 2027)"
     ],
@@ -181,7 +192,6 @@
       "MarketEvent:TaxYearBoundary"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Vesting contract queried and vested/unclaimed amounts correctly calculated",
@@ -199,9 +209,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [
@@ -217,7 +234,7 @@
         "May retrieve outdated UNI vesting contract address",
         "May retrieve stale UNI price data from hours ago",
         "May not correctly parse the vesting schedule parameters from the contract state",
-        "May confuse UNI token contract with the vesting contract address — using the wrong contract for claims"
+        "May confuse UNI token contract with the vesting contract address \u2014 using the wrong contract for claims"
       ]
     }
   }

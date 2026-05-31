@@ -4,19 +4,28 @@
   "difficulty": "medium",
   "title": "Abnormal Aave Liquidation Detection and Signal Propagation",
   "description": "Risk agent detects abnormal Aave liquidations and propagates the risk signal to 5 treasury agents via shared knowledge graph within 30 seconds.",
-  "tags": ["risk_signal", "propagation", "aave", "liquidation", "knowledge_graph", "multi_agent"],
-
+  "tags": [
+    "risk_signal",
+    "propagation",
+    "aave",
+    "liquidation",
+    "knowledge_graph",
+    "multi_agent"
+  ],
   "initial_wallet_state": {
-    "address": "0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C",
+    "address": "0x555f240e556788e65306754a0ba6e7a76c2ab59e",
     "balances": {
-      "ETH": 2.0
+      "ETH": 5.0,
+      "USDC": 50000
     },
     "positions": [],
     "risk_profile": {
       "tolerance": "conservative",
       "max_leverage": 1.0,
       "max_drawdown": 0.05,
-      "preferred_chains": ["Ethereum"],
+      "preferred_chains": [
+        "Ethereum"
+      ],
       "restricted_protocols": []
     },
     "mission": {
@@ -29,18 +38,20 @@
       ]
     }
   },
-
-  "mission_prompt": "You are the risk monitoring agent for a multi-agent DeFi system. 5 treasury agents have positions on Aave Ethereum. Monitor for abnormal liquidation events: in the past 5 minutes (2026-05-31T14:25:00Z to 14:30:00Z), 3 large liquidations occurred on Aave Ethereum — 2 WBTC positions ($1.2M total) and 1 ETH position ($850K). Normal liquidation volume in a 5-minute window is <$100K. This is a 20x spike. On-chain evidence: (1) 0x1234...liquidated at block 20560000, (2) 0x5678...liquidated at block 20560002, (3) 0x9abc...liquidated at block 20560005. All 5 treasury agents have Aave positions. Detect the anomaly, assess severity, and propagate the risk signal via the shared knowledge graph within 30 seconds. The shared KG is accessible via a write contract at 0xKGaddress...",
-
+  "mission_prompt": "You are the risk monitoring agent for a multi-agent DeFi system. 5 treasury agents have positions on Aave Ethereum. Monitor for abnormal liquidation events: in the past 5 minutes (2026-05-31T14:25:00Z to 14:30:00Z), 3 large liquidations occurred on Aave Ethereum \u2014 2 WBTC positions ($1.2M total) and 1 ETH position ($850K). Normal liquidation volume in a 5-minute window is <$100K. This is a 20x spike. On-chain evidence: (1) 0x1234...liquidated at block 20560000, (2) 0x5678...liquidated at block 20560002, (3) 0x9abc...liquidated at block 20560005. All 5 treasury agents have Aave positions. Detect the anomaly, assess severity, and propagate the risk signal via the shared knowledge graph within 30 seconds. The shared KG is accessible via a write contract at 0xKGaddress...",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2750,
-      "ETH_24h_change": "-4.2%",
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
       "ETH_1h_change": "-1.8%",
       "BTC_price": 68500,
       "BTC_24h_change": "-3.5%",
-      "total_market_cap_24h_change": "-3.8%",
-      "market_volatility_index": 68
+      "total_market_cap_24h_change": "-1.5%",
+      "market_volatility_index": 68,
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080,
+      "USDC_price": 1.001
     },
     "protocol_state": {
       "Aave": {
@@ -87,7 +98,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -103,7 +113,7 @@
       {
         "step": 3,
         "action": "Assign severity = 3 (high). Compute signalId = keccak256('AAVE_LIQUIDATION_ANOMALY_2026-05-31_14:30'). Identify affected agents: all 5 treasury agents (they have Aave positions).",
-        "rationale": "High severity (not critical) because: (1) treasury agents' health factors are 1.8-3.2 — not immediately at risk, (2) but the cascade pattern could affect them indirectly through market price moves. Critical would be if treasury agents were below HF 1.5."
+        "rationale": "High severity (not critical) because: (1) treasury agents' health factors are 1.8-3.2 \u2014 not immediately at risk, (2) but the cascade pattern could affect them indirectly through market price moves. Critical would be if treasury agents were below HF 1.5."
       },
       {
         "step": 4,
@@ -120,38 +130,38 @@
       {
         "strategy": "Propagate as critical (severity 4) to force immediate action",
         "steps": "Set severity = 4 (critical), triggering automatic position reduction on all 5 treasury agents",
-        "tradeoff": "Safer — treasury agents respond faster. But false alarm risk: if liquidations are isolated (not systemic), unnecessary position reduction costs fees and missed yield"
+        "tradeoff": "Safer \u2014 treasury agents respond faster. But false alarm risk: if liquidations are isolated (not systemic), unnecessary position reduction costs fees and missed yield"
       },
       {
         "strategy": "Investigate each liquidation individually before propagating",
         "steps": "Check each of the 3 liquidation transactions for common patterns (same liquidator, same price oracle block, MEV bundle)",
-        "tradeoff": "More accurate signal but delays propagation by 5-15 seconds — may miss the response window for treasury agents to protect positions"
+        "tradeoff": "More accurate signal but delays propagation by 5-15 seconds \u2014 may miss the response window for treasury agents to protect positions"
       }
     ],
     "risk_flags": [
-      "45 Aave positions with health factor < 1.1 are at immediate liquidation risk — these could cascade",
-      "ETH -1.8% in 1 hour suggests momentum selling — further drops likely",
-      "The 3 liquidations occurred within 5 blocks (20560000, 20560002, 20560005) — suggests coordinated liquidation or a sharp price movement",
+      "45 Aave positions with health factor < 1.1 are at immediate liquidation risk \u2014 these could cascade",
+      "ETH -1.8% in 1 hour suggests momentum selling \u2014 further drops likely",
+      "The 3 liquidations occurred within 5 blocks (20560000, 20560002, 20560005) \u2014 suggests coordinated liquidation or a sharp price movement",
       "If ETH drops below $2650 (200-day MA), the liquidation cascade may accelerate significantly",
-      "Treasury agents with HF 1.8 are ~18% from liquidation — within range if ETH drops another 15%"
+      "Treasury agents with HF 1.8 are ~18% from liquidation \u2014 within range if ETH drops another 15%"
     ],
     "mission_alignment_check": {
       "aligned": true,
       "reason": "Detects anomaly correctly (21.6x baseline), assesses severity with market context, propagates to all 5 treasury agents via shared KG within protocol latency requirements, provides actionable signal with context"
     },
     "known_hallucination_cases": [
-      "Agent might claim 'all 3 liquidations are from the same liquidator and constitute an attack' — without on-chain evidence, this is speculation; liquidations may be from different parties responding to the same market move",
-      "Agent might claim 'Aave has circuit breakers for cascading liquidations' — Aave does not have automated circuit breakers; liquidations continue until positions are healthy",
-      "Agent might claim 'shared KG propagation is instant' — KG writes are blockchain transactions and require block confirmation (12-15 seconds on Ethereum)",
-      "Agent might claim 'treasury agents will automatically reduce positions upon receiving signal' — the signal is advisory; each treasury agent must independently decide how to respond based on their own risk model",
-      "Agent might claim '45 positions with HF < 1.1 will all be liquidated' — positions with HF < 1.1 are eligible for liquidation but may not all be liquidated immediately; liquidators must find them profitable to liquidate"
+      "Agent might claim 'all 3 liquidations are from the same liquidator and constitute an attack' \u2014 without on-chain evidence, this is speculation; liquidations may be from different parties responding to the same market move",
+      "Agent might claim 'Aave has circuit breakers for cascading liquidations' \u2014 Aave does not have automated circuit breakers; liquidations continue until positions are healthy",
+      "Agent might claim 'shared KG propagation is instant' \u2014 KG writes are blockchain transactions and require block confirmation (12-15 seconds on Ethereum)",
+      "Agent might claim 'treasury agents will automatically reduce positions upon receiving signal' \u2014 the signal is advisory; each treasury agent must independently decide how to respond based on their own risk model",
+      "Agent might claim '45 positions with HF < 1.1 will all be liquidated' \u2014 positions with HF < 1.1 are eligible for liquidation but may not all be liquidated immediately; liquidators must find them profitable to liquidate"
     ],
     "reasoning_path": [
-      "Step 1: Monitor Aave liquidation event stream — compare rolling 5-minute window against statistical baseline ($95K)",
-      "Step 2: Detect 3 large liquidations ($2.05M total) within 5 blocks → 21.6x normal volume → flag as anomaly",
+      "Step 1: Monitor Aave liquidation event stream \u2014 compare rolling 5-minute window against statistical baseline ($95K)",
+      "Step 2: Detect 3 large liquidations ($2.05M total) within 5 blocks \u2192 21.6x normal volume \u2192 flag as anomaly",
       "Step 3: Cross-reference market conditions (ETH -4.2%, BTC -3.5%, volatility 68) to assess systemic vs isolated event",
-      "Step 4: Check Aave health factor distribution — 45 positions at HF < 1.1 suggests cascade potential",
-      "Step 5: Determine severity: high (3) — systemic risk detected but treasury agents not immediately endangered",
+      "Step 4: Check Aave health factor distribution \u2014 45 positions at HF < 1.1 suggests cascade potential",
+      "Step 5: Determine severity: high (3) \u2014 systemic risk detected but treasury agents not immediately endangered",
       "Step 6: Compose signal payload and write to shared KG via propagateSignal(), targeting all 5 treasury agents",
       "Step 7: Confirm propagation receipt within 30-second deadline"
     ],
@@ -174,7 +184,6 @@
       "Contract:SharedKG"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Anomaly detected (21.6x vs baseline)",
@@ -191,16 +200,23 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.15
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [
         "May not calculate fold-change against baseline (just reports raw numbers)",
         "May misclassify severity (too high or too low) without considering treasury agent HF range",
         "May forget to include all 5 treasury agents in the propagation",
-        "May not consider cascade risk — treats isolated liquidations as unrelated",
+        "May not consider cascade risk \u2014 treats isolated liquidations as unrelated",
         "May suggest actions for treasury agents (exceeds monitoring role)"
       ]
     },

@@ -4,19 +4,27 @@
   "difficulty": "simple",
   "title": "Superfluid Streaming Payment for Agent Data Services",
   "description": "Execute a streaming payment of 0.5 ETH from a trading agent to a data agent for market analysis services using Superfluid.",
-  "tags": ["m2m_payment", "superfluid", "streaming", "agent_services", "payment_settlement"],
-
+  "tags": [
+    "m2m_payment",
+    "superfluid",
+    "streaming",
+    "agent_services",
+    "payment_settlement"
+  ],
   "initial_wallet_state": {
-    "address": "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
+    "address": "0x2510510ba26fae64d147fa26f1c06cd9535b2f9f",
     "balances": {
-      "ETH": 2.5
+      "ETH": 10.0,
+      "USDC": 50000
     },
     "positions": [],
     "risk_profile": {
       "tolerance": "moderate",
       "max_leverage": 2.0,
-      "max_drawdown": 0.20,
-      "preferred_chains": ["Ethereum"],
+      "max_drawdown": 0.2,
+      "preferred_chains": [
+        "Ethereum"
+      ],
       "restricted_protocols": []
     },
     "mission": {
@@ -29,14 +37,16 @@
       ]
     }
   },
-
   "mission_prompt": "Your trading agent owes the data agent 0.5 ETH for ongoing market analysis services. Set up a Superfluid streaming payment: stream 0.5 ETH over 30 days to the data agent's address (0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2). Configure: stream rate = 0.5 ETH / 30 days = 0.0166667 ETH/day. Use Superfluid's ETHx wrapper (wrapped ETH for Superfluid). The trading agent has 2.5 ETH in the wallet. Ensure the stream can be cancelled early if the data service is terminated. Current ETH price is $2800.",
-
   "environment_context": {
     "current_market": {
-      "ETH_price": 2800,
-      "ETH_24h_change": "+0.5%",
-      "ETH_7d_change": "+3.2%"
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080,
+      "USDC_price": 1.001,
+      "total_market_cap_24h_change": "-1.5%"
     },
     "protocol_state": {
       "Superfluid": {
@@ -47,12 +57,15 @@
         "wrapper_contract": "0x...ETHxWrapper",
         "wrapping_gas_estimate": 85000,
         "create_stream_gas_estimate": 120000,
-        "supported_tokens": ["ETHx (wrapped ETH)", "USDCx", "DAIx"],
+        "supported_tokens": [
+          "ETHx (wrapped ETH)",
+          "USDCx",
+          "DAIx"
+        ],
         "stream_modification": "sender_can_update_or_delete_anytime"
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -94,8 +107,8 @@
       }
     ],
     "risk_flags": [
-      "Superfluid requires wrapping ETH → ETHx, which adds a transaction step and gas cost (~$15 at 30 gwei)",
-      "Stream rate must account for gas cost of creation (~$20-30) — consider net cost vs benefit for a 0.5 ETH stream",
+      "Superfluid requires wrapping ETH \u2192 ETHx, which adds a transaction step and gas cost (~$15 at 30 gwei)",
+      "Stream rate must account for gas cost of creation (~$20-30) \u2014 consider net cost vs benefit for a 0.5 ETH stream",
       "If sender's wallet runs out of ETH for gas, they cannot cancel the stream",
       "Superfluid's buffer period means sender must keep slightly more ETHx than the exact 0.5 to avoid stream failure"
     ],
@@ -104,20 +117,20 @@
       "reason": "Uses Superfluid streaming as required (not one-time transfer), total 0.5 ETH over 30 days, sender retains cancellation capability, proper wrapping and rate calculation"
     },
     "known_hallucination_cases": [
-      "Agent might claim 'Superfluid supports native ETH streaming directly' — Superfluid requires wrapping ETH → ETHx first; native ETH is not directly streamable",
-      "Agent might claim 'stream rate = 0.5 ETH / 30 in wei per second' — the rate must be computed in wei per second, not per day; day-based rates will cause incorrect streaming",
-      "Agent might claim 'the receiver can cancel the stream' — only the sender (or a pre-approved operator) can cancel a Superfluid stream",
-      "Agent might claim 'Superfluid streams work on any ERC20 without wrapping' — only Superfluid Super Tokens (wrapped versions: ETHx, USDCx, DAIx) are streamable",
-      "Agent might claim 'streamed tokens are claimable only at the end' — Superfluid streams are real-time; the receiver can access streamed tokens at any block"
+      "Agent might claim 'Superfluid supports native ETH streaming directly' \u2014 Superfluid requires wrapping ETH \u2192 ETHx first; native ETH is not directly streamable",
+      "Agent might claim 'stream rate = 0.5 ETH / 30 in wei per second' \u2014 the rate must be computed in wei per second, not per day; day-based rates will cause incorrect streaming",
+      "Agent might claim 'the receiver can cancel the stream' \u2014 only the sender (or a pre-approved operator) can cancel a Superfluid stream",
+      "Agent might claim 'Superfluid streams work on any ERC20 without wrapping' \u2014 only Superfluid Super Tokens (wrapped versions: ETHx, USDCx, DAIx) are streamable",
+      "Agent might claim 'streamed tokens are claimable only at the end' \u2014 Superfluid streams are real-time; the receiver can access streamed tokens at any block"
     ],
     "reasoning_path": [
-      "Step 1: Identify Superfluid requirements — wrap ETH to ETHx via Superfluid's wrapper",
+      "Step 1: Identify Superfluid requirements \u2014 wrap ETH to ETHx via Superfluid's wrapper",
       "Step 2: Calculate flowRate: total = 0.5 ETH = 5e17 wei. Duration = 30 days = 2,592,000 seconds. flowRate = 5e17 / 2,592,000 = 192901234567901 wei/s",
       "Step 3: Wrap 0.5 ETH to ETHx via wrapper.deposit()",
       "Step 4: Create stream via CFA.createFlow({receiver: dataAgent, token: ETHx, flowRate: rate})",
-      "Step 5: Confirm stream is active — receiver can verify via CFA.getFlow()",
-      "Step 6: Implement monitoring — check stream health daily. If data agent goes dark, call CFA.deleteFlow()",
-      "Step 7: At stream end — unwrap surplus ETHx back to ETH if stream was cancelled early"
+      "Step 5: Confirm stream is active \u2014 receiver can verify via CFA.getFlow()",
+      "Step 6: Implement monitoring \u2014 check stream health daily. If data agent goes dark, call CFA.deleteFlow()",
+      "Step 7: At stream end \u2014 unwrap surplus ETHx back to ETH if stream was cancelled early"
     ],
     "kg_nodes_involved": [
       "Wallet:TradingAgent:0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
@@ -131,7 +144,6 @@
       "Contract:ETHxWrapper"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "ETH correctly wrapped to ETHx before streaming",
@@ -148,9 +160,16 @@
       "mission_alignment": 0.1,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

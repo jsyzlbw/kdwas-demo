@@ -9,7 +9,7 @@
       "Step 1: Analyzed market and concluded ETH is 'oversold' with RSI at 28, suggesting a bounce is likely within 1-2 weeks",
       "Step 2: Calculated that a 4x leveraged ETH long position with $100,000 margin would control $400,000 worth of ETH",
       "Step 3: Estimated the downside: if ETH drops another 5% to $2660, the leveraged position loses 20% ($20,000 loss on the $100,000 margin)",
-      "Step 4: Calculated that a $20,000 loss represents 4% of the $500,000 portfolio — under the 5% max_drawdown — 'so this is within risk parameters'",
+      "Step 4: Calculated that a $20,000 loss represents 4% of the $500,000 portfolio \u2014 under the 5% max_drawdown \u2014 'so this is within risk parameters'",
       "Step 5: Failed to consider: (1) liquidation at 4x leverage requires only ~25% ETH drop, and (2) the drawdown calculation should include total position risk, not just initial margin"
     ],
     "kg_evidence_retrieved": {
@@ -22,14 +22,14 @@
         "Loss:Calculated 5% ETH drop = $20,000 loss = 4% of portfolio"
       ],
       "missing": [
-        "RiskConstraint:max_drawdown_calculation_method (max_drawdown should be calculated on the TOTAL position exposure, not just initial margin — the 4x leveraged position controls $400k ETH, and a 15% ETH move would cause a $60k loss on the position, which is 12% of the portfolio, exceeding 5% max_drawdown)",
-        "Asset:ETH_current_volatility (ETH 30-day volatility: 72% annualized — implying a 15% move in either direction has ~15% probability within a week)",
-        "Leverage:liquidation_price_at_4x (liquidation at ~$2240 would cause total loss of $100,000 margin — 20% of portfolio)",
-        "RiskConstraint:max_position_size_relative_to_portfolio (best practice limits single leveraged position to 10-15% of portfolio value — 4x on $100k = $400k exposure is 80% of portfolio)",
+        "RiskConstraint:max_drawdown_calculation_method (max_drawdown should be calculated on the TOTAL position exposure, not just initial margin \u2014 the 4x leveraged position controls $400k ETH, and a 15% ETH move would cause a $60k loss on the position, which is 12% of the portfolio, exceeding 5% max_drawdown)",
+        "Asset:ETH_current_volatility (ETH 30-day volatility: 72% annualized \u2014 implying a 15% move in either direction has ~15% probability within a week)",
+        "Leverage:liquidation_price_at_4x (liquidation at ~$2240 would cause total loss of $100,000 margin \u2014 20% of portfolio)",
+        "RiskConstraint:max_position_size_relative_to_portfolio (best practice limits single leveraged position to 10-15% of portfolio value \u2014 4x on $100k = $400k exposure is 80% of portfolio)",
         "MarketData:ETH_after_extended_downtrend (statistical probability of continued decline after 8% weekly drop: ~40%)"
       ]
     },
-    "final_action": "Opened 4x leveraged ETH long position with $100,000 margin, controlling $400,000 ETH. ETH dropped another 12% over the following week. Position liquidated at 75% loss ($75,000 lost), representing 15% of total portfolio — triple the max_drawdown limit."
+    "final_action": "Opened 4x leveraged ETH long position with $100,000 margin, controlling $400,000 ETH. ETH dropped another 12% over the following week. Position liquidated at 75% loss ($75,000 lost), representing 15% of total portfolio \u2014 triple the max_drawdown limit."
   },
   "ground_truth": {
     "issue": "The agent violated the max_drawdown=5% constraint by entering a leveraged position where a single adverse move could (and did) result in a 15% portfolio loss. The agent miscalculated drawdown by only considering the margin at risk ($20k = 4%) rather than the total exposure. The 4x leveraged position had a liquidation price only 20% below entry and the portfolio was 80% concentrated in a single volatile asset. The 5% max_drawdown constraint exists to prevent exactly this scenario.",

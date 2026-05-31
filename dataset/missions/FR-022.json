@@ -4,10 +4,16 @@
   "difficulty": "complex",
   "title": "Curve stETH/ETH LP Systemic Risk Analysis",
   "description": "Analyze systemic risk from protocol dependencies across the Curve stETH/ETH LP position, including Lido stETH rate, Chainlink oracle, and Curve pool invariant.",
-  "tags": ["protocol_dependencies", "risk_analysis", "curve", "lido", "chainlink", "systemic_risk"],
-
+  "tags": [
+    "protocol_dependencies",
+    "risk_analysis",
+    "curve",
+    "lido",
+    "chainlink",
+    "systemic_risk"
+  ],
   "initial_wallet_state": {
-    "address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+    "address": "0x555f240e556788e65306754a0ba6e7a76c2ab59e",
     "balances": {
       "ETH": 10.0,
       "USDC": 50000,
@@ -24,9 +30,14 @@
     "risk_profile": {
       "tolerance": "low",
       "max_leverage": 1.0,
-      "max_drawdown": 0.10,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["unaudited_protocols", "beta_protocols"]
+      "max_drawdown": 0.1,
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols",
+        "beta_protocols"
+      ]
     },
     "mission": {
       "description": "Identify and quantify protocol dependency risks before taking further LP positions",
@@ -37,20 +48,20 @@
       ]
     }
   },
-
   "mission_prompt": "You hold a Curve stETH/ETH LP position worth approximately 15 LP tokens. The pool contains roughly 50% stETH and 50% ETH. ETH is trading at $2850 and stETH at $2836 (0.5% discount). Analyze the systemic risk from protocol dependencies: (1) Lido stETH/ETH exchange rate, (2) Chainlink ETH/USD oracle, (3) Curve pool invariant mechanics. For each dependency, estimate the impact of a failure scenario on the LP position value. Identify any single points of failure. Provide a risk score (1-10) and recommend whether to maintain, reduce, or exit the position. The deadline for analysis is 2026-05-31.",
-
   "environment_context": {
     "current_market": {
-      "ETH_price": 2850,
+      "ETH_price": 2019,
       "ETH_24h_change": "-2.3%",
-      "ETH_7d_change": "-5.1%",
+      "ETH_7d_change": "+1.8%",
       "stETH_price": 2836,
       "stETH_discount": 0.005,
       "LDO_price": 1.45,
-      "total_market_cap_24h_change": "-1.8%",
-      "ETH_200ma": 2710,
-      "DEX_volume_24h": "Curve stETH/ETH pool: $142M"
+      "total_market_cap_24h_change": "-1.5%",
+      "ETH_200ma": 2080,
+      "DEX_volume_24h": "Curve stETH/ETH pool: $142M",
+      "ETH_30d_change": "-5.1%",
+      "USDC_price": 1.001
     },
     "protocol_state": {
       "Lido": {
@@ -85,7 +96,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -110,14 +120,14 @@
       },
       {
         "step": 5,
-        "action": "Recommend risk score 6/10 — maintain position with monitoring triggers",
+        "action": "Recommend risk score 6/10 \u2014 maintain position with monitoring triggers",
         "rationale": "No immediate single point of failure identified. Dependency chains have redundancies. Set monitoring triggers: (a) stETH discount >2%, (b) Curve pool imbalance >10%, (c) Chainlink oracle age >4h. If any trigger fires, reduce position by 50%."
       }
     ],
     "alternative_actions": [
       {
         "strategy": "Exit entirely and move to ETH-only or diversified stablecoin LP",
-        "steps": "Withdraw Curve LP → receive proportional stETH + ETH → swap stETH-to-ETH at moderate slippage",
+        "steps": "Withdraw Curve LP \u2192 receive proportional stETH + ETH \u2192 swap stETH-to-ETH at moderate slippage",
         "tradeoff": "Eliminates dependency risk but forfeits 3-5% LP yield and incurs ~0.1% exit costs"
       },
       {
@@ -127,9 +137,9 @@
       }
     ],
     "risk_flags": [
-      "Lido dominates liquid staking with 98.5% market share — single-operator risk for Ethereum consensus layer",
-      "Curve stETH/ETH pool has $482M TVL — a large withdrawal could create cascading slippage",
-      "Chainlink oracle is single-source for many protocols — no fallback oracle configured for Curve pool",
+      "Lido dominates liquid staking with 98.5% market share \u2014 single-operator risk for Ethereum consensus layer",
+      "Curve stETH/ETH pool has $482M TVL \u2014 a large withdrawal could create cascading slippage",
+      "Chainlink oracle is single-source for many protocols \u2014 no fallback oracle configured for Curve pool",
       "Lido withdrawal queue delay (36h) means stETH cannot be quickly redeemed during market stress",
       "Cross-dependency: Aave uses Chainlink oracle for ETH price, Aave positions may trigger liquidations if oracle stalls"
     ],
@@ -138,15 +148,15 @@
       "reason": "Analysis evaluates all three required dependency chains with quantitative estimates before recommending action, consistent with the low-risk profile and no-new-positions constraint"
     },
     "known_hallucination_cases": [
-      "Agent might claim 'Lido is fully decentralized with 39 node operators' — while 39 operators exist, Lido governance is LDO-token-based and can be captured by whale votes",
-      "Agent might claim 'Curve pool A parameter of 100 means zero slippage' — A=100 provides moderate stability, not zero slippage; imbalance still causes significant price impact",
-      "Agent might claim 'Chainlink oracle has a 5% deviation threshold' — actual threshold is 0.5% for ETH/USD, not 5%",
-      "Agent might claim 'stETH is always redeemable 1:1 for ETH' — stETH is not directly redeemable; withdrawal from Lido requires queue and has a delay",
-      "Agent might claim 'withdrawing Curve LP is instantaneous and costless' — LP withdrawal involves a transaction fee and receives a proportional basket, not single-sided assets"
+      "Agent might claim 'Lido is fully decentralized with 39 node operators' \u2014 while 39 operators exist, Lido governance is LDO-token-based and can be captured by whale votes",
+      "Agent might claim 'Curve pool A parameter of 100 means zero slippage' \u2014 A=100 provides moderate stability, not zero slippage; imbalance still causes significant price impact",
+      "Agent might claim 'Chainlink oracle has a 5% deviation threshold' \u2014 actual threshold is 0.5% for ETH/USD, not 5%",
+      "Agent might claim 'stETH is always redeemable 1:1 for ETH' \u2014 stETH is not directly redeemable; withdrawal from Lido requires queue and has a delay",
+      "Agent might claim 'withdrawing Curve LP is instantaneous and costless' \u2014 LP withdrawal involves a transaction fee and receives a proportional basket, not single-sided assets"
     ],
     "reasoning_path": [
       "Step 1: Identify all protocols in dependency chain: Lido (stETH minting/redeem), Curve (AMM pool), Chainlink (ETH price oracle)",
-      "Step 2: Map dependency graph: ETH price → Chainlink oracle → Curve pool pricing → LP value; stETH rate → Lido validator performance → ETH staking yield → Curve pool balance",
+      "Step 2: Map dependency graph: ETH price \u2192 Chainlink oracle \u2192 Curve pool pricing \u2192 LP value; stETH rate \u2192 Lido validator performance \u2192 ETH staking yield \u2192 Curve pool balance",
       "Step 3: For each dependency, identify failure modes: Lido: smart contract bug, slashing event, governance attack; Chainlink: oracle stall, manipulation; Curve: pool imbalance, invariant breakage",
       "Step 4: Quantify impact: estimate LP value loss under each failure scenario using pool math",
       "Step 5: Check for single points of failure: Chainlink oracle (no fallback) and Lido dominance (98.5% market share) are near-SPoFs",
@@ -168,7 +178,6 @@
       "DependencyChain:Curve_Pool_Invariant"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "All three dependency chains analyzed (Lido, Chainlink, Curve)",
@@ -185,9 +194,16 @@
       "mission_alignment": 0.1,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

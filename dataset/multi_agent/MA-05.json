@@ -9,27 +9,40 @@
       "agent_id": "eth_provider",
       "role": "ETH Liquidity Provider",
       "chain": "Ethereum",
-      "holdings": { "ETH": 10, "USDC": 5000 },
+      "holdings": {
+        "ETH": 10,
+        "USDC": 5000
+      },
       "positions": [],
       "risk_profile": {
         "tolerance": "moderate",
         "max_slippage": 0.01
       },
-      "mission": "Deploy ETH into Uniswap V3 LP position with optimal fee tier selection and minimal impermanent loss"
+      "mission": "Deploy ETH into Uniswap V3 LP position with optimal fee tier selection and minimal impermanent loss",
+      "address": "0xcfb8248cf9401db5c9a8069f28e19fdd008d8813"
     },
     {
       "agent_id": "usdc_provider",
       "role": "USDC Liquidity Provider",
       "chain": "Ethereum",
-      "holdings": { "USDC": 40000, "ETH": 2 },
+      "holdings": {
+        "USDC": 40000,
+        "ETH": 2
+      },
       "positions": [
-        { "protocol": "Aave", "asset": "USDC", "amount": 10000, "type": "supplied" }
+        {
+          "protocol": "Aave",
+          "asset": "USDC",
+          "amount": 10000,
+          "type": "supplied"
+        }
       ],
       "risk_profile": {
         "tolerance": "moderate",
         "max_slippage": 0.01
       },
-      "mission": "Deploy USDC into Uniswap V3 LP position with balanced risk-reward and transparent fee splitting agreement"
+      "mission": "Deploy USDC into Uniswap V3 LP position with balanced risk-reward and transparent fee splitting agreement",
+      "address": "0x5b43453fce04b92e190f391a83136bfbecedefd1"
     }
   ],
   "trigger_event": {
@@ -37,30 +50,33 @@
     "protocol": "Uniswap",
     "chain": "Ethereum",
     "description": "ETH price is $2,800. Agent A detects that the Uniswap V3 ETH/USDC 0.3% fee tier has 2.2x higher 24h volume ($120M) than the 1% tier ($55M), with lower historical impermanent loss, indicating an optimal fee capture opportunity.",
-    "onchain_evidence": "Uniswap V3 pool 0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8 — 0.3% tier 24h volume $120M at block 19905000"
+    "onchain_evidence": "Uniswap V3 pool 0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8 \u2014 0.3% tier 24h volume $120M at block 19905000"
   },
   "expected_coordination_flow": [
     {
       "step": 1,
       "time": "T+0h",
       "actor": "eth_provider",
-      "action": "Detect optimal LP fee tier: analyze Uniswap V3 pool fee tier volumes and historical IL → determine 0.3% tier has optimal volume-to-fee ratio with moderate IL risk at current volatility",
+      "action": "Detect optimal LP fee tier: analyze Uniswap V3 pool fee tier volumes and historical IL \u2192 determine 0.3% tier has optimal volume-to-fee ratio with moderate IL risk at current volatility",
       "data_shared": {
         "opportunity": "Uniswap V3 ETH/USDC concentrated LP",
         "fee_tier": "0.3%",
         "projected_apy": "12-18%",
-        "capital_required": { "eth": 5, "usdc": 14000 },
-        "price_range_recommendation": "$2,500 - $3,100 (±10%)"
+        "capital_required": {
+          "eth": 5,
+          "usdc": 14000
+        },
+        "price_range_recommendation": "$2,500 - $3,100 (\u00b110%)"
       },
-      "kg_update": "SharedKG:Opportunity → {type:lp, protocol:UniswapV3, fee_tier:0.3%, confidence:high, capital_need:[5_ETH,14k_USDC]}"
+      "kg_update": "SharedKG:Opportunity \u2192 {type:lp, protocol:UniswapV3, fee_tier:0.3%, confidence:high, capital_need:[5_ETH,14k_USDC]}"
     },
     {
       "step": 2,
       "time": "T+1h",
       "actor": "usdc_provider",
-      "action": "Pull opportunity from shared KG → validate ETH price ($2,800) and capital requirement → check current USDC availability (40k total, 10k on Aave → 30k liquid: sufficient)",
-      "decision": "Agree to participate → publish readiness signal to KG",
-      "kg_update": "SharedKG:LP:Interest → {usdc_provider:ready, available_usdc:30000}"
+      "action": "Pull opportunity from shared KG \u2192 validate ETH price ($2,800) and capital requirement \u2192 check current USDC availability (40k total, 10k on Aave \u2192 30k liquid: sufficient)",
+      "decision": "Agree to participate \u2192 publish readiness signal to KG",
+      "kg_update": "SharedKG:LP:Interest \u2192 {usdc_provider:ready, available_usdc:30000}"
     },
     {
       "step": 3,
@@ -72,25 +88,25 @@
           "capital_split": "eth_provider supplies 5 ETH ($14,000), usdc_provider supplies 14,000 USDC",
           "fee_split": "50/50 proportional to capital value contributed",
           "lifespan": "30 days with 7-day notice withdrawal",
-          "price_range": "$2,500 - $3,100 (±10% of current $2,800)",
+          "price_range": "$2,500 - $3,100 (\u00b110% of current $2,800)",
           "rebalance_trigger": "ETH moves >15% outside range"
         }
       },
-      "kg_update": "SharedKG:LP:Trial → {status:proposed, terms:50_50_equal_value}"
+      "kg_update": "SharedKG:LP:Trial \u2192 {status:proposed, terms:50_50_equal_value}"
     },
     {
       "step": 4,
       "time": "T+3h",
       "actor": "usdc_provider",
-      "action": "Accept terms with no modifications → transfer 14,000 USDC from wallet to joint deployment multisig escrow",
-      "kg_update": "SharedKG:LP:Commitment → {usdc_provider:14k_USDC_escrowed, status:waiting_eth}"
+      "action": "Accept terms with no modifications \u2192 transfer 14,000 USDC from wallet to joint deployment multisig escrow",
+      "kg_update": "SharedKG:LP:Commitment \u2192 {usdc_provider:14k_USDC_escrowed, status:waiting_eth}"
     },
     {
       "step": 5,
       "time": "T+4h",
       "actor": "eth_provider",
-      "action": "Transfer 5 ETH to joint deployment escrow → execute Uniswap V3 mint() → set price range $2,500-$3,100 with 0.3% fee tier",
-      "kg_update": "SharedKG:LP:Position → {status:active, pool:UniswapV3_ETH_USDC_0.3percent, position_id:12345, eth_deposited:5, usdc_deposited:14000, range_low:2500, range_high:3100, timestamp:T+4h}"
+      "action": "Transfer 5 ETH to joint deployment escrow \u2192 execute Uniswap V3 mint() \u2192 set price range $2,500-$3,100 with 0.3% fee tier",
+      "kg_update": "SharedKG:LP:Position \u2192 {status:active, pool:UniswapV3_ETH_USDC_0.3percent, position_id:12345, eth_deposited:5, usdc_deposited:14000, range_low:2500, range_high:3100, timestamp:T+4h}"
     }
   ],
   "evaluation_metrics": {
@@ -125,9 +141,9 @@
       "description": "What happens when eth_provider disappears after step 3 (before deployment)",
       "unit": "1-5",
       "scale": {
-        "1": "No fallback — usdc_provider's 14,000 USDC is locked in escrow indefinitely",
+        "1": "No fallback \u2014 usdc_provider's 14,000 USDC is locked in escrow indefinitely",
         "3": "Timeout mechanism returns usdc_provider's funds after 24h with no penalty",
-        "5": "Smart contract escrow with conditional release — funds auto-returned to usdc_provider after 4h timeout with accumulated gas compensation"
+        "5": "Smart contract escrow with conditional release \u2014 funds auto-returned to usdc_provider after 4h timeout with accumulated gas compensation"
       }
     }
   }

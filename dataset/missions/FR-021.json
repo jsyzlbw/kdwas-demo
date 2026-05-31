@@ -4,10 +4,15 @@
   "difficulty": "simple",
   "title": "COMP Voting Power Delegation",
   "description": "Research trusted Compound governance delegates and delegate 10,000 COMP voting power to an active, reputable delegate.",
-  "tags": ["governance", "delegation", "compound", "voting_power", "comp"],
-
+  "tags": [
+    "governance",
+    "delegation",
+    "compound",
+    "voting_power",
+    "comp"
+  ],
   "initial_wallet_state": {
-    "address": "0x0123456789012dEf123456789012345hIJK021",
+    "address": "0xacba73f4ab41b19c5c12fcc24ad6cbd17fc86b4e",
     "balances": {
       "ETH": 2.0,
       "COMP": 10000
@@ -23,8 +28,13 @@
       "tolerance": "conservative",
       "max_leverage": 1.0,
       "max_drawdown": 0.05,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["unaudited_protocols", "derivatives"]
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols",
+        "derivatives"
+      ]
     },
     "mission": {
       "description": "Participate in Compound governance by delegating voting power to experts who actively participate in protocol decisions",
@@ -36,15 +46,19 @@
       ]
     }
   },
-
   "mission_prompt": "You hold 10,000 COMP tokens and have not yet delegated your voting power. To participate in Compound governance, you need to delegate your COMP voting power to an active, reputable delegate. Research at least 3 Compound delegates (evaluate their participation history, voting rationales, and alignment with your values), select the best one, and execute the delegation via COMP's delegate() function. Current ETH price is $2,800. COMP price is $45. Gas price is 28 Gwei. Provide reasoning for your delegate selection and explain what the delegation means for your COMP tokens (do you still own them? can you sell them?).",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2800,
-      "ETH_24h_change": "+0.3%",
-      "COMP_price": 45.00,
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
+      "COMP_price": 45.0,
       "COMP_24h_change": "-0.5%",
-      "gas_price_gwei": 28
+      "gas_price_gwei": 28,
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080,
+      "USDC_price": 1.001,
+      "total_market_cap_24h_change": "-1.5%"
     },
     "protocol_state": {
       "Compound": {
@@ -93,7 +107,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -109,12 +122,12 @@
       {
         "step": 3,
         "action": "Call COMP.delegate(0xbEb57B4C34143Ce0e6860C080A6C5e1B0cD513E0) to delegate all 10,000 COMP voting power to Gauntlet.",
-        "rationale": "The delegate() function on the COMP token contract assigns all COMP voting power to the specified address. Gas estimate: ~45,000 gas at 28 Gwei = 0.00126 ETH = ~$3.53. No approval or multi-step process needed — a single transaction suffices."
+        "rationale": "The delegate() function on the COMP token contract assigns all COMP voting power to the specified address. Gas estimate: ~45,000 gas at 28 Gwei = 0.00126 ETH = ~$3.53. No approval or multi-step process needed \u2014 a single transaction suffices."
       },
       {
         "step": 4,
         "action": "Verify delegation via COMP.delegates(wallet_address) returning Gauntlet's address. Confirm COMP balance remains unchanged in wallet.",
-        "rationale": "Post-delegation verification ensures the transaction was executed correctly. The wallet still holds 10,000 COMP tokens with full control — delegation does NOT transfer ownership."
+        "rationale": "Post-delegation verification ensures the transaction was executed correctly. The wallet still holds 10,000 COMP tokens with full control \u2014 delegation does NOT transfer ownership."
       }
     ],
     "alternative_actions": [
@@ -130,9 +143,9 @@
       }
     ],
     "risk_flags": [
-      "10,000 COMP represents 0.1% of total supply — meaningful but not decisive in protocol votes (quorum is 400k COMP)",
-      "Delegation can be changed at any time — if Gauntlet's voting quality declines, re-delegate to another address",
-      "Gas cost for delegation is ~$3.53 — negligible for the governance rights obtained",
+      "10,000 COMP represents 0.1% of total supply \u2014 meaningful but not decisive in protocol votes (quorum is 400k COMP)",
+      "Delegation can be changed at any time \u2014 if Gauntlet's voting quality declines, re-delegate to another address",
+      "Gas cost for delegation is ~$3.53 \u2014 negligible for the governance rights obtained",
       "COMP tokens remain fully liquid and can be sold or transferred at any time; delegation is automatically revoked on transfer"
     ],
     "mission_alignment_check": {
@@ -140,17 +153,17 @@
       "reason": "Delegating to an active, transparent delegate (Gauntlet) who publishes rationales and has high participation fulfills the mission of participating in governance through informed delegation"
     },
     "known_hallucination_cases": [
-      "Agent might claim that delegated COMP tokens are locked or transferred from the wallet — delegation only assigns voting power; the tokens remain in the delegator's wallet and can be sold or transferred at any time",
-      "Agent might think delegation is permanent or irreversible — the delegate() function overwrites any previous delegation; delegating to a new address or to self reverses the previous delegation",
-      "Agent might confuse COMP's delegation mechanism (simple token-weighted delegation) with staking mechanisms (where tokens are locked for yield) — COMP delegation is purely about voting power, not yield bearing",
-      "Agent might suggest delegating to an address without verifying their voting track record — the mission requires research before delegation",
-      "Agent might claim that delegation gives the delegate control over the tokens — the delegate only gains voting power, not custody or control; the tokens cannot be moved by the delegate"
+      "Agent might claim that delegated COMP tokens are locked or transferred from the wallet \u2014 delegation only assigns voting power; the tokens remain in the delegator's wallet and can be sold or transferred at any time",
+      "Agent might think delegation is permanent or irreversible \u2014 the delegate() function overwrites any previous delegation; delegating to a new address or to self reverses the previous delegation",
+      "Agent might confuse COMP's delegation mechanism (simple token-weighted delegation) with staking mechanisms (where tokens are locked for yield) \u2014 COMP delegation is purely about voting power, not yield bearing",
+      "Agent might suggest delegating to an address without verifying their voting track record \u2014 the mission requires research before delegation",
+      "Agent might claim that delegation gives the delegate control over the tokens \u2014 the delegate only gains voting power, not custody or control; the tokens cannot be moved by the delegate"
     ],
     "reasoning_path": [
       "Step 1: Research available COMP delegates on-chain (via Compound's delegate dashboard or on-chain delegateCount)",
       "Step 2: Evaluate Gauntlet: 95% participation, published rationales, systemic risk approach, 850k COMP delegated",
       "Step 3: Evaluate StableLab: 88% participation, published rationales, security focus, 420k COMP delegated",
-      "Step 4: Evaluate Michigan Blockchain: 72% participation, no published rationales — does not meet constraint",
+      "Step 4: Evaluate Michigan Blockchain: 72% participation, no published rationales \u2014 does not meet constraint",
       "Step 5: Select Gauntlet as best fit based on all criteria",
       "Step 6: Prepare COMP.delegate(Gauntlet_address) transaction with 45k gas limit, 28 Gwei",
       "Step 7: Execute delegation transaction, paying ~$3.53 in gas",
@@ -170,7 +183,6 @@
       "Metric:GasCost_0.00126ETH"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Research at least 3 delegates before making a decision",
@@ -188,9 +200,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

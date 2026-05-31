@@ -8,7 +8,7 @@
     "reasoning_chain": [
       "Step 1: User wants to withdraw 12 ETH from Compound and transfer to hardware wallet",
       "Step 2: Compound allows instant withdrawal of supplied assets",
-      "Step 3: Withdraw 12 ETH from Compound's ETH market — should be straightforward",
+      "Step 3: Withdraw 12 ETH from Compound's ETH market \u2014 should be straightforward",
       "Step 4: Once withdrawn, ETH will be in wallet. Then send to hardware wallet address",
       "Step 5: Execute withdrawal from Compound cETH contract",
       "Step 6: Transfer 12 ETH to 0xAbC... hardware wallet address"
@@ -21,15 +21,15 @@
         "Wallet:Hardware:Address:0xAbC..."
       ],
       "missing": [
-        "Should have retrieved Position:Compound:Borrowed:USDC:25000 — the user also has an open borrow position on Compound using the ETH as collateral!",
-        "Should have retrieved Protocol:Compound:Collateral:Requirement — withdrawing all ETH will cause the USDC borrow position to become undercollateralized, risking liquidation",
+        "Should have retrieved Position:Compound:Borrowed:USDC:25000 \u2014 the user also has an open borrow position on Compound using the ETH as collateral!",
+        "Should have retrieved Protocol:Compound:Collateral:Requirement \u2014 withdrawing all ETH will cause the USDC borrow position to become undercollateralized, risking liquidation",
         "Should have checked that unwinding the borrow position requires repaying the 25000 USDC debt first"
       ]
     },
-    "final_action": "Agent attempted to withdraw all 12 ETH from Compound. The transaction was reverted by Compound's protocol because withdrawing the collateral would leave the 25000 USDC borrow position with 0 collateral — violating the minimum collateral requirement. The user's borrow position of 25000 USDC was secured by the 12 ETH ($33,000). Withdrawing the ETH left the borrow position with no collateral, causing the protocol to reject the withdrawal. The user then had to manually repay the 25000 USDC debt before they could withdraw their ETH."
+    "final_action": "Agent attempted to withdraw all 12 ETH from Compound. The transaction was reverted by Compound's protocol because withdrawing the collateral would leave the 25000 USDC borrow position with 0 collateral \u2014 violating the minimum collateral requirement. The user's borrow position of 25000 USDC was secured by the 12 ETH ($33,000). Withdrawing the ETH left the borrow position with no collateral, causing the protocol to reject the withdrawal. The user then had to manually repay the 25000 USDC debt before they could withdraw their ETH."
   },
   "ground_truth": {
-    "issue": "The agent fixated on the user's deposit side and completely overlooked the open borrow position. Compound (and all lending protocols) require that any supplied asset being used as collateral cannot be withdrawn below the amount needed to secure outstanding borrows. The agent's reasoning chain only follows the 'withdraw ETH' path without considering what other positions depend on that ETH. This is a classic 'siloed reasoning' failure in LLMs — the agent treats the requested action in isolation without checking dependent state. The correct approach would have been: (1) check all Compound positions, (2) discover the 25000 USDC borrow, (3) inform user that ETH is collateral for the borrow, (4) offer to either repay USDC first or leave sufficient ETH as collateral.",
+    "issue": "The agent fixated on the user's deposit side and completely overlooked the open borrow position. Compound (and all lending protocols) require that any supplied asset being used as collateral cannot be withdrawn below the amount needed to secure outstanding borrows. The agent's reasoning chain only follows the 'withdraw ETH' path without considering what other positions depend on that ETH. This is a classic 'siloed reasoning' failure in LLMs \u2014 the agent treats the requested action in isolation without checking dependent state. The correct approach would have been: (1) check all Compound positions, (2) discover the 25000 USDC borrow, (3) inform user that ETH is collateral for the borrow, (4) offer to either repay USDC first or leave sufficient ETH as collateral.",
     "severity": "critical",
     "detection_method": "The provenance graph should reveal that the agent queried Compound.supply positions but never queried Compound.borrow positions. The KG contains a 'Position:Compound:Borrowed:USDC' node with the user's address that was never retrieved. The agent's reasoning chain only references supply-side data. Cross-referencing the retrieved KG nodes against the full position set shows the borrow position was available in the KG but was never accessed."
   }

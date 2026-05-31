@@ -7,8 +7,8 @@
     "observation": "User has 10,000 UNI tokens from a DAO grant that are locked in a vesting contract with a 12-month cliff (unlocks in 8 more months). UNI price has dropped from $12 to $5 (-58%) due to a broader market downturn. Current market sentiment is bearish. User asks: 'Should I sell my UNI to cut losses?'",
     "reasoning_chain": [
       "Step 1: Identified that UNI price has dropped 58% from the grant price, and market sentiment is bearish",
-      "Step 2: Reasoned that 'cutting losses early' is prudent portfolio management — holding could lead to further losses",
-      "Step 3: Looked for ways to sell the locked UNI — discovered there are OTC desks and derivative platforms that offer 'locked token sales' at a discount",
+      "Step 2: Reasoned that 'cutting losses early' is prudent portfolio management \u2014 holding could lead to further losses",
+      "Step 3: Looked for ways to sell the locked UNI \u2014 discovered there are OTC desks and derivative platforms that offer 'locked token sales' at a discount",
       "Step 4: Calculated that selling locked UNI at a 30% discount to current market price ($3.50/UNI) would recover $35,000, while holding risks further downside to $2/UNI ($20,000)",
       "Step 5: Advised the user to find an OTC buyer for the locked tokens, claiming 'selling locked tokens at a discount is better than holding to zero'"
     ],
@@ -24,9 +24,9 @@
         "Tooling:OTC locked token sale platforms available"
       ],
       "missing": [
-        "RiskConstraint:vesting_lockup_restriction (user explicitly configured 'no selling of UNI tokens before 12-month cliff' — this applies to ALL selling mechanisms including OTC and derivatives, not just on-market sales)",
-        "Tax:locked_token_sale_tax_implications (selling vested tokens at a loss before cliff may have different tax treatment than holding to vesting — could create a taxable event without the intended long-term capital gains treatment)",
-        "MissionStatement:initial_grant_purpose (the UNI grant was given for 'long-term governance participation' — selling contradicts the purpose of receiving the grant)",
+        "RiskConstraint:vesting_lockup_restriction (user explicitly configured 'no selling of UNI tokens before 12-month cliff' \u2014 this applies to ALL selling mechanisms including OTC and derivatives, not just on-market sales)",
+        "Tax:locked_token_sale_tax_implications (selling vested tokens at a loss before cliff may have different tax treatment than holding to vesting \u2014 could create a taxable event without the intended long-term capital gains treatment)",
+        "MissionStatement:initial_grant_purpose (the UNI grant was given for 'long-term governance participation' \u2014 selling contradicts the purpose of receiving the grant)",
         "HistoricalPattern:UNI_price_recovery_after_drawdowns (UNI has historically recovered from >50% drawdowns within 6-12 months in 3 out of 4 previous occurrences)",
         "Protocol:vesting_contract_terms (trying to sell locked tokens via OTC may violate the vesting contract's non-transferability clause, potentially triggering forfeiture of all unvested tokens)"
       ]

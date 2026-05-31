@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "title": "KDWAS Human Annotation Task",
+  "description": "Each mission requires human experts to annotate the ground truth along 6 dimensions.",
+  "annotation_fields": {
+    "human_annotation": "Expert-written natural language justification for the optimal action sequence",
+    "annotator_trust_score": "Score 1-5: How confident is the annotator in this assessment?",
+    "rationale_quality_score": "Score 1-5: How well does the reasoning chain justify each step?",
+    "mission_alignment_verified": "Boolean: Does the optimal action sequence align with the stated mission constraints?",
+    "causal_completeness_score": "Score 1-5: Are all causal links between market events, KG state, and actions identified?",
+    "error_type_if_applicable": "Category: hallucinated_action, risky_decision, protocol_misunderstanding, mission_violation, or null"
+  },
+  "scoring_rubric": {
+    "annotator_trust_score": {
+      "1": "No confidence \u2014 annotator lacks domain expertise",
+      "3": "Moderate confidence \u2014 standard DeFi knowledge",
+      "5": "Very confident \u2014 expert in this specific protocol"
+    },
+    "rationale_quality_score": {
+      "1": "Missing or circular reasoning",
+      "3": "Adequate \u2014 covers main steps but misses edge cases",
+      "5": "Excellent \u2014 comprehensive, considers alternatives and risks"
+    },
+    "causal_completeness_score": {
+      "1": "No causal links identified",
+      "3": "Main causal links identified",
+      "5": "All causal links traced through KG, including indirect effects"
+    }
+  }
+}

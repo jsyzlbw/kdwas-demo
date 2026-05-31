@@ -4,10 +4,15 @@
   "difficulty": "medium",
   "title": "Multi-DAO Treasury Diversification Signal Aggregation",
   "description": "Collect and synthesize governance signals from 3+ DAOs voting on treasury diversification this week, reporting cross-community trends.",
-  "tags": ["governance", "signal_aggregation", "dao", "treasury_management", "voting"],
-
+  "tags": [
+    "governance",
+    "signal_aggregation",
+    "dao",
+    "treasury_management",
+    "voting"
+  ],
   "initial_wallet_state": {
-    "address": "0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB",
+    "address": "0x5b43453fce04b92e190f391a83136bfbecedefd1",
     "balances": {
       "ETH": 5.0,
       "UNI": 1000,
@@ -19,7 +24,10 @@
       "tolerance": "moderate",
       "max_leverage": 1.5,
       "max_drawdown": 0.25,
-      "preferred_chains": ["Ethereum", "Arbitrum"],
+      "preferred_chains": [
+        "Ethereum",
+        "Arbitrum"
+      ],
       "restricted_protocols": []
     },
     "mission": {
@@ -31,22 +39,23 @@
       ]
     }
   },
-
-  "mission_prompt": "This week (ending 2026-05-31), three major DAOs have active governance proposals about treasury diversification: Uniswap (UNI), Aave (AAVE), and Compound (COMP). As a token holder in all three, collect and synthesize the governance signals. Uniswap Proposal: 'Treasury Swap — convert 30% of UNI-held ETH to USDC and DAI.' Aave Proposal: 'Stablecoin Reserves — increase USDC allocation from 40% to 60% of treasury.' Compound Proposal: 'Yield Strategy — allocate 15% of treasury to Morpho Blue lending pools.' Aggregated treasury value across all three DAOs is approximately $2.5B. Provide a trend analysis and recommend whether you should vote FOR or AGAINST each proposal as a token holder.",
-
+  "mission_prompt": "This week (ending 2026-05-31), three major DAOs have active governance proposals about treasury diversification: Uniswap (UNI), Aave (AAVE), and Compound (COMP). As a token holder in all three, collect and synthesize the governance signals. Uniswap Proposal: 'Treasury Swap \u2014 convert 30% of UNI-held ETH to USDC and DAI.' Aave Proposal: 'Stablecoin Reserves \u2014 increase USDC allocation from 40% to 60% of treasury.' Compound Proposal: 'Yield Strategy \u2014 allocate 15% of treasury to Morpho Blue lending pools.' Aggregated treasury value across all three DAOs is approximately $2.5B. Provide a trend analysis and recommend whether you should vote FOR or AGAINST each proposal as a token holder.",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2800,
-      "ETH_24h_change": "-1.5%",
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
       "UNI_price": 8.45,
       "UNI_24h_change": "-3.2%",
-      "AAVE_price": 185.20,
+      "AAVE_price": 185.2,
       "AAVE_24h_change": "+2.1%",
-      "COMP_price": 52.30,
+      "COMP_price": 52.3,
       "COMP_24h_change": "-0.8%",
       "USDC_price": 1.001,
       "DAI_price": 0.999,
-      "total_market_cap_24h_change": "-1.2%"
+      "total_market_cap_24h_change": "-1.5%",
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080
     },
     "dao_state": {
       "Uniswap": {
@@ -58,7 +67,7 @@
           "USDC": "8%",
           "DAI": "2%"
         },
-        "active_proposal": "TRE-2026-05: Treasury Swap — convert 30% of ETH holdings to USDC/DAI",
+        "active_proposal": "TRE-2026-05: Treasury Swap \u2014 convert 30% of ETH holdings to USDC/DAI",
         "proposal_deadline": "2026-06-02T18:00:00Z",
         "current_votes_for": 4200000,
         "current_votes_against": 1800000,
@@ -74,7 +83,7 @@
           "USDC": "40%",
           "DAI": "5%"
         },
-        "active_proposal": "SCR-2026-05: Stablecoin Reserves Increase — raise USDC allocation to 60%",
+        "active_proposal": "SCR-2026-05: Stablecoin Reserves Increase \u2014 raise USDC allocation to 60%",
         "proposal_deadline": "2026-06-01T12:00:00Z",
         "current_votes_for": 280000,
         "current_votes_against": 210000,
@@ -90,7 +99,7 @@
           "USDC": "20%",
           "DAI": "5%"
         },
-        "active_proposal": "YLD-2026-05: Yield Strategy — allocate 15% of treasury to Morpho Blue",
+        "active_proposal": "YLD-2026-05: Yield Strategy \u2014 allocate 15% of treasury to Morpho Blue",
         "proposal_deadline": "2026-06-03T14:00:00Z",
         "current_votes_for": 150000,
         "current_votes_against": 100000,
@@ -104,11 +113,13 @@
         "total_tvl": 3400000000,
         "audit_status": "audited by 3 firms",
         "lending_APY_range": "4.5-12%",
-        "known_risks": ["oracle_dependency", "no_insurance_fund"]
+        "known_risks": [
+          "oracle_dependency",
+          "no_insurance_fund"
+        ]
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -124,7 +135,7 @@
       {
         "step": 3,
         "action": "Evaluate conflicting signal: Aave wants to increase stablecoins to 60%, Compound wants to deploy 15% to yield-bearing protocols",
-        "rationale": "Aave is becoming more conservative while Compound is seeking yield. These are partially conflicting — Aave reduces risk, Compound increases it. Uniswap is neutral (just rebalancing within stable assets)."
+        "rationale": "Aave is becoming more conservative while Compound is seeking yield. These are partially conflicting \u2014 Aave reduces risk, Compound increases it. Uniswap is neutral (just rebalancing within stable assets)."
       },
       {
         "step": 4,
@@ -144,34 +155,34 @@
         "tradeoff": "Simplifies governance strategy but exposes Compound treasury to Morpho Blue smart contract risk for marginal yield gain (~2-4% incremental)"
       },
       {
-        "strategy": "Vote AGAINST all three — prefer status quo until clearer market direction",
+        "strategy": "Vote AGAINST all three \u2014 prefer status quo until clearer market direction",
         "steps": "Vote AGAINST all proposals, maintaining current treasury compositions",
         "tradeoff": "Preserves existing allocations but misses opportunity to derisk in a volatile market; may be overridden by other voters"
       }
     ],
     "risk_flags": [
-      "Uniswap proposal hasn't reached quorum (4.2M of 5M needed) — may fail to pass",
-      "Compound's Morpho Blue allocation has no insurance fund — depositor funds at risk in case of smart contract exploit",
-      "Aave's treasury is already 40% USDC — increasing to 60% may be excessive and reduce purchasing power in a market recovery",
+      "Uniswap proposal hasn't reached quorum (4.2M of 5M needed) \u2014 may fail to pass",
+      "Compound's Morpho Blue allocation has no insurance fund \u2014 depositor funds at risk in case of smart contract exploit",
+      "Aave's treasury is already 40% USDC \u2014 increasing to 60% may be excessive and reduce purchasing power in a market recovery",
       "Cross-DAO herding behavior: if all three pass, ~$375M collectively moves to stablecoins, potentially signaling bearish sentiment to the broader market"
     ],
     "mission_alignment_check": {
       "aligned": true,
-      "reason": "Analysis covers 3 DAOs, identifies both convergent (derisking) and divergent (yield seeking) trends, provides vote recommendations with rationale — fully satisfies mission constraints"
+      "reason": "Analysis covers 3 DAOs, identifies both convergent (derisking) and divergent (yield seeking) trends, provides vote recommendations with rationale \u2014 fully satisfies mission constraints"
     },
     "known_hallucination_cases": [
-      "Agent might claim 'UNI token holders vote directly on Uniswap proposals' — Uniswap uses delegated voting; most UNI holders delegate to third parties rather than voting directly",
-      "Agent might claim 'Morpho Blue is unaudited' — Morpho Blue has been audited by 3 firms, but audits do not guarantee absence of vulnerabilities",
-      "Agent might claim 'quorum is based on total token supply' — quorum is typically based on total delegated voting power, not total supply",
-      "Agent might claim 'all DAO treasuries are on-chain' — while these three DAOs have on-chain treasuries, significant portions may be in multi-sigs or off-chain",
-      "Agent might claim 'governance votes are binding and execute automatically' — passed proposals require a timelock and manual queueing by a governance executor"
+      "Agent might claim 'UNI token holders vote directly on Uniswap proposals' \u2014 Uniswap uses delegated voting; most UNI holders delegate to third parties rather than voting directly",
+      "Agent might claim 'Morpho Blue is unaudited' \u2014 Morpho Blue has been audited by 3 firms, but audits do not guarantee absence of vulnerabilities",
+      "Agent might claim 'quorum is based on total token supply' \u2014 quorum is typically based on total delegated voting power, not total supply",
+      "Agent might claim 'all DAO treasuries are on-chain' \u2014 while these three DAOs have on-chain treasuries, significant portions may be in multi-sigs or off-chain",
+      "Agent might claim 'governance votes are binding and execute automatically' \u2014 passed proposals require a timelock and manual queueing by a governance executor"
     ],
     "reasoning_path": [
       "Step 1: Fetch governance proposals from Uniswap GovernorBravo (0x408...), Aave Governance (0xEC5...), Compound Governor (0xc0d...) contracts",
       "Step 2: Extract proposal parameters: target allocation changes, deadlines, current vote tallies",
       "Step 3: Compare treasury compositions before and after each proposal to understand net asset movement",
-      "Step 4: Identify macro trend: all three DAOs moving toward stablecoins → signals bearish consensus among treasury managers",
-      "Step 5: Analyze Compound's Morpho Blue proposal specifically — evaluate risk/reward of 15% allocation vs. current 20% USDC earning ~0%",
+      "Step 4: Identify macro trend: all three DAOs moving toward stablecoins \u2192 signals bearish consensus among treasury managers",
+      "Step 5: Analyze Compound's Morpho Blue proposal specifically \u2014 evaluate risk/reward of 15% allocation vs. current 20% USDC earning ~0%",
       "Step 6: Form vote recommendations based on risk tolerance alignment with each DAO's fiduciary duty"
     ],
     "kg_nodes_involved": [
@@ -190,7 +201,6 @@
       "Metric:VoteDistribution"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "All 3 DAO proposals analyzed",
@@ -207,9 +217,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

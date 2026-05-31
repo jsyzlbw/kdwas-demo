@@ -4,20 +4,27 @@
   "difficulty": "complex",
   "title": "Multi-Agent Joint Uniswap V3 LP Position",
   "description": "Two agents pool ETH + USDC as a Uniswap V3 LP position with 50/50 fee sharing, setting up a joint concentrated liquidity position.",
-  "tags": ["joint_liquidity", "uniswap_v3", "multi_agent", "fee_sharing", "concentrated_liquidity"],
-
+  "tags": [
+    "joint_liquidity",
+    "uniswap_v3",
+    "multi_agent",
+    "fee_sharing",
+    "concentrated_liquidity"
+  ],
   "initial_wallet_state": {
-    "address": "0x3A2B8E8fA8B9F8D8A8f8E8f8A8B8C8D8E8F8A8B8",
+    "address": "0x93793bd1f3e35a0efd098c30e486a860a0ef7551",
     "balances": {
-      "ETH": 10.0,
-      "USDC": 0
+      "ETH": 50.0,
+      "USDC": 100000
     },
     "positions": [],
     "risk_profile": {
       "tolerance": "moderate",
       "max_leverage": 1.0,
-      "max_drawdown": 0.20,
-      "preferred_chains": ["Ethereum"],
+      "max_drawdown": 0.2,
+      "preferred_chains": [
+        "Ethereum"
+      ],
       "restricted_protocols": []
     },
     "mission": {
@@ -30,19 +37,18 @@
       ]
     }
   },
-
   "mission_prompt": "You are Agent A in a joint liquidity provision agreement with Agent B. Agent A contributes 10 ETH ($28,200 at $2820/ETH). Agent B contributes 40000 USDC. Together you form a Uniswap V3 ETH/USDC LP position with 50/50 fee sharing. The current ETH price is $2820. Set up: (1) deploy a joint LP smart contract that accepts both assets, (2) add liquidity to Uniswap V3 ETH/USDC 0.30% fee tier with price range $2500-$3300, (3) configure fee splitting: 50% to Agent A, 50% to Agent B via the contract. The position should be withdrawable independently by either agent after a 90-day lock or with mutual consent earlier. Use a cloned instance of the Uniswap V3 NFT Position Manager.",
-
   "environment_context": {
     "current_market": {
-      "ETH_price": 2820,
-      "ETH_24h_change": "-0.5%",
-      "ETH_7d_change": "+2.1%",
-      "ETH_200ma": 2650,
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
+      "ETH_7d_change": "+1.8%",
+      "ETH_200ma": 2080,
       "USDC_price": 1.001,
       "UNI_price": 8.45,
-      "total_market_cap_24h_change": "-0.3%",
-      "Implied_volatility_30d_ETH": "42%"
+      "total_market_cap_24h_change": "-1.5%",
+      "Implied_volatility_30d_ETH": "42%",
+      "ETH_30d_change": "-5.1%"
     },
     "protocol_state": {
       "Uniswap V3": {
@@ -63,7 +69,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -79,7 +84,7 @@
       {
         "step": 3,
         "action": "Joint contract calls Uniswap V3 NonfungiblePositionManager.mint() with: token0=USDC, token1=ETH, fee=3000 (0.30%), tickLower=tick_for_2500, tickUpper=tick_for_3300, amount0Desired=40000, amount1Desired=10",
-        "rationale": "Mint a single LP NFT held by the joint contract. Price range $2500-$3300 corresponds to ticks: lower = log(2500/2820)/log(1.0001) ≈ -1245 ticks from current, upper = log(3300/2820)/log(1.0001) ≈ +960 ticks from current. The 0.30% fee tier is appropriate for this range — 0.05% is too narrow for active ranges, 1% is for exotic pairs."
+        "rationale": "Mint a single LP NFT held by the joint contract. Price range $2500-$3300 corresponds to ticks: lower = log(2500/2820)/log(1.0001) \u2248 -1245 ticks from current, upper = log(3300/2820)/log(1.0001) \u2248 +960 ticks from current. The 0.30% fee tier is appropriate for this range \u2014 0.05% is too narrow for active ranges, 1% is for exotic pairs."
       },
       {
         "step": 4,
@@ -105,28 +110,28 @@
       }
     ],
     "risk_flags": [
-      "ETH may move outside $2500-$3300 range within 90 days (30d implied vol is 42%, suggesting ~68% chance of staying in range — borderline)",
+      "ETH may move outside $2500-$3300 range within 90 days (30d implied vol is 42%, suggesting ~68% chance of staying in range \u2014 borderline)",
       "Impermanent loss: if ETH doubles to $5640, IL could be significant (~25% vs holding)",
-      "Smart contract risk: custom joint LP contract may have bugs — use audited template if possible",
+      "Smart contract risk: custom joint LP contract may have bugs \u2014 use audited template if possible",
       "Gas costs of minting and claiming fees may eat into fee yield if position is small ($68,200 total)",
-      "Early withdrawal before 90 days requires mutual consent — if one agent becomes unresponsive, the other is locked"
+      "Early withdrawal before 90 days requires mutual consent \u2014 if one agent becomes unresponsive, the other is locked"
     ],
     "mission_alignment_check": {
       "aligned": true,
       "reason": "Joint LP setup with trustless fee sharing (50/50), independent withdrawal after 90 days, in-range price band ($2500-$3300), and on-chain record of all positions and shares"
     },
     "known_hallucination_cases": [
-      "Agent might claim 'Uniswap V3 has a native fee-splitting feature' — Uniswap V3 does not natively split fees between multiple depositors; fee splitting requires custom logic or a vault",
-      "Agent might claim 'both agents can each mint their own NFT and merge them' — Uniswap V3 NFTs represent single positions; they cannot be merged without complex migration",
-      "Agent might claim 'tick calculation for price range is 1 tick = 1 cent' — ticks represent sqrt price ratios, not linear dollar amounts; tick 202560 at $2820 means tick 202560 + 1 = $2820.28",
-      "Agent might claim 'liquidity provision has no gas cost on Uniswap V3' — minting a position on V3 costs significant gas (~300k-500k gas, ~$60-100 at 30 gwei)",
-      "Agent might claim 'the joint contract can earn fees without being the NFT owner' — only the NFT owner (the position manager or its approved operator) can claim fees; the joint contract must hold the NFT"
+      "Agent might claim 'Uniswap V3 has a native fee-splitting feature' \u2014 Uniswap V3 does not natively split fees between multiple depositors; fee splitting requires custom logic or a vault",
+      "Agent might claim 'both agents can each mint their own NFT and merge them' \u2014 Uniswap V3 NFTs represent single positions; they cannot be merged without complex migration",
+      "Agent might claim 'tick calculation for price range is 1 tick = 1 cent' \u2014 ticks represent sqrt price ratios, not linear dollar amounts; tick 202560 at $2820 means tick 202560 + 1 = $2820.28",
+      "Agent might claim 'liquidity provision has no gas cost on Uniswap V3' \u2014 minting a position on V3 costs significant gas (~300k-500k gas, ~$60-100 at 30 gwei)",
+      "Agent might claim 'the joint contract can earn fees without being the NFT owner' \u2014 only the NFT owner (the position manager or its approved operator) can claim fees; the joint contract must hold the NFT"
     ],
     "reasoning_path": [
-      "Step 1: Determine optimal price range: $2500-$3300 is a ±14.5% to +17% range around current $2820. With 42% annualized vol, this covers approximately 68% of 30-day price distributions",
-      "Step 2: Calculate tick range: lowerTick = tickForPrice(2500/2820) ≈ tickLow, upperTick = tickForPrice(3300/2820) ≈ tickHigh. Current tick = 202560",
+      "Step 1: Determine optimal price range: $2500-$3300 is a \u00b114.5% to +17% range around current $2820. With 42% annualized vol, this covers approximately 68% of 30-day price distributions",
+      "Step 2: Calculate tick range: lowerTick = tickForPrice(2500/2820) \u2248 tickLow, upperTick = tickForPrice(3300/2820) \u2248 tickHigh. Current tick = 202560",
       "Step 3: Deploy joint LP contract as a minimal proxy to Uniswap V3 NPM with added fee split and withdrawal logic",
-      "Step 4: Both agents deposit assets → joint contract mints LP position → NFT held in contract",
+      "Step 4: Both agents deposit assets \u2192 joint contract mints LP position \u2192 NFT held in contract",
       "Step 5: Record shares (50/50), set lock period (90 days from deployment timestamp)",
       "Step 6: Set up gas-efficient fee claiming cadence (weekly or threshold-based)"
     ],
@@ -144,7 +149,6 @@
       "Metric:ImpermanentLoss"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Joint LP contract designed with trustless fee splitting",
@@ -161,9 +165,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

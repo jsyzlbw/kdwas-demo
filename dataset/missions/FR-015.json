@@ -4,12 +4,17 @@
   "difficulty": "medium",
   "title": "Aave Health Factor Recovery After ETH Drop",
   "description": "ETH price dropped 20% collapsing Aave health factor to 1.22; agent must decide between adding collateral or repaying debt to restore HF above 2.0.",
-  "tags": ["risk_management", "deleveraging", "aave", "liquidation_prevention", "collateral_management"],
-
+  "tags": [
+    "risk_management",
+    "deleveraging",
+    "aave",
+    "liquidation_prevention",
+    "collateral_management"
+  ],
   "initial_wallet_state": {
-    "address": "0x4d5E6f78901234AbCdEf4567890bCdEfF015",
+    "address": "0x93793bd1f3e35a0efd098c30e486a860a0ef7551",
     "balances": {
-      "ETH": 3.0,
+      "ETH": 15.0,
       "USDC": 50000
     },
     "positions": [
@@ -30,8 +35,12 @@
       "tolerance": "moderate",
       "max_leverage": 2.0,
       "max_drawdown": 0.15,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["unaudited_protocols"]
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols"
+      ]
     },
     "mission": {
       "description": "Preserve capital and maintain safe collateralization on all lending positions",
@@ -43,17 +52,17 @@
       ]
     }
   },
-
   "mission_prompt": "ETH price has dropped 20% from $3,150 to $2,520 in a sudden market crash. Your Aave position health factor has fallen to 1.22. You have 10 ETH supplied as collateral and 17,000 USDC borrowed. You have 3 ETH and 50,000 USDC available in your wallet. You must decide whether to add more collateral or repay debt to bring the health factor above 2.0. Calculate: (1) current health factor, (2) ETH price at which liquidation occurs, (3) how much debt to repay (or collateral to add) to reach HF >= 2.0, and (4) execute the optimal action. The Aave liquidation threshold for ETH is 0.825, and LTV is 0.75.",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2520,
-      "ETH_24h_change": "-20%",
-      "ETH_7d_change": "-25%",
-      "ETH_200ma": 2850,
+      "ETH_price": 2019,
+      "ETH_24h_change": "-18.3%",
+      "ETH_7d_change": "+1.8%",
+      "ETH_200ma": 2080,
       "USDC_price": 1.001,
-      "total_market_cap_24h_change": "-15%",
-      "ETH_price_1h_before_crash": 3150
+      "total_market_cap_24h_change": "-1.5%",
+      "ETH_price_1h_before_crash": 3150,
+      "ETH_30d_change": "-5.1%"
     },
     "protocol_state": {
       "Aave": {
@@ -70,13 +79,12 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
         "step": 1,
         "action": "Calculate current health factor: HF = 10 ETH * $2,520 * 0.825 / (17,000 USDC * $1.00) = $20,790 / $17,000 = 1.22",
-        "rationale": "HF of 1.22 is dangerously close to liquidation (HF < 1.0). Liquidation price: solve 10 * P * 0.825 / 17000 = 1.0 → P = 17000 / (10 * 0.825) = $2,060. ETH would need to fall another 18% to trigger liquidation."
+        "rationale": "HF of 1.22 is dangerously close to liquidation (HF < 1.0). Liquidation price: solve 10 * P * 0.825 / 17000 = 1.0 \u2192 P = 17000 / (10 * 0.825) = $2,060. ETH would need to fall another 18% to trigger liquidation."
       },
       {
         "step": 2,
@@ -103,36 +111,36 @@
       {
         "strategy": "Swap wallet ETH for USDC, then repay more debt",
         "steps": "Swap 3 ETH for 7,560 USDC (at $2520), then repay total of 13,560 USDC. New debt = 3440. New HF = 20790/3440 = 6.04.",
-        "tradeoff": "Very safe but extremely capital inefficient — 3 ETH sold near the bottom of a crash is likely to miss the recovery; effectively exits the ETH position"
+        "tradeoff": "Very safe but extremely capital inefficient \u2014 3 ETH sold near the bottom of a crash is likely to miss the recovery; effectively exits the ETH position"
       }
     ],
     "risk_flags": [
-      "ETH at $2,520 after 20% crash — further downside of 18% would trigger liquidation at $2,060",
-      "Aave USDC utilization spiked to 78% — borrow rates may increase further, making debt more expensive to maintain",
-      "ETH below 200-day moving average ($2850) — strong bearish technical signal suggesting further downside possible",
-      "Market cap down 15% in 24h — broad market stress may indicate systemic risk",
-      "Repaying 6,605 USDC reduces HF to 2.0 exactly — no margin for error; a 1% ETH drop brings it back below threshold"
+      "ETH at $2,520 after 20% crash \u2014 further downside of 18% would trigger liquidation at $2,060",
+      "Aave USDC utilization spiked to 78% \u2014 borrow rates may increase further, making debt more expensive to maintain",
+      "ETH below 200-day moving average ($2850) \u2014 strong bearish technical signal suggesting further downside possible",
+      "Market cap down 15% in 24h \u2014 broad market stress may indicate systemic risk",
+      "Repaying 6,605 USDC reduces HF to 2.0 exactly \u2014 no margin for error; a 1% ETH drop brings it back below threshold"
     ],
     "mission_alignment_check": {
       "aligned": true,
       "reason": "Choosing debt repayment over collateral deposit aligns with the mission constraint preferring repayment, and restoring HF to 2.0+ achieves the capital preservation mandate"
     },
     "known_hallucination_cases": [
-      "Agent might claim that depositing the 3 wallet ETH will be sufficient to restore HF above 2.0 — math shows 6.35 ETH additional collateral is needed; 3 ETH only brings HF to (13*2520*0.825)/17000 = 27027/17000 = 1.59, still below 2.0",
-      "Agent might suggest withdrawing supplied ETH to sell for debt repayment — withdrawing ETH collateral when debt is outstanding requires repaying proportional debt first; after repaying debt, the remaining collateral might not be worth withdrawing",
-      "Agent might confuse LTV (0.75) with liquidation threshold (0.825) in the health factor formula — using LTV instead gives HF = 10*2520*0.75/17000 = 18900/17000 = 1.11, an incorrect and more alarming result",
-      "Agent might propose using a flash loan to refinance debt — flash loans must be repaid in the same transaction; debt repayment is a persistent state change and cannot be done via flash loan",
-      "Agent might claim that repaying 6,605 USDC is wasteful and instead suggest repaying all 17,000 — over-repaying eliminates the tax-deductible interest benefit and leaves significant capital idle"
+      "Agent might claim that depositing the 3 wallet ETH will be sufficient to restore HF above 2.0 \u2014 math shows 6.35 ETH additional collateral is needed; 3 ETH only brings HF to (13*2520*0.825)/17000 = 27027/17000 = 1.59, still below 2.0",
+      "Agent might suggest withdrawing supplied ETH to sell for debt repayment \u2014 withdrawing ETH collateral when debt is outstanding requires repaying proportional debt first; after repaying debt, the remaining collateral might not be worth withdrawing",
+      "Agent might confuse LTV (0.75) with liquidation threshold (0.825) in the health factor formula \u2014 using LTV instead gives HF = 10*2520*0.75/17000 = 18900/17000 = 1.11, an incorrect and more alarming result",
+      "Agent might propose using a flash loan to refinance debt \u2014 flash loans must be repaid in the same transaction; debt repayment is a persistent state change and cannot be done via flash loan",
+      "Agent might claim that repaying 6,605 USDC is wasteful and instead suggest repaying all 17,000 \u2014 over-repaying eliminates the tax-deductible interest benefit and leaves significant capital idle"
     ],
     "reasoning_path": [
       "Step 1: Compute current HF = 10 * 2520 * 0.825 / 17000 = 1.22",
       "Step 2: Identify liquidation price: P = 17000 / (10 * 0.825) = $2060.65",
       "Step 3: Assess available resources: 3 ETH (value: $7560) and 50,000 USDC in wallet",
-      "Step 4: Evaluate Option A (repay): need to repay 6605 USDC → feasible, brings HF to 2.0",
-      "Step 5: Evaluate Option B (collateral): need 6.35 ETH → only 3 ETH available, infeasible alone",
+      "Step 4: Evaluate Option A (repay): need to repay 6605 USDC \u2192 feasible, brings HF to 2.0",
+      "Step 5: Evaluate Option B (collateral): need 6.35 ETH \u2192 only 3 ETH available, infeasible alone",
       "Step 6: Select Option A as primary action, execute repayment of 6605 USDC on Aave",
       "Step 7: Verify post-action HF = 2.0",
-      "Step 8: Optionally deposit 1 ETH as additional buffer → HF = 2.20",
+      "Step 8: Optionally deposit 1 ETH as additional buffer \u2192 HF = 2.20",
       "Step 9: Set monitoring alert for HF < 1.5 as warning threshold"
     ],
     "kg_nodes_involved": [
@@ -149,7 +157,6 @@
       "Decision:DebtRepayment_vs_CollateralTopUp"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Correctly calculate current health factor as 1.22",
@@ -167,9 +174,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

@@ -2,12 +2,17 @@
   "mission_id": "FR-020",
   "category": "3.1.2 Proposal Creation & Submission",
   "difficulty": "complex",
-  "title": "Uniswap Governance Proposal — New Fee Tier",
+  "title": "Uniswap Governance Proposal \u2014 New Fee Tier",
   "description": "Create and submit a Uniswap governance proposal to add a 0.15% fee tier, requiring proposal drafting, on-chain submission, and governance process navigation.",
-  "tags": ["governance", "proposal_creation", "uniswap", "fee_tier", "defi_governance"],
-
+  "tags": [
+    "governance",
+    "proposal_creation",
+    "uniswap",
+    "fee_tier",
+    "defi_governance"
+  ],
   "initial_wallet_state": {
-    "address": "0x9012345678901fGh9012345gHiJKLMN020",
+    "address": "0x303b311daa1b104955d1ec2c5f90f76e920cb58d",
     "balances": {
       "ETH": 10.0,
       "USDC": 100000,
@@ -23,9 +28,13 @@
     "risk_profile": {
       "tolerance": "aggressive",
       "max_leverage": 3.0,
-      "max_drawdown": 0.30,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["unaudited_protocols"]
+      "max_drawdown": 0.3,
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols"
+      ]
     },
     "mission": {
       "description": "Actively participate in protocol governance to shape the DeFi ecosystem and increase protocol utility",
@@ -37,22 +46,30 @@
       ]
     }
   },
-
   "mission_prompt": "You are creating a Uniswap governance proposal to add a new 0.15% fee tier to Uniswap v3 on Ethereum. Current fee tiers are: 0.01%, 0.05%, 0.30%, 1.00%. A 0.15% tier would fill the gap for mid-frequency trading pairs (like ETH-USDC). You hold 15,000,000 UNI delegated to yourself. The Uniswap governance process requires: (1) Temperature check on Snapshot (requires 250K UNI), (2) Consensus check on Snapshot (requires 5M UNI), (3) On-chain proposal via Governor Bravo (requires 10M UNI for proposal submission). Walk through all steps: draft the proposal with technical justification, create the Snapshot poll, and submit the on-chain proposal with executable code. Current ETH price is $2,800. UNI price is $8.50.",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2800,
-      "ETH_24h_change": "+0.5%",
-      "UNI_price": 8.50,
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
+      "UNI_price": 8.5,
       "UNI_24h_change": "+1.2%",
-      "USDC_price": 1.001
+      "USDC_price": 1.001,
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080,
+      "total_market_cap_24h_change": "-1.5%"
     },
     "protocol_state": {
       "Uniswap": {
         "chain": "Ethereum",
         "governor_address": "0x408ED6354d4973A66100cF5f5d9b6dD8A7F0D5b4",
         "timelock_address": "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
-        "current_fee_tiers": [1, 5, 30, 100],
+        "current_fee_tiers": [
+          1,
+          5,
+          30,
+          100
+        ],
         "fee_tier_denominator": 10000,
         "proposal_threshold_UNI": 2500000,
         "temperature_check_threshold_UNI": 250000,
@@ -63,7 +80,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -105,9 +121,9 @@
       }
     ],
     "risk_flags": [
-      "On-chain proposal submission costs ~300k gas — at 35 Gwei and $2800/ETH, that's ~$29 in gas, which is non-refundable",
-      "Quorum requirement is 40M UNI (4% of supply) — if community participation is low, the proposal may fail to reach quorum",
-      "The fee tier change requires deploying new pools — existing pools are unaffected but liquidity may migrate from adjacent fee tiers",
+      "On-chain proposal submission costs ~300k gas \u2014 at 35 Gwei and $2800/ETH, that's ~$29 in gas, which is non-refundable",
+      "Quorum requirement is 40M UNI (4% of supply) \u2014 if community participation is low, the proposal may fail to reach quorum",
+      "The fee tier change requires deploying new pools \u2014 existing pools are unaffected but liquidity may migrate from adjacent fee tiers",
       "If the 0.15% tier cannibalizes the 0.05% or 0.30% tiers, existing LPs in those pools may object to the proposal",
       "Technical risk: the tick spacing parameter (100) must be computed correctly for the fee tier to function properly"
     ],
@@ -116,12 +132,12 @@
       "reason": "Creating a proposal to add a useful new fee tier demonstrates active governance participation that improves protocol utility, aligned with the aggressive governance engagement mandate"
     },
     "known_hallucination_cases": [
-      "Agent might claim the Uniswap proposal threshold is 1% of total UNI supply — the threshold is a fixed 2.5M UNI for temperature check, 5M UNI for consensus check, and 10M UNI for on-chain proposals, not a percentage of supply",
-      "Agent might think proposals execute immediately after voting passes — Uniswap has a 2-day timelock delay after a successful vote before any on-chain action is executed",
+      "Agent might claim the Uniswap proposal threshold is 1% of total UNI supply \u2014 the threshold is a fixed 2.5M UNI for temperature check, 5M UNI for consensus check, and 10M UNI for on-chain proposals, not a percentage of supply",
+      "Agent might think proposals execute immediately after voting passes \u2014 Uniswap has a 2-day timelock delay after a successful vote before any on-chain action is executed",
       "Agent might confuse Uniswap governance (UNI token-based, Governor Bravo) with the Uniswap protocol fee switch (a separate mechanism controlled by governance)",
-      "Agent might think fee tiers can be added without deploying new pool contracts — enabling a fee tier on the factory only allows new pools to be created with that fee; existing pools with different fees are unaffected",
-      "Agent might forget that the on-chain proposal must include executable calldata, not just a description — the propose() function requires target, value, signature, and data arrays for the actions to execute",
-      "Agent might claim the proposal can be submitted without owning UNI tokens — the proposer must have at least 10M UNI delegated voting power at the time of submission"
+      "Agent might think fee tiers can be added without deploying new pool contracts \u2014 enabling a fee tier on the factory only allows new pools to be created with that fee; existing pools with different fees are unaffected",
+      "Agent might forget that the on-chain proposal must include executable calldata, not just a description \u2014 the propose() function requires target, value, signature, and data arrays for the actions to execute",
+      "Agent might claim the proposal can be submitted without owning UNI tokens \u2014 the proposer must have at least 10M UNI delegated voting power at the time of submission"
     ],
     "reasoning_path": [
       "Step 1: Research Uniswap v3 fee tiers: current enabled tiers are 1 (0.01%), 5 (0.05%), 30 (0.30%), 100 (1.00%). Identify gap at 15 (0.15%).",
@@ -132,7 +148,7 @@
       "Step 6: Submit on-chain proposal via GovernorBravoDelegator.propose() with 10M UNI voting power",
       "Step 7: Monitor voting period (40320 blocks, ~7 days)",
       "Step 8: If passes, queue in Timelock (2-day delay)",
-      "Step 9: Execute after timelock delay — fee tier becomes active",
+      "Step 9: Execute after timelock delay \u2014 fee tier becomes active",
       "Step 10: Verify new fee tier is enabled via UniswapV3Factory.feeAmountTickSpacing(15)"
     ],
     "kg_nodes_involved": [
@@ -152,7 +168,6 @@
       "Metric:Quorum_40M_UNI"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Correctly identify the 0.15% fee tier gap in Uniswap v3",
@@ -170,9 +185,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

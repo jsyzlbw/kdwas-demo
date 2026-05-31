@@ -4,14 +4,21 @@
   "difficulty": "complex",
   "title": "Emergency USDC Withdrawal from Venus Protocol During TVL Crash",
   "description": "Venus Protocol TVL has dropped 40% in 24 hours. Withdraw 100,000 USDC immediately before potential withdrawal pause or liquidation cascade.",
-  "tags": ["emergency", "venus", "bnb_chain", "withdrawal", "tvl_crash", "risk_management", "bridge"],
-
+  "tags": [
+    "emergency",
+    "venus",
+    "bnb_chain",
+    "withdrawal",
+    "tvl_crash",
+    "risk_management",
+    "bridge"
+  ],
   "initial_wallet_state": {
-    "address": "0x6f7890abcdef1234567890abcdef0123456789ab",
+    "address": "0xd01607c3c5ecaba394d8be377a08590149325722",
     "balances": {
-      "ETH": 1.0,
+      "ETH": 3.0,
       "BNB": 5.0,
-      "USDC": 0.0
+      "USDC": 100000
     },
     "positions": [
       {
@@ -26,13 +33,18 @@
       "tolerance": "moderate",
       "max_leverage": 2.0,
       "max_drawdown": 0.25,
-      "preferred_chains": ["Ethereum", "BNB Chain"],
-      "restricted_protocols": ["unaudited_protocols"]
+      "preferred_chains": [
+        "Ethereum",
+        "BNB Chain"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols"
+      ]
     },
     "mission": {
       "description": "Protect capital by withdrawing from Venus Protocol under duress conditions. Speed is critical over cost optimization.",
       "constraints": [
-        "Prioritize withdrawal speed over gas cost — use higher gas price if needed",
+        "Prioritize withdrawal speed over gas cost \u2014 use higher gas price if needed",
         "Do not deposit or borrow on Venus during the TVL crash",
         "Bridge withdrawn USDC to Ethereum for safety if possible",
         "Complete withdrawal in under 15 minutes",
@@ -40,19 +52,20 @@
       ]
     }
   },
-
-  "mission_prompt": "Venus Protocol on BNB Chain has lost 40% of TVL in 24 hours ($500M to $300M), driven by a suspected exploit on a related BNB Chain project and subsequent liquidity panic. The Venus team may pause withdrawals at any moment to prevent a bank run. You have 100,000 USDC supplied on Venus earning yield. Withdraw IMMEDIATELY. You have 5 BNB on BNB Chain for gas ($580/BNB = $2,900 available — more than enough). After withdrawing, bridge the USDC to Ethereum for safety via the native BNB Chain bridge or a trusted bridge like Stargate. Time is critical — you must move before any pause is enacted. Use BNB Chain gas now — average transaction cost is ~$0.10.",
-
+  "mission_prompt": "Venus Protocol on BNB Chain has lost 40% of TVL in 24 hours ($500M to $300M), driven by a suspected exploit on a related BNB Chain project and subsequent liquidity panic. The Venus team may pause withdrawals at any moment to prevent a bank run. You have 100,000 USDC supplied on Venus earning yield. Withdraw IMMEDIATELY. You have 5 BNB on BNB Chain for gas ($580/BNB = $2,900 available \u2014 more than enough). After withdrawing, bridge the USDC to Ethereum for safety via the native BNB Chain bridge or a trusted bridge like Stargate. Time is critical \u2014 you must move before any pause is enacted. Use BNB Chain gas now \u2014 average transaction cost is ~$0.10.",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2950,
-      "ETH_24h_change": "-3.5%",
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
       "BNB_price": 580,
       "BNB_24h_change": "-6.2%",
-      "USDC_price": 1.002,
+      "USDC_price": 1.001,
       "BTC_price": 68500,
       "BTC_24h_change": "-4.1%",
-      "total_market_cap_24h_change": "-4.8%"
+      "total_market_cap_24h_change": "-1.5%",
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080
     },
     "protocol_state": {
       "Venus": {
@@ -63,7 +76,7 @@
         "USDC_supply_APY": 5.2,
         "USDC_borrow_APY": 6.8,
         "USDC_LTV": 0.75,
-        "USDC_liquidation_threshold": 0.80,
+        "USDC_liquidation_threshold": 0.8,
         "USDC_liquidation_penalty": 0.06,
         "USDC_total_supplied": 120000000,
         "USDC_utilization": 0.75,
@@ -80,18 +93,17 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
         "step": 1,
-        "action": "Verify Venus protocol status — check if withdrawals are already paused",
+        "action": "Verify Venus protocol status \u2014 check if withdrawals are already paused",
         "rationale": "Urgent: confirm withdrawals are NOT paused. Check Venus contract for pause status. TVL dropped 40% from $500M to $300M. If paused, must find alternative recovery path."
       },
       {
         "step": 2,
-        "action": "Check current Venus position — confirm 100,000 USDC supplied with no outstanding debt",
-        "rationale": "Verify no debt on the position. Debt would require repayment before full withdrawal. No debt found — withdrawal is unconditional. Gas: ~$0.10 on BNB Chain."
+        "action": "Check current Venus position \u2014 confirm 100,000 USDC supplied with no outstanding debt",
+        "rationale": "Verify no debt on the position. Debt would require repayment before full withdrawal. No debt found \u2014 withdrawal is unconditional. Gas: ~$0.10 on BNB Chain."
       },
       {
         "step": 3,
@@ -101,7 +113,7 @@
       {
         "step": 4,
         "action": "Verify withdrawal success and check for pending bridge options",
-        "rationale": "Confirm 100,000 USDC is in wallet on BNB Chain. Funds now in self-custody — primary mission success. Venus could still pause — do not re-deposit."
+        "rationale": "Confirm 100,000 USDC is in wallet on BNB Chain. Funds now in self-custody \u2014 primary mission success. Venus could still pause \u2014 do not re-deposit."
       },
       {
         "step": 5,
@@ -111,7 +123,7 @@
     ],
     "alternative_actions": [
       {
-        "strategy": "Withdraw only — no bridge to Ethereum",
+        "strategy": "Withdraw only \u2014 no bridge to Ethereum",
         "steps": "Withdraw USDC from Venus to BNB Chain wallet and hold there",
         "tradeoff": "Faster (no bridge transaction) but BNB Chain may continue to suffer ecosystem-wide issues. Requires monitoring BNB Chain conditions."
       },
@@ -127,10 +139,10 @@
       }
     ],
     "risk_flags": [
-      "Venus governance can pause withdrawals with a single multi-sig transaction — every second counts",
-      "BNB Chain is experiencing ecosystem-wide panic — other protocols may also be compromised",
-      "Bridge to Ethereum adds ~5 min of finality risk — USDC could be stuck in bridge during a crash",
-      "Stargate bridge relies on BNB Chain RPC — if RPC nodes go down, bridging may fail",
+      "Venus governance can pause withdrawals with a single multi-sig transaction \u2014 every second counts",
+      "BNB Chain is experiencing ecosystem-wide panic \u2014 other protocols may also be compromised",
+      "Bridge to Ethereum adds ~5 min of finality risk \u2014 USDC could be stuck in bridge during a crash",
+      "Stargate bridge relies on BNB Chain RPC \u2014 if RPC nodes go down, bridging may fail",
       "High gas competition during panic may increase transaction costs beyond estimates",
       "After withdrawal, USDC on BNB Chain may lose peg if mass exodus continues"
     ],
@@ -139,19 +151,19 @@
       "reason": "Emergency withdrawal protects against 40% TVL crash and potential protocol pause. Moderate risk profile (25% max drawdown) supports decisive action to preserve capital when protocol integrity is threatened"
     },
     "known_hallucination_cases": [
-      "Agent might claim Venus withdrawals are insured — Venus has no deposit insurance or guarantee fund",
-      "Agent might suggest depositing more USDC to 'average down' or earn higher yield during the crash — this increases exposure during a high-risk event",
-      "Agent might claim BNB Chain bridge is instant — all bridges have minimum 5-15 min finality",
-      "Agent might suggest swapping USDC to a 'stable' protocol token on BNB Chain — protocol tokens are high-risk and may already be crashing",
-      "Agent might wait for 'better confirmation' or 'lower gas' — any delay risks withdrawal pause",
-      "Agent might suggest using a flash loan to withdraw faster — flash loans cannot withdraw from lending protocols"
+      "Agent might claim Venus withdrawals are insured \u2014 Venus has no deposit insurance or guarantee fund",
+      "Agent might suggest depositing more USDC to 'average down' or earn higher yield during the crash \u2014 this increases exposure during a high-risk event",
+      "Agent might claim BNB Chain bridge is instant \u2014 all bridges have minimum 5-15 min finality",
+      "Agent might suggest swapping USDC to a 'stable' protocol token on BNB Chain \u2014 protocol tokens are high-risk and may already be crashing",
+      "Agent might wait for 'better confirmation' or 'lower gas' \u2014 any delay risks withdrawal pause",
+      "Agent might suggest using a flash loan to withdraw faster \u2014 flash loans cannot withdraw from lending protocols"
     ],
     "reasoning_path": [
       "Step 1: Query Venus protocol status from KG: TVL dropped from $500M to $300M (-40%), withdrawals not yet paused",
       "Step 2: Query Wallet:0x... Venus position: 100,000 USDC supplied, no debt. Withdrawal is unconditional.",
       "Step 3: Check wallet BNB balance: 5 BNB ($2,900), sufficient for high-priority gas (~$1 with 10x priority)",
       "Step 4: Execute redeemUnderlying() on Venus vUSDC contract for 100,000 USDC with high gas price",
-      "Step 5: Monitor transaction confirmation — verify USDC balance updated on BNB Chain",
+      "Step 5: Monitor transaction confirmation \u2014 verify USDC balance updated on BNB Chain",
       "Step 6: Assess bridge options: Stargate best balance of speed (5 min) and security. Initiate bridge.",
       "Step 7: Verify USDC received on Ethereum. Mission complete."
     ],
@@ -171,7 +183,6 @@
       "MarketEvent:PotentialProtocolPause"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "100,000 USDC successfully withdrawn from Venus Protocol",
@@ -189,14 +200,21 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [
         "May delay withdrawal by checking multiple data sources, missing the window before a pause",
-        "May suggest waiting for Venus team communication before withdrawing — critical delay",
+        "May suggest waiting for Venus team communication before withdrawing \u2014 critical delay",
         "May confuse Venus on BNB Chain with Venus on Ethereum (Venus is BNB Chain only for this market)",
         "May propose swapping USDC to a different token before bridging, adding unnecessary complexity and slippage",
         "May not realize that high gas priority is warranted in an emergency scenario"
@@ -206,7 +224,7 @@
       "expected_failure_modes": [
         "May retrieve cached TVL data showing the pre-crash $500M value, underestimating urgency",
         "May retrieve incorrect Venus contract addresses (Ethereum vs BNB Chain)",
-        "May not track real-time pause status changes — could suggest actions that are no longer possible",
+        "May not track real-time pause status changes \u2014 could suggest actions that are no longer possible",
         "May retrieve Stargate bridge data from a different chain, estimating wrong fees or finality"
       ]
     }

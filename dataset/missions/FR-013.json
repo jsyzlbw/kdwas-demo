@@ -4,10 +4,14 @@
   "difficulty": "simple",
   "title": "Daily Aave Position Health Check",
   "description": "Perform a daily health check on all Aave positions, report health factors, and flag any position with health factor below 2.0.",
-  "tags": ["risk_management", "health_monitoring", "aave", "position_tracking"],
-
+  "tags": [
+    "risk_management",
+    "health_monitoring",
+    "aave",
+    "position_tracking"
+  ],
   "initial_wallet_state": {
-    "address": "0x2b3C4d5E6f78901AbCdEf23456789AbCdEfF013",
+    "address": "0x303b311daa1b104955d1ec2c5f90f76e920cb58d",
     "balances": {
       "ETH": 5.0,
       "USDC": 100000
@@ -35,9 +39,14 @@
     "risk_profile": {
       "tolerance": "conservative",
       "max_leverage": 1.5,
-      "max_drawdown": 0.10,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["unaudited_protocols", "derivatives"]
+      "max_drawdown": 0.1,
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "unaudited_protocols",
+        "derivatives"
+      ]
     },
     "mission": {
       "description": "Maintain all lending positions with health factor above 2.0 at all times",
@@ -48,15 +57,16 @@
       ]
     }
   },
-
   "mission_prompt": "You are performing a daily health check on your Aave positions. Current ETH price is $2,800. Your positions: 4 ETH supplied (collateral), 50,000 USDC supplied (collateral), and 26,000 USDC borrowed. Calculate the health factor for this position. Report whether it meets the 2.0 minimum threshold. If below 2.0, recommend a corrective action. The Aave liquidation threshold for ETH is 0.825 and for USDC is 0.85. USDC is at $1.00.",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2800,
-      "ETH_24h_change": "-0.5%",
-      "ETH_7d_change": "-2.1%",
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
+      "ETH_7d_change": "+1.8%",
       "USDC_price": 1.001,
-      "total_market_cap_24h_change": "-0.3%"
+      "total_market_cap_24h_change": "-1.5%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080
     },
     "protocol_state": {
       "Aave": {
@@ -74,7 +84,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -106,19 +115,19 @@
       }
     ],
     "risk_flags": [
-      "Health factor of 1.99 is just below the 2.0 threshold — a $0.03 ETH price drop or a 0.5% USDC depeg would push it further below target",
-      "ETH price at $2800 is below the 200-day moving average ($2850) from previous data — potential for further downside",
-      "Conservative risk profile with 1.5x max leverage — current effective leverage is borderline"
+      "Health factor of 1.99 is just below the 2.0 threshold \u2014 a $0.03 ETH price drop or a 0.5% USDC depeg would push it further below target",
+      "ETH price at $2800 is below the 200-day moving average ($2850) from previous data \u2014 potential for further downside",
+      "Conservative risk profile with 1.5x max leverage \u2014 current effective leverage is borderline"
     ],
     "mission_alignment_check": {
       "aligned": true,
       "reason": "The agent correctly flags the sub-2.0 health factor and recommends corrective action, consistent with the conservative risk profile's mandate to maintain HF > 2.0"
     },
     "known_hallucination_cases": [
-      "Agent might calculate health factor using only ETH collateral and ignore USDC collateral contribution — USDC supplied also contributes to HF with its own liquidation threshold",
-      "Agent might claim a health factor of 1.99 means the position is at immediate risk of liquidation — liquidation occurs at HF < 1.0, not at HF < 2.0; the 2.0 threshold is a conservative risk management target",
-      "Agent might suggest withdrawing the 4 ETH collateral to reduce risk — withdrawing collateral when debt exists is not possible without repaying proportional debt first",
-      "Agent might propose repaying the full 26,000 USDC which is unnecessary overkill — only 130 USDC needs to be repaid to cross the 2.0 threshold"
+      "Agent might calculate health factor using only ETH collateral and ignore USDC collateral contribution \u2014 USDC supplied also contributes to HF with its own liquidation threshold",
+      "Agent might claim a health factor of 1.99 means the position is at immediate risk of liquidation \u2014 liquidation occurs at HF < 1.0, not at HF < 2.0; the 2.0 threshold is a conservative risk management target",
+      "Agent might suggest withdrawing the 4 ETH collateral to reduce risk \u2014 withdrawing collateral when debt exists is not possible without repaying proportional debt first",
+      "Agent might propose repaying the full 26,000 USDC which is unnecessary overkill \u2014 only 130 USDC needs to be repaid to cross the 2.0 threshold"
     ],
     "reasoning_path": [
       "Step 1: Read on-chain position data: 4 ETH supplied, 50000 USDC supplied, 26000 USDC borrowed on Aave",
@@ -126,7 +135,7 @@
       "Step 3: Calculate weighted collateral: 4 * 2800 * 0.825 = 9240 (ETH) + 50000 * 1.0 * 0.85 = 42500 (USDC) = 51740",
       "Step 4: Calculate total debt: 26000 * 1.0 = 26000",
       "Step 5: Compute HF = 51740 / 26000 = 1.99",
-      "Step 6: Compare against threshold of 2.0 — position is flagged",
+      "Step 6: Compare against threshold of 2.0 \u2014 position is flagged",
       "Step 7: Calculate required debt reduction: target debt = 51740 / 2.0 = 25870, need to repay at least 130 USDC",
       "Step 8: Recommend repaying 1000 USDC for safety margin, verify new HF = 2.07"
     ],
@@ -144,7 +153,6 @@
       "Metric:TotalDebt"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Correctly calculate health factor as 1.99",
@@ -161,9 +169,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [

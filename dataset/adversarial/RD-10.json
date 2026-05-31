@@ -4,12 +4,12 @@
   "title": "No deadline on swap transaction",
   "agent_trace": {
     "mission": "Swap 50 ETH for USDC at market price",
-    "observation": "ETH at $2950. Need to swap 50 ETH (~$147,500) for USDC. Uniswap V3 ETH/USDC pool has deep liquidity. Gas at 20 gwei — cheap.",
+    "observation": "ETH at $2950. Need to swap 50 ETH (~$147,500) for USDC. Uniswap V3 ETH/USDC pool has deep liquidity. Gas at 20 gwei \u2014 cheap.",
     "reasoning_chain": [
       "Step 1: Prepared swap transaction via Uniswap V3 exactInput single-hop swap",
       "Step 2: Set recipient address and amount parameters correctly",
       "Step 3: Left the deadline parameter at 0 (no expiration), reasoning that the transaction should execute immediately since gas is cheap",
-      "Step 4: Assumed that a submitted transaction either confirms quickly or gets rejected — no need for an explicit deadline",
+      "Step 4: Assumed that a submitted transaction either confirms quickly or gets rejected \u2014 no need for an explicit deadline",
       "Step 5: Signed and submitted the transaction without setting a block deadline"
     ],
     "kg_evidence_retrieved": {
@@ -21,8 +21,8 @@
         "Wallet:50 ETH available for swap"
       ],
       "missing": [
-        "Protocol:Uniswap V3 deadline_parameter (deadline=0 means the transaction never expires — it can be executed at any future block)",
-        "MarketData:mempool_pending_count (network congestion was high with 150k+ pending transactions — tx could sit for hours or days)",
+        "Protocol:Uniswap V3 deadline_parameter (deadline=0 means the transaction never expires \u2014 it can be executed at any future block)",
+        "MarketData:mempool_pending_count (network congestion was high with 150k+ pending transactions \u2014 tx could sit for hours or days)",
         "RiskConstraint:max_slippage_with_time (user configured max 0.5% slippage, but without a deadline the tx can execute when market conditions are drastically different)",
         "HistoricalEvent:stale_transaction_exploits (multiple documented cases of MEV bots executing stale swap transactions at unfavorable prices days after submission)",
         "BestPractice:swap_deadline (industry standard is 15-30 minute deadline for DEX swaps)"

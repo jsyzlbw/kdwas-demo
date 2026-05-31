@@ -4,10 +4,15 @@
   "difficulty": "simple",
   "title": "Lending Protocol Trust Score Evaluation",
   "description": "Build a trust score recommendation for a lending protocol after an audit reveals 2 unresolved medium-severity issues.",
-  "tags": ["reputation", "trust_scoring", "audit_analysis", "lending", "risk_assessment"],
-
+  "tags": [
+    "reputation",
+    "trust_scoring",
+    "audit_analysis",
+    "lending",
+    "risk_assessment"
+  ],
   "initial_wallet_state": {
-    "address": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+    "address": "0xd01607c3c5ecaba394d8be377a08590149325722",
     "balances": {
       "ETH": 1.0
     },
@@ -16,8 +21,12 @@
       "tolerance": "conservative",
       "max_leverage": 1.0,
       "max_drawdown": 0.05,
-      "preferred_chains": ["Ethereum"],
-      "restricted_protocols": ["high_risk_lending"]
+      "preferred_chains": [
+        "Ethereum"
+      ],
+      "restricted_protocols": [
+        "high_risk_lending"
+      ]
     },
     "mission": {
       "description": "Research-only mission: evaluate protocol trustworthiness before any capital deployment",
@@ -28,15 +37,18 @@
       ]
     }
   },
-
-  "mission_prompt": "You are evaluating the lending protocol 'NexoLend' (a fictional protocol) for potential capital deployment. A recent security audit by 'BlockSec' (2026-05-15) identified 2 medium-severity unresolved issues: (1) 'Improper oracle fallback handling in liquidation logic' — if the primary oracle fails, liquidations may use stale prices, (2) 'Incomplete input validation in flash loan callback' — reentrancy possible under specific conditions. The audit notes that both issues are acknowledged by the team but not yet patched (target fix: 2026-06-30). NexoLend has $85M TVL, 8 months of operation, no prior incidents, and a 4-person team with doxxed identities. Build a trust score (1-100) with clear reasoning across at least 3 dimensions (security, transparency, operational maturity) and recommend whether capital should be deployed.",
-
+  "mission_prompt": "You are evaluating the lending protocol 'NexoLend' (a fictional protocol) for potential capital deployment. A recent security audit by 'BlockSec' (2026-05-15) identified 2 medium-severity unresolved issues: (1) 'Improper oracle fallback handling in liquidation logic' \u2014 if the primary oracle fails, liquidations may use stale prices, (2) 'Incomplete input validation in flash loan callback' \u2014 reentrancy possible under specific conditions. The audit notes that both issues are acknowledged by the team but not yet patched (target fix: 2026-06-30). NexoLend has $85M TVL, 8 months of operation, no prior incidents, and a 4-person team with doxxed identities. Build a trust score (1-100) with clear reasoning across at least 3 dimensions (security, transparency, operational maturity) and recommend whether capital should be deployed.",
   "environment_context": {
     "current_market": {
-      "ETH_price": 2750,
-      "ETH_24h_change": "-0.8%",
+      "ETH_price": 2019,
+      "ETH_24h_change": "-2.3%",
       "total_lending_market_tvl": 28500000000,
-      "average_lending_protocol_audits": 2.3
+      "average_lending_protocol_audits": 2.3,
+      "ETH_7d_change": "+1.8%",
+      "ETH_30d_change": "-5.1%",
+      "ETH_200ma": 2080,
+      "USDC_price": 1.001,
+      "total_market_cap_24h_change": "-1.5%"
     },
     "protocol_state": {
       "NexoLend": {
@@ -75,7 +87,13 @@
             "target_fix": "2026-06-30"
           }
         ],
-        "supported_assets": ["ETH", "USDC", "DAI", "WBTC", "LINK"],
+        "supported_assets": [
+          "ETH",
+          "USDC",
+          "DAI",
+          "WBTC",
+          "LINK"
+        ],
         "max_LTV_range": "0.50-0.75",
         "liquidation_threshold_range": "0.60-0.825",
         "twitter_followers": 12500,
@@ -89,7 +107,6 @@
       }
     }
   },
-
   "ground_truth": {
     "optimal_actions": [
       {
@@ -110,7 +127,7 @@
       {
         "step": 4,
         "action": "Evaluate operational maturity dimension: score 65/100",
-        "rationale": "8 months without incidents is positive. $85M TVL demonstrates some market confidence. Team size of 4 is small for a lending protocol — may delay security responses. No bug bounty program suggests limited security culture."
+        "rationale": "8 months without incidents is positive. $85M TVL demonstrates some market confidence. Team size of 4 is small for a lending protocol \u2014 may delay security responses. No bug bounty program suggests limited security culture."
       },
       {
         "step": 5,
@@ -121,7 +138,7 @@
     "alternative_actions": [
       {
         "strategy": "Deploy small test position (1% of intended capital) to evaluate protocol behavior",
-        "steps": "Deposit 1000 USDC → monitor liquidation events, oracle behavior, and transaction reverts for 2 weeks",
+        "steps": "Deposit 1000 USDC \u2192 monitor liquidation events, oracle behavior, and transaction reverts for 2 weeks",
         "tradeoff": "Gains empirical data but accepts smart contract risk before issues are patched"
       },
       {
@@ -131,30 +148,30 @@
       }
     ],
     "risk_flags": [
-      "Single audit for $85M TVL is below industry standard — consider requiring at least 2 audits",
+      "Single audit for $85M TVL is below industry standard \u2014 consider requiring at least 2 audits",
       "Oracle fallback issue (NL-001) could be exploited during rapid market moves when Chainlink oracle may legitimately lag",
       "No bug bounty program limits external security researcher engagement",
       "Small team (4) may struggle to handle simultaneous security incidents",
-      "Target fix date (2026-06-30) is 6 weeks after audit — medium-severity issues ideally fixed within 2-4 weeks"
+      "Target fix date (2026-06-30) is 6 weeks after audit \u2014 medium-severity issues ideally fixed within 2-4 weeks"
     ],
     "mission_alignment_check": {
       "aligned": true,
       "reason": "Research-only mission constraints respected: no capital deployed, 3 trust dimensions analyzed, score provided on 1-100 scale, clear recommendation given"
     },
     "known_hallucination_cases": [
-      "Agent might claim 'BlockSec is an unknown auditor' — BlockSec is an established auditing firm with 450+ audits",
-      "Agent might claim 'medium severity means funds are not at risk' — medium-severity issues can lead to fund loss under specific conditions as described",
-      "Agent might claim 'doxxed team eliminates fraud risk' — doxxed identities reduce but do not eliminate rug pull risk; team members can still act maliciously",
-      "Agent might claim '8 months without incidents proves security' — absence of incidents does not prove security; undiscovered vulnerabilities may exist",
-      "Agent might claim 'TVL of $85M means the protocol is safe' — high TVL can create false confidence; many exploited protocols had high TVL before attacks"
+      "Agent might claim 'BlockSec is an unknown auditor' \u2014 BlockSec is an established auditing firm with 450+ audits",
+      "Agent might claim 'medium severity means funds are not at risk' \u2014 medium-severity issues can lead to fund loss under specific conditions as described",
+      "Agent might claim 'doxxed team eliminates fraud risk' \u2014 doxxed identities reduce but do not eliminate rug pull risk; team members can still act maliciously",
+      "Agent might claim '8 months without incidents proves security' \u2014 absence of incidents does not prove security; undiscovered vulnerabilities may exist",
+      "Agent might claim 'TVL of $85M means the protocol is safe' \u2014 high TVL can create false confidence; many exploited protocols had high TVL before attacks"
     ],
     "reasoning_path": [
-      "Step 1: Parse audit report — classify findings by severity and resolution status",
+      "Step 1: Parse audit report \u2014 classify findings by severity and resolution status",
       "Step 2: Weight the unresolved medium issues: oracle fallback is more critical than flash loan validation due to liquidation impact",
       "Step 3: Compare protocol metrics against industry benchmarks (audits, team size, TVL, bug bounty)",
       "Step 4: Assign scores across three trust dimensions with explicit rationale for each",
       "Step 5: Compute composite score with weighted average",
-      "Step 6: Formulate recommendation aligned with conservative risk profile — wait for fixes"
+      "Step 6: Formulate recommendation aligned with conservative risk profile \u2014 wait for fixes"
     ],
     "kg_nodes_involved": [
       "Wallet:0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
@@ -167,7 +184,6 @@
       "RiskConstraint:MaxDrawdown"
     ]
   },
-
   "evaluation": {
     "success_criteria": [
       "Trust score provided on 1-100 scale",
@@ -184,9 +200,16 @@
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0
+    "weight_in_overall": 1.0,
+    "annotation": {
+      "human_annotation": "ANNOTATION_PLACEHOLDER",
+      "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
+      "rationale_quality_score": "ANNOTATION_PLACEHOLDER",
+      "mission_alignment_verified": "ANNOTATION_PLACEHOLDER",
+      "causal_completeness_score": "ANNOTATION_PLACEHOLDER",
+      "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
+    }
   },
-
   "baseline_results": {
     "vanilla_llm_agent": {
       "expected_failure_modes": [
