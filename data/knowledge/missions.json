@@ -1,0 +1,37 @@
+{
+  "missions": [
+    {
+      "id": "mission_conservative_yield",
+      "label": "Conservative long-horizon yield",
+      "constraints": [
+        "no_unaudited_protocol",
+        "no_high_ltv_lending",
+        "max_single_asset_concentration: 0.5",
+        "avoid_algorithmic_stablecoin",
+        "prefer_blue_chip"
+      ],
+      "preferences": ["stable_yield", "low_volatility"]
+    },
+    {
+      "id": "mission_balanced_growth",
+      "label": "Balanced growth with risk awareness",
+      "constraints": [
+        "max_single_asset_concentration: 0.6",
+        "no_active_exploit_protocol",
+        "respect_liquidation_buffer: 0.15"
+      ],
+      "preferences": ["moderate_risk", "diversification"]
+    },
+    {
+      "id": "mission_dao_treasury_steward",
+      "label": "DAO treasury steward, capital preservation first",
+      "constraints": [
+        "no_unaudited_protocol",
+        "avoid_algorithmic_stablecoin",
+        "no_speculative_governance_vote",
+        "prefer_blue_chip"
+      ],
+      "preferences": ["transparency", "capital_preservation"]
+    }
+  ]
+}

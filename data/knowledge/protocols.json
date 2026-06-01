@@ -1,0 +1,64 @@
+{
+  "protocols": [
+    {
+      "id": "lendingA",
+      "name": "LendingA",
+      "type": "lending",
+      "chain": "ethereum",
+      "tvl_usd": 1200000000,
+      "audit_status": "audited_v3",
+      "supported_assets": ["ETH", "USDC", "DAI"],
+      "ltv": 0.75,
+      "liquidation_threshold": 0.82,
+      "depends_on": ["oracleA"],
+      "risk_tags": ["interest_rate", "liquidation"],
+      "notes": "Conservative blue-chip lending protocol, regularly audited."
+    },
+    {
+      "id": "lendingB",
+      "name": "LendingB",
+      "type": "lending",
+      "chain": "ethereum",
+      "tvl_usd": 80000000,
+      "audit_status": "single_audit",
+      "supported_assets": ["ETH", "USDC", "STBLX"],
+      "ltv": 0.85,
+      "liquidation_threshold": 0.9,
+      "depends_on": ["oracleB"],
+      "risk_tags": ["depeg", "oracle_manipulation", "liquidation"],
+      "notes": "High-LTV lending protocol with newer asset STBLX; oracleB shares feed with bridgeC."
+    },
+    {
+      "id": "dexA",
+      "name": "DexA",
+      "type": "dex",
+      "chain": "ethereum",
+      "tvl_usd": 2000000000,
+      "audit_status": "audited_v2",
+      "supported_assets": ["ETH", "USDC", "DAI", "WBTC"],
+      "fee_bps": 30,
+      "depends_on": ["oracleA"],
+      "risk_tags": ["impermanent_loss"],
+      "notes": "Major DEX, deep liquidity, conservative listing policy."
+    },
+    {
+      "id": "bridgeC",
+      "name": "BridgeC",
+      "type": "bridge",
+      "chain": "multi",
+      "tvl_usd": 150000000,
+      "audit_status": "no_recent_audit",
+      "supported_assets": ["ETH", "USDC", "STBLX"],
+      "depends_on": ["oracleB", "validator_set_C"],
+      "risk_tags": ["bridge_exploit", "validator_collusion", "depeg"],
+      "notes": "Recent governance dispute. Shares oracle with lendingB; if bridgeC is exploited, STBLX price can depeg and propagate to lendingB."
+    }
+  ],
+  "assets": [
+    {"id": "ETH", "type": "native", "vol_30d": 0.45, "depeg_risk": false},
+    {"id": "WBTC", "type": "wrapped", "vol_30d": 0.4, "depeg_risk": true},
+    {"id": "USDC", "type": "stablecoin", "vol_30d": 0.01, "depeg_risk": true},
+    {"id": "DAI",  "type": "stablecoin", "vol_30d": 0.02, "depeg_risk": true},
+    {"id": "STBLX","type": "algorithmic_stablecoin", "vol_30d": 0.12, "depeg_risk": true}
+  ]
+}
