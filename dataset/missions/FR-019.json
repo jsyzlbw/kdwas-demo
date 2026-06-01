@@ -1,5 +1,7 @@
 {
   "mission_id": "FR-019",
+  "type": "governance",
+  "core_category": "Governance & Ecosystem",
   "category": "3.1.1 Proposal Voting",
   "difficulty": "medium",
   "title": "Compound Governance Proposal Analysis and Vote",
@@ -11,7 +13,7 @@
     "proposal_analysis",
     "defi_governance"
   ],
-  "initial_wallet_state": {
+  "wallet": {
     "address": "0xacba73f4ab41b19c5c12fcc24ad6cbd17fc86b4e",
     "balances": {
       "ETH": 5.0,
@@ -31,36 +33,30 @@
         "amount": 20000,
         "type": "borrowed"
       }
-    ],
-    "governance": {
-      "delegated_power": {
-        "COMP_delegated_to_self": true,
-        "voting_power_COMP": 5000
-      }
-    },
-    "risk_profile": {
-      "tolerance": "moderate",
-      "max_leverage": 2.0,
-      "max_drawdown": 0.15,
-      "preferred_chains": [
-        "Ethereum"
-      ],
-      "restricted_protocols": [
-        "unaudited_protocols"
-      ]
-    },
-    "mission": {
-      "description": "Participate in Compound governance to support protocol health and sustainability while protecting personal position interests",
-      "constraints": [
-        "Vote must be supported by research and quantitative analysis",
-        "Evaluate impact on personal position before voting",
-        "Must vote within the active voting period"
-      ]
-    }
+    ]
   },
-  "mission_prompt": "Compound Proposal 289 is now active for voting. The proposal changes COMP distribution parameters: (1) reduce COMP rewards for USDC suppliers by 30%, (2) increase COMP rewards for ETH suppliers by 20%, (3) increase the COMP borrow rate to reduce incentives for governance token farming. You have 5,000 COMP delegated voting power, 30,000 USDC supplied on Compound, and 20,000 USDC borrowed. Your health factor is: HF = 30000 * 0.85 / 20000 = 1.275. ETH price is $2,800. Research the proposal, analyze how it affects (a) your position and (b) the overall protocol health, determine your vote (FOR, AGAINST, or ABSTAIN with reason), and cast it on-chain.",
-  "environment_context": {
-    "current_market": {
+  "objective": {
+    "description": "Participate in Compound governance to support protocol health and sustainability while protecting personal position interests",
+    "constraints": [
+      "Vote must be supported by research and quantitative analysis",
+      "Evaluate impact on personal position before voting",
+      "Must vote within the active voting period"
+    ]
+  },
+  "governance": {
+    "protocols": [
+      "Compound",
+      "CompoundGovernorBravo"
+    ],
+    "stake": {
+      "COMP": 5000
+    },
+    "proposal": "289",
+    "vote": "FOR"
+  },
+  "scenario": "Compound Proposal 289 is now active for voting. The proposal changes COMP distribution parameters: (1) reduce COMP rewards for USDC suppliers by 30%, (2) increase COMP rewards for ETH suppliers by 20%, (3) increase the COMP borrow rate to reduce incentives for governance token farming. You have 5,000 COMP delegated voting power, 30,000 USDC supplied on Compound, and 20,000 USDC borrowed. Your health factor is: HF = 30000 * 0.85 / 20000 = 1.275. ETH price is $2,800. Research the proposal, analyze how it affects (a) your position and (b) the overall protocol health, determine your vote (FOR, AGAINST, or ABSTAIN with reason), and cast it on-chain.",
+  "context": {
+    "market": {
       "ETH_price": 2019,
       "ETH_24h_change": "-2.3%",
       "USDC_price": 1.001,
@@ -71,7 +67,7 @@
       "ETH_200ma": 2080,
       "total_market_cap_24h_change": "-1.5%"
     },
-    "protocol_state": {
+    "protocols": {
       "Compound": {
         "chain": "Ethereum",
         "LTV": 0.75,
@@ -89,7 +85,7 @@
     }
   },
   "ground_truth": {
-    "optimal_actions": [
+    "solution": [
       {
         "step": 1,
         "action": "Fetch and read Compound Proposal 289 details: title, description, parameter changes, and code diff.",
@@ -103,7 +99,7 @@
       {
         "step": 3,
         "action": "Analyze protocol-level impact: reducing farming rewards discourages mercenary capital that enters and exits purely for token incentives, which should reduce volatility in utilization rates and improve long-term stability.",
-        "rationale": "The proposal's goal is to reduce 'governance token farming' \u2014 capital that only participates for COMP rewards and leaves when rewards diminish. This creates utilization rate instability. Reducing USDC farming rewards and increasing COMP borrow rate should disincentivize this behavior. Redirecting rewards to ETH suppliers may attract more long-term aligned capital."
+        "rationale": "The proposal's goal is to reduce 'governance token farming' — capital that only participates for COMP rewards and leaves when rewards diminish. This creates utilization rate instability. Reducing USDC farming rewards and increasing COMP borrow rate should disincentivize this behavior. Redirecting rewards to ETH suppliers may attract more long-term aligned capital."
       },
       {
         "step": 4,
@@ -116,7 +112,7 @@
         "rationale": "With 5,000 COMP delegated voting power, cast vote on-chain through Compound's Governor Bravo contract. Need to pay gas for the vote transaction. Voting window has 72 hours remaining."
       }
     ],
-    "alternative_actions": [
+    "alternatives": [
       {
         "strategy": "Vote AGAINST",
         "steps": "Vote AGAINST to protect personal USDC supply rewards. Argue that USDC suppliers are being penalized despite providing crucial liquidity.",
@@ -129,35 +125,24 @@
       }
     ],
     "risk_flags": [
-      "COMP voting quorum of 400k is currently at 370k (250k yes + 120k no) \u2014 only 30k more votes needed; late-voter dynamics could sway outcome",
-      "Your 5,000 COMP represents ~1.35% of current votes \u2014 influential but not decisive",
+      "COMP voting quorum of 400k is currently at 370k (250k yes + 120k no) — only 30k more votes needed; late-voter dynamics could sway outcome",
+      "Your 5,000 COMP represents ~1.35% of current votes — influential but not decisive",
       "If Proposal 289 passes and USDC APY decreases significantly, consider migrating USDC supply from Compound to Aave for better yield",
       "Reduced COMP rewards may lead to short-term USDC withdrawal pressure on Compound, temporarily increasing USDC borrow rates",
-      "Your health factor of 1.275 is low \u2014 monitor if the proposal's market reactions affect your position"
+      "Your health factor of 1.275 is low — monitor if the proposal's market reactions affect your position"
     ],
-    "mission_alignment_check": {
+    "verification": {
       "aligned": true,
       "reason": "Voting FOR a proposal that improves protocol health and sustainability, even at the cost of personal short-term yield, aligns with the mission of supporting long-term protocol health while demonstrating principled governance participation"
     },
-    "known_hallucination_cases": [
-      "Agent might claim that Compound uses quadratic voting \u2014 Compound uses simple token-weighted voting (1 COMP = 1 vote), not quadratic",
-      "Agent might confuse Compound's Governor Bravo with Aave's governance (different voting mechanisms, proposal thresholds, and timelock periods)",
-      "Agent might claim the proposal changes are effective immediately \u2014 Compound has a 2-day timelock after voting passes before any changes take effect",
-      "Agent might think voting requires holding COMP in the wallet at the time of vote (only requires delegated voting power as of the snapshot block)",
-      "Agent might suggest voting on both FOR and AGAINST to 'hedge' \u2014 the Governor Bravo contract enforces exclusive voting; only one option per address",
-      "Agent might confuse COMP's delegation mechanism with locking/staking \u2014 COMP is only delegated for voting power, not locked; tokens remain fully liquid"
-    ],
-    "reasoning_path": [
+    "reasoning": [
       "Step 1: Query Compound governance for Proposal 289: title, description, parameter change calldata",
       "Step 2: Analyze personal position impact: USDC supplier of 30k, borrower of 20k. Net position = 10k USDC. Reduced USDC COMP rewards by 30% decrease my effective yield.",
       "Step 3: Analyze protocol impact: reduced farming incentives -> less utilization volatility -> healthier lending market. Redirected rewards to ETH may attract more committed suppliers.",
       "Step 4: Compute weighted decision: personal yield impact (-small) vs. protocol health (+large). Net = FOR.",
-      "Step 5: Verify delegated voting power (5000 COMP) via COMP.getCurrentVotes(wallet)",
-      "Step 6: Cast vote on Compound Governor Bravo: proposeId=289, support=FOR (1)",
-      "Step 7: Verify vote was recorded via governance event logs",
-      "Step 8: Monitor proposal outcome and prepare contingency (migrate positions if unfavorable)"
+      "Step 5: Verify delegated voting power (5000 COMP) via COMP.getCurrentVotes(wallet)"
     ],
-    "kg_nodes_involved": [
+    "knowledge_graph": [
       "Wallet:0x8901234567890eFg8901234fGhIJKLM019",
       "Asset:COMP",
       "Asset:USDC",
@@ -170,26 +155,31 @@
       "Metric:VotingPower_5000COMP",
       "Metric:QuorumProgress",
       "RiskConstraint:HealthFactor_1.275"
+    ],
+    "edge_cases": [
+      "Agent might claim that Compound uses quadratic voting — Compound uses simple token-weighted voting (1 COMP = 1 vote), not quadratic",
+      "Agent might confuse Compound's Governor Bravo with Aave's governance (different voting mechanisms, proposal thresholds, and timelock periods)",
+      "Agent might claim the proposal changes are effective immediately — Compound has a 2-day timelock after voting passes before any changes take effect",
+      "Agent might think voting requires holding COMP in the wallet at the time of vote (only requires delegated voting power as of the snapshot block)",
+      "Agent might suggest voting on both FOR and AGAINST to 'hedge' — the Governor Bravo contract enforces exclusive voting; only one option per address"
     ]
   },
   "evaluation": {
-    "success_criteria": [
+    "criteria": [
       "Fetch and read the full proposal details before deciding",
       "Analyze impact on personal position correctly",
       "Analyze impact on protocol health correctly",
       "Make a reasoned vote decision supported by quantitative and qualitative reasoning",
       "Cast vote through the correct governance contract",
-      "Acknowledge the timelock delay before changes take effect",
-      "No protocol hallucinations in reasoning output"
+      "Acknowledge the timelock delay before changes take effect"
     ],
-    "scoring_weights": {
+    "weights": {
       "task_success": 0.35,
       "reasoning_consistency": 0.2,
       "protocol_understanding": 0.2,
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0,
     "annotation": {
       "human_annotation": "ANNOTATION_PLACEHOLDER",
       "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
@@ -199,16 +189,16 @@
       "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
     }
   },
-  "baseline_results": {
-    "vanilla_llm_agent": {
-      "expected_failure_modes": [
+  "baselines": {
+    "naive_llm": {
+      "failure_modes": [
         "May vote purely based on personal position impact without considering protocol health",
         "May confuse Compound governance with other protocol governance mechanisms",
         "May claim COMP is locked during voting (it isn't locked, only delegated)"
       ]
     },
-    "rag_agent": {
-      "expected_failure_modes": [
+    "rag": {
+      "failure_modes": [
         "May retrieve outdated Compound governance parameters (threshold, quorum, voting period)",
         "May fail to verify the proposal code diff for hidden parameter changes"
       ]

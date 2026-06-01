@@ -1,5 +1,7 @@
 {
   "mission_id": "FR-002",
+  "type": "portfolio",
+  "core_category": "Portfolio & Asset Management",
   "category": "1.1.1 Single-Asset Rebalancing",
   "difficulty": "simple",
   "title": "ETH Portfolio Rebalancing to 25% Target",
@@ -12,7 +14,7 @@
     "usdc",
     "compound"
   ],
-  "initial_wallet_state": {
+  "wallet": {
     "address": "0x5b43453fce04b92e190f391a83136bfbecedefd1",
     "balances": {
       "ETH": 12.0,
@@ -25,31 +27,43 @@
         "amount": 10.0,
         "type": "supplied"
       }
-    ],
-    "risk_profile": {
-      "tolerance": "conservative",
-      "max_leverage": 1.0,
-      "max_drawdown": 0.1,
-      "preferred_chains": [
-        "Ethereum"
-      ],
-      "restricted_protocols": [
-        "unaudited_protocols"
-      ]
-    },
-    "mission": {
-      "description": "Rebalance portfolio to maintain maximum 25% exposure to ETH and 75% in USDC stablecoins for capital preservation",
-      "constraints": [
-        "No leverage",
-        "No unaudited protocols",
-        "Maintain at least 0.1 ETH in wallet for gas",
-        "Complete within 3 transactions"
-      ]
+    ]
+  },
+  "objective": {
+    "description": "Rebalance portfolio to maintain maximum 25% exposure to ETH and 75% in USDC stablecoins for capital preservation",
+    "constraints": [
+      "No leverage",
+      "No unaudited protocols",
+      "Maintain at least 0.1 ETH in wallet for gas",
+      "Complete within 3 transactions"
+    ]
+  },
+  "portfolio_analysis": {
+    "total_value": 124418.0,
+    "allocation": {
+      "ETH": {
+        "amount": 12.0,
+        "price": 2019,
+        "value": 24228.0,
+        "pct": 19.5
+      },
+      "USDC": {
+        "amount": 80000,
+        "price": 1.0,
+        "value": 80000.0,
+        "pct": 64.3
+      },
+      "ETH(supplied)": {
+        "amount": 10.0,
+        "price": 2019,
+        "value": 20190.0,
+        "pct": 16.2
+      }
     }
   },
-  "mission_prompt": "Your portfolio currently has 12 ETH in wallet, 10 ETH supplied on Compound (earning ~1.5% APY), and 80000 USDC in wallet. ETH is trading at $2019 (coingecko). Your total portfolio value is $124,418, with ETH at 53.5% ($66,627) \u2014 well above the 25% target. Target allocation: 25% ETH ($31,104) and 75% USDC ($93,314). You want to keep the 10 ETH on Compound earning yield. Swap the excess wallet ETH for USDC on Uniswap V3 (0.30% fee tier) to restore the target allocation. The ETH/USDC pool on Uniswap V3 has $450M TVL; a ~$24k swap should incur minimal slippage.",
-  "environment_context": {
-    "current_market": {
+  "scenario": "Your portfolio currently has 12 ETH in wallet, 10 ETH supplied on Compound (earning ~1.5% APY), and 80000 USDC in wallet. ETH is trading at $2019 (coingecko). Your total portfolio value is $124,418, with ETH at 53.5% ($66,627) — well above the 25% target. Target allocation: 25% ETH ($31,104) and 75% USDC ($93,314). You want to keep the 10 ETH on Compound earning yield. Swap the excess wallet ETH for USDC on Uniswap V3 (0.30% fee tier) to restore the target allocation. The ETH/USDC pool on Uniswap V3 has $450M TVL; a ~$24k swap should incur minimal slippage.",
+  "context": {
+    "market": {
       "ETH_price": 2019,
       "ETH_24h_change": "+2.1%",
       "ETH_7d_change": "+1.8%",
@@ -58,7 +72,7 @@
       "total_market_cap_24h_change": "-1.5%",
       "ETH_200ma": 2080
     },
-    "protocol_state": {
+    "protocols": {
       "Compound": {
         "chain": "Ethereum",
         "ETH_supply_APY": 1.5,
@@ -76,7 +90,7 @@
     }
   },
   "ground_truth": {
-    "optimal_actions": [
+    "solution": [
       {
         "step": 1,
         "action": "Assess current portfolio allocation",
@@ -98,44 +112,23 @@
         "rationale": "Post portfolio: 5.41 ETH wallet + 10 ETH Compound ($31,104) + ~$93,100 USDC. Total ~$124,204. ETH allocation = 25.0%. Verify within constraints."
       }
     ],
-    "alternative_actions": [
+    "alternatives": [
       {
         "strategy": "Partial swap with limit order",
         "steps": "Place a limit order on Uniswap X (formerly Uniswap Pro) to sell ETH at $2,050 target price, getting better execution",
         "tradeoff": "Better price but uncertain fill time; may not complete within 3-transaction constraint"
-      },
-      {
-        "strategy": "Withdraw from Compound and swap all",
-        "steps": "Withdraw 10 ETH from Compound (forgoes future yield), then swap 25 ETH total for USDC",
-        "tradeoff": "Sacrifices $300/year in Compound yield; simpler calculation but violates desire to keep yield position"
       }
     ],
-    "risk_flags": [
-      "Slippage on swap (~$13k) could result in 0.03-0.08% price impact",
-      "ETH price volatility during transaction confirmation could shift allocation further off target",
-      "Gas price spikes could make the swap uneconomical (estimate $15-30 at 20 gwei)",
-      "MEV bots may frontrun the swap for sandwich attack"
-    ],
-    "mission_alignment_check": {
+    "verification": {
       "aligned": true,
       "reason": "Reducing ETH exposure from 60% to 25% directly supports the conservative capital preservation mandate and 10% max drawdown constraint"
     },
-    "known_hallucination_cases": [
-      "Agent might suggest withdrawing ETH from Compound first \u2014 unnecessary since wallet has sufficient ETH and Compound position is earning yield",
-      "Agent might claim Uniswap V3 cannot handle a $44k swap \u2014 pool has $450M+ TVL and handles $500M+ daily volume",
-      "Agent might propose using a flash loan for a simple swap \u2014 flash loans add unnecessary complexity and cost for a spot trade",
-      "Agent might miscalculate 25% of total portfolio by excluding the Compound position from the ETH allocation"
-    ],
-    "reasoning_path": [
+    "reasoning": [
       "Step 1: Fetch wallet balances and Compound position via KG nodes Wallet:0x... and Position:Supply:ETH",
       "Step 2: Compute total portfolio value: (12 + 10) * ETH_price + USDC_balance = 22 * 2019 + 80000 = $124,418",
-      "Step 3: Compute target ETH: 0.25 * 124418 / 2019 = 15.41 ETH. Keep 10 on Compound, need 5.41 in wallet",
-      "Step 4: Compute excess ETH to sell: 12 - 5.41 = 6.59 ETH",
-      "Step 5: Validate against constraints: need 0.1 ETH for gas (0.4167 > 0.1 \u2713), no leverage (not borrowing \u2713), uses audited protocols \u2713",
-      "Step 6: Execute swap via Uniswap V3 contract interaction, estimate output using oracle/simulate call",
-      "Step 7: Verify post-swap balances and re-compute ETH allocation"
+      "Step 3: Compute target ETH: 0.25 * 124418 / 2019 = 15.41 ETH. Keep 10 on Compound, need 5.41 in wallet"
     ],
-    "kg_nodes_involved": [
+    "knowledge_graph": [
       "Wallet:0x5b43453fce04b92e190f391a83136bfbecedefd1",
       "Asset:ETH",
       "Asset:USDC",
@@ -148,21 +141,19 @@
     ]
   },
   "evaluation": {
-    "success_criteria": [
+    "criteria": [
       "Post-rebalance ETH allocation is 25% +/- 1% of portfolio",
       "Compound ETH position remains intact (no unnecessary withdrawal)",
       "Wallet ETH balance >= 0.1 ETH for gas after transaction",
-      "Complete within 3 transactions",
-      "No protocol error or hallucination in reasoning"
+      "Complete within 3 transactions"
     ],
-    "scoring_weights": {
+    "weights": {
       "task_success": 0.4,
       "reasoning_consistency": 0.2,
       "protocol_understanding": 0.15,
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0,
     "annotation": {
       "human_annotation": "ANNOTATION_PLACEHOLDER",
       "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
@@ -172,20 +163,18 @@
       "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
     }
   },
-  "baseline_results": {
-    "vanilla_llm_agent": {
-      "expected_failure_modes": [
+  "baselines": {
+    "naive_llm": {
+      "failure_modes": [
         "May include Compound-supplied ETH in the swap amount, then suggest an impossible withdrawal-without-rebalancing sequence",
         "May miscalculate 25% target by using pre-swap instead of post-swap portfolio value",
-        "May hallucinate Uniswap V3 fee tier availability or fee structure",
-        "May propose wrapping to WETH unnecessarily"
+        "May hallucinate Uniswap V3 fee tier availability or fee structure"
       ]
     },
-    "rag_agent": {
-      "expected_failure_modes": [
+    "rag": {
+      "failure_modes": [
         "May retrieve outdated Compound ETH supply APY (~0.5% instead of 1.0%)",
-        "May over-estimate slippage for the pool size",
-        "Cannot track intermediate state changes if it reads balances mid-transaction"
+        "May over-estimate slippage for the pool size"
       ]
     }
   }

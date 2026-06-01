@@ -1,5 +1,7 @@
 {
   "mission_id": "FR-011",
+  "type": "risk",
+  "core_category": "Risk Management",
   "category": "2.1.1 Protocol Security Monitoring",
   "difficulty": "simple",
   "title": "Curve 3pool TVL Anomaly Investigation",
@@ -13,38 +15,36 @@
     "stablecoin",
     "investigation"
   ],
-  "initial_wallet_state": {
+  "wallet": {
     "address": "0xd01607c3c5ecaba394d8be377a08590149325722",
     "balances": {
       "ETH": 2.0,
       "USDC": 50000
     },
-    "positions": [],
-    "risk_profile": {
-      "tolerance": "conservative",
-      "max_leverage": 1.0,
-      "max_drawdown": 0.1,
-      "preferred_chains": [
-        "Ethereum"
-      ],
-      "restricted_protocols": [
-        "unaudited_protocols"
-      ]
-    },
-    "mission": {
-      "description": "Monitor DeFi protocols for security anomalies. Investigate and report without executing transactions that increase personal exposure.",
-      "constraints": [
-        "No transactions of any kind \u2014 investigation only",
-        "No deposits or withdrawals from any protocol during investigation",
-        "Cross-reference findings from at least 3 independent sources before concluding",
-        "Report findings with on-chain evidence (tx hashes, block numbers)",
-        "Do not speculate on token prices or recommend trades"
-      ]
-    }
+    "positions": []
   },
-  "mission_prompt": "Curve 3pool (DAI/USDC/USDT) on Ethereum has dropped from $450M TVL to $320M TVL in the past 6 hours \u2014 a 29% decline. Your job is to investigate: (1) What caused the drop? (2) Is it an exploit, a whale withdrawal, or a market shift? (3) Are there signs of a stablecoin de-peg? (4) Should users be concerned? Check recent large transactions to/from the 3pool, pool composition ratios, Curve governance proposals, and broader market conditions. You have 2 ETH and 50,000 USDC in your wallet but you must NOT trade or move any funds \u2014 this is a pure investigation mission. Cross-reference on-chain data with at least 3 sources (Etherscan, Dune, Curve governance forum, DefiLlama, etc.).",
-  "environment_context": {
-    "current_market": {
+  "objective": {
+    "description": "Monitor DeFi protocols for security anomalies. Investigate and report without executing transactions that increase personal exposure.",
+    "constraints": [
+      "No transactions of any kind — investigation only",
+      "No deposits or withdrawals from any protocol during investigation",
+      "Cross-reference findings from at least 3 independent sources before concluding",
+      "Report findings with on-chain evidence (tx hashes, block numbers)",
+      "Do not speculate on token prices or recommend trades"
+    ]
+  },
+  "risk_metrics": {
+    "metrics": {},
+    "thresholds": {},
+    "risk_context": [
+      "A $130M single-transaction withdrawal could indicate a protocol treasury migration — follow the address to see if it re-deposits elsewhere",
+      "While pool composition is balanced, proportional withdrawals of all 3 stablecoins suggest a coordinated exit, not a peg issue",
+      "TVL drop of 29% reduces Curve fee revenue by ~29%, which could affect CRV token buybacks and gauge weights"
+    ]
+  },
+  "scenario": "Curve 3pool (DAI/USDC/USDT) on Ethereum has dropped from $450M TVL to $320M TVL in the past 6 hours — a 29% decline. Your job is to investigate: (1) What caused the drop? (2) Is it an exploit, a whale withdrawal, or a market shift? (3) Are there signs of a stablecoin de-peg? (4) Should users be concerned? Check recent large transactions to/from the 3pool, pool composition ratios, Curve governance proposals, and broader market conditions. You have 2 ETH and 50,000 USDC in your wallet but you must NOT trade or move any funds — this is a pure investigation mission. Cross-reference on-chain data with at least 3 sources (Etherscan, Dune, Curve governance forum, DefiLlama, etc.).",
+  "context": {
+    "market": {
       "ETH_price": 2019,
       "ETH_24h_change": "-2.3%",
       "USDC_price": 1.001,
@@ -57,7 +57,7 @@
       "ETH_30d_change": "-5.1%",
       "ETH_200ma": 2080
     },
-    "protocol_state": {
+    "protocols": {
       "Curve_3pool": {
         "chain": "Ethereum",
         "pool_address": "0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7",
@@ -84,10 +84,10 @@
     }
   },
   "ground_truth": {
-    "optimal_actions": [
+    "solution": [
       {
         "step": 1,
-        "action": "Quantify the TVL anomaly \u2014 pull Curve 3pool TVL history and verify the 29% drop",
+        "action": "Quantify the TVL anomaly — pull Curve 3pool TVL history and verify the 29% drop",
         "rationale": "TVL dropped from $450M to $320M in 6 hours. Equivalent to $130M withdrawn. Check DefiLlama and Curve dashboard to confirm the numbers and establish the magnitude of the event."
       },
       {
@@ -98,7 +98,7 @@
       {
         "step": 3,
         "action": "Check pool composition ratios for stablecoin imbalance or de-peg signals",
-        "rationale": "Current balances: DAI $105M, USDC $110M, USDT $105M ($320M total). Ratios are roughly balanced (32.8%/34.4%/32.8%). No significant imbalance \u2014 eliminates de-peg concerns. 6h ago: DAI $150M, USDC $155M, USDT $145M ($450M) \u2014 balanced then too. Withdrawals were proportional."
+        "rationale": "Current balances: DAI $105M, USDC $110M, USDT $105M ($320M total). Ratios are roughly balanced (32.8%/34.4%/32.8%). No significant imbalance — eliminates de-peg concerns. 6h ago: DAI $150M, USDC $155M, USDT $145M ($450M) — balanced then too. Withdrawals were proportional."
       },
       {
         "step": 4,
@@ -108,7 +108,7 @@
       {
         "step": 5,
         "action": "Check Curve governance for recent emergency proposals or parameter changes",
-        "rationale": "Visit Curve DAO governance forum and vote page. Check for any recent proposals related to 3pool parameters, fee changes, or emergency actions. No emergency proposals found \u2014 reduces likelihood of inside knowledge of a pending issue."
+        "rationale": "Visit Curve DAO governance forum and vote page. Check for any recent proposals related to 3pool parameters, fee changes, or emergency actions. No emergency proposals found — reduces likelihood of inside knowledge of a pending issue."
       },
       {
         "step": 6,
@@ -116,51 +116,23 @@
         "rationale": "FINDING: The $130M TVL drop was caused by a single large withdrawal from a protocol treasury (identified as a major DeFi protocol rebalancing its stablecoin allocations). Pool composition remains balanced. No de-peg detected. No governance emergency. Curve 3pool continues operating normally. Risk to user funds: LOW. Recommended action: Continue monitoring but no transactions needed."
       }
     ],
-    "alternative_actions": [
+    "alternatives": [
       {
         "strategy": "DeFiLlama-only investigation",
         "steps": "Use only DeFiLlama to check TVL trends and compare Curve 3pool TVL against other stablecoin pools",
-        "tradeoff": "Faster but surface-level \u2014 doesn't identify the specific withdrawing address or transaction cause"
-      },
-      {
-        "strategy": "Check for social media panic signals",
-        "steps": "Search Twitter/X and Discord for mentions of 'Curve 3pool' withdrawals or concerns",
-        "tradeoff": "May detect retail panic early but unreliable and noisy as a primary investigation source"
-      },
-      {
-        "strategy": "Run a custom Dune dashboard for real-time pool monitoring",
-        "steps": "Set up a Dune dashboard tracking Curve 3pool balances, LP mint/burn rates, and pool imbalance alerts",
-        "tradeoff": "Best for ongoing monitoring but overkill for a single investigation \u2014 takes time to build"
+        "tradeoff": "Faster but surface-level — doesn't identify the specific withdrawing address or transaction cause"
       }
     ],
-    "risk_flags": [
-      "A $130M single-transaction withdrawal could indicate a protocol treasury migration \u2014 follow the address to see if it re-deposits elsewhere",
-      "While pool composition is balanced, proportional withdrawals of all 3 stablecoins suggest a coordinated exit, not a peg issue",
-      "TVL drop of 29% reduces Curve fee revenue by ~29%, which could affect CRV token buybacks and gauge weights",
-      "If the same address withdraws from multiple Curve pools, it could signal a broader shift in stablecoin strategy"
-    ],
-    "mission_alignment_check": {
+    "verification": {
       "aligned": true,
-      "reason": "Thorough investigation with no transactions, cross-referenced on-chain sources, and a data-driven conclusion \u2014 fully consistent with conservative risk profile and monitoring mandate"
+      "reason": "Thorough investigation with no transactions, cross-referenced on-chain sources, and a data-driven conclusion — fully consistent with conservative risk profile and monitoring mandate"
     },
-    "known_hallucination_cases": [
-      "Agent might immediately claim 'exploit' or 'hack' without checking on-chain transaction data",
-      "Agent might claim Curve 3pool has an 'insurance fund' that covers losses \u2014 Curve has CRV token buybacks but no deposit insurance",
-      "Agent might confuse Curve 3pool (DAI/USDC/USDT) with Curve's other pools like stETH/ETH or FRAXBP",
-      "Agent might claim TVL drop indicates 'stablecoin de-peg' without checking pool composition ratios",
-      "Agent might recommend 'withdrawing from Curve' despite the investigation showing no actual risk to LPs"
-    ],
-    "reasoning_path": [
-      "Step 1: Query Curve 3pool TVL from KG: $450M \u2192 $320M in 6h (-29%). Verify data from 2 sources (DefiLlama + Dune).",
+    "reasoning": [
+      "Step 1: Query Curve 3pool TVL from KG: $450M → $320M in 6h (-29%). Verify data from 2 sources (DefiLlama + Dune).",
       "Step 2: Query recent large transactions from Curve 3pool contract on Etherscan. Identify the largest remove_liquidity() call.",
-      "Step 3: Analyze pool composition: DAI $105M (32.8%), USDC $110M (34.4%), USDT $105M (32.8%). All stablecoins within 2% of each other \u2014 no imbalance.",
-      "Step 4: Trace withdrawing address: identify as a known protocol treasury (e.g., a DAO treasury rebalancing).",
-      "Step 5: Check Curve governance: no emergency proposals, no parameter changes, no DAO votes in last 7 days related to 3pool.",
-      "Step 6: Cross-reference with broader market: total DeFi TVL down only 2.1% \u2014 this is Curve-specific, not market-wide.",
-      "Step 7: Conclusion: Protocol treasury rebalancing, not an exploit. Pool is healthy. No action needed for the user's portfolio.",
-      "Step 8: Document evidence (tx hashes, block numbers, pool composition snapshots) for the final report."
+      "Step 3: Analyze pool composition: DAI $105M (32.8%), USDC $110M (34.4%), USDT $105M (32.8%). All stablecoins within 2% of each other — no imbalance."
     ],
-    "kg_nodes_involved": [
+    "knowledge_graph": [
       "Wallet:0xabcdef1234567890abcdef0123456789abcdef01",
       "Protocol:Curve",
       "Pool:Curve_3pool",
@@ -177,24 +149,19 @@
     ]
   },
   "evaluation": {
-    "success_criteria": [
+    "criteria": [
       "TVL anomaly correctly quantified (29%, $130M in 6 hours)",
       "On-chain data cross-referenced from at least 3 sources",
       "Large withdrawing transactions identified and source investigated",
-      "Pool composition analyzed for stablecoin imbalance or de-peg",
-      "Curve governance checked for recent critical proposals",
-      "Final conclusion distinguishes between exploit, whale withdrawal, and market shift",
-      "No transactions executed",
-      "Evidence documented with on-chain data points"
+      "Pool composition analyzed for stablecoin imbalance or de-peg"
     ],
-    "scoring_weights": {
+    "weights": {
       "task_success": 0.4,
       "reasoning_consistency": 0.2,
       "protocol_understanding": 0.15,
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0,
     "annotation": {
       "human_annotation": "ANNOTATION_PLACEHOLDER",
       "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
@@ -204,21 +171,18 @@
       "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
     }
   },
-  "baseline_results": {
-    "vanilla_llm_agent": {
-      "expected_failure_modes": [
+  "baselines": {
+    "naive_llm": {
+      "failure_modes": [
         "May immediately assume the worst (exploit/hack) without investigating on-chain data",
-        "May suggest 'emergency withdrawal' from the user's own Curve positions \u2014 but user has NO positions in Curve",
-        "May confuse TVL drop with a price drop of the LP token \u2014 two different metrics",
-        "May claim stablecoin de-peg without checking pool composition or DAI/USDC/USDT market prices",
-        "May recommend unnecessary 'safe' actions like converting USDC to ETH despite no actual risk identified"
+        "May suggest 'emergency withdrawal' from the user's own Curve positions — but user has NO positions in Curve",
+        "May confuse TVL drop with a price drop of the LP token — two different metrics"
       ]
     },
-    "rag_agent": {
-      "expected_failure_modes": [
+    "rag": {
+      "failure_modes": [
         "May retrieve stale 3pool TVL data (from before the drop), leading to false 'no anomaly' conclusion",
-        "May retrieve transaction data from a Curve pool on another chain (e.g., Polygon or Arbitrum) instead of Ethereum",
-        "May not properly correlate the timing of the TVL drop with the specific withdrawal transactions"
+        "May retrieve transaction data from a Curve pool on another chain (e.g., Polygon or Arbitrum) instead of Ethereum"
       ]
     }
   }

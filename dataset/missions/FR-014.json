@@ -1,5 +1,7 @@
 {
   "mission_id": "FR-014",
+  "type": "risk",
+  "core_category": "Risk Management",
   "category": "2.2.1 Automated Hedging",
   "difficulty": "complex",
   "title": "ETH Exposure Hedging via dYdX Perpetuals",
@@ -12,7 +14,7 @@
     "risk_management",
     "volatility"
   ],
-  "initial_wallet_state": {
+  "wallet": {
     "address": "0x555f240e556788e65306754a0ba6e7a76c2ab59e",
     "balances": {
       "ETH": 50.0,
@@ -25,31 +27,29 @@
         "amount": 80.0,
         "type": "supplied"
       }
-    ],
-    "risk_profile": {
-      "tolerance": "aggressive",
-      "max_leverage": 3.0,
-      "max_drawdown": 0.3,
-      "preferred_chains": [
-        "Ethereum"
-      ],
-      "restricted_protocols": [
-        "unaudited_protocols"
-      ]
-    },
-    "mission": {
-      "description": "Aggressively grow capital while managing tail-risk through systematic hedging of large concentrated positions",
-      "constraints": [
-        "Max 3x leverage",
-        "No unaudited protocols",
-        "Hedging must cover at least 30% of directional exposure during high vol regimes",
-        "No liquidation on any position"
-      ]
-    }
+    ]
   },
-  "mission_prompt": "The ETH volatility index (DVOL) is at the 90th percentile (reading of 112), indicating extreme implied volatility. Your total long ETH exposure across protocols is 80 ETH (supplied on Aave with no debt). You have 100 ETH and 500,000 USDC in your wallet. Hedge 30% of your ETH exposure (24 ETH) by opening a short perpetual position on dYdX. Current ETH price is $3,000. dYdX ETH-PERP requires 10% initial margin and has a funding rate of 0.001% per hour. Calculate: (1) the notional value of the hedge, (2) the margin required, (3) execute the hedge on dYdX, and (4) verify the net delta exposure is reduced as intended. Provide reasoning for your hedge sizing and margin selection.",
-  "environment_context": {
-    "current_market": {
+  "objective": {
+    "description": "Aggressively grow capital while managing tail-risk through systematic hedging of large concentrated positions",
+    "constraints": [
+      "Max 3x leverage",
+      "No unaudited protocols",
+      "Hedging must cover at least 30% of directional exposure during high vol regimes",
+      "No liquidation on any position"
+    ]
+  },
+  "risk_metrics": {
+    "metrics": {},
+    "thresholds": {},
+    "risk_context": [
+      "DVOL at 112 (90th percentile) — mean reversion may take 3-7 days; funding costs accumulate over time",
+      "dYdX short position has its own liquidation risk — if ETH rises to $3,750 (+25%), the short position with 20% margin would face liquidation",
+      "Funding rate of 0.001%/hour = 0.024%/day = ~8.76%/year — significant carry cost for prolonged hedges"
+    ]
+  },
+  "scenario": "The ETH volatility index (DVOL) is at the 90th percentile (reading of 112), indicating extreme implied volatility. Your total long ETH exposure across protocols is 80 ETH (supplied on Aave with no debt). You have 100 ETH and 500,000 USDC in your wallet. Hedge 30% of your ETH exposure (24 ETH) by opening a short perpetual position on dYdX. Current ETH price is $3,000. dYdX ETH-PERP requires 10% initial margin and has a funding rate of 0.001% per hour. Calculate: (1) the notional value of the hedge, (2) the margin required, (3) execute the hedge on dYdX, and (4) verify the net delta exposure is reduced as intended. Provide reasoning for your hedge sizing and margin selection.",
+  "context": {
+    "market": {
       "ETH_price": 2019,
       "ETH_24h_change": "-2.3%",
       "ETH_7d_change": "+1.8%",
@@ -61,7 +61,7 @@
       "ETH_open_interest_24h_change": "+12%",
       "ETH_30d_change": "-5.1%"
     },
-    "protocol_state": {
+    "protocols": {
       "Aave": {
         "chain": "Ethereum",
         "LTV": 0.75,
@@ -83,7 +83,7 @@
     }
   },
   "ground_truth": {
-    "optimal_actions": [
+    "solution": [
       {
         "step": 1,
         "action": "Calculate target hedge size: 30% of 80 ETH long exposure = 24 ETH. Notional value = 24 ETH * $3,000 = $72,000.",
@@ -110,7 +110,7 @@
         "rationale": "The hedge is a tactical position designed for the current high-volatility regime. If ETH rises 15%, the short loses $10,800, which should prompt reconsideration. If ETH drops 15%, the short gains $10,800, and partial hedge unwind could lock in profits."
       }
     ],
-    "alternative_actions": [
+    "alternatives": [
       {
         "strategy": "OTC put options hedge",
         "steps": "Purchase 24 ETH notional of put options with 30-day expiry at $3,000 strike from an OTC desk. Cost estimated at $2,160 (3% premium).",
@@ -122,30 +122,23 @@
         "tradeoff": "More capital efficient as borrowed USDC can earn yield, but introduces Aave debt and liquidation risk to the strategy"
       },
       {
-        "strategy": "No hedge \u2014 maintain long exposure",
+        "strategy": "No hedge — maintain long exposure",
         "steps": "Monitor DVOL but do not hedge, given DVOL mean-reverts historically within 5 days.",
         "tradeoff": "No hedging costs but full downside exposure during high vol regime; only suitable for max-aggressive profiles"
       }
     ],
     "risk_flags": [
-      "DVOL at 112 (90th percentile) \u2014 mean reversion may take 3-7 days; funding costs accumulate over time",
-      "dYdX short position has its own liquidation risk \u2014 if ETH rises to $3,750 (+25%), the short position with 20% margin would face liquidation",
-      "Funding rate of 0.001%/hour = 0.024%/day = ~8.76%/year \u2014 significant carry cost for prolonged hedges",
-      "The 80 ETH Aave position earns no yield when hedged \u2014 the hedge offsets the APY benefit of supplied ETH",
+      "DVOL at 112 (90th percentile) — mean reversion may take 3-7 days; funding costs accumulate over time",
+      "dYdX short position has its own liquidation risk — if ETH rises to $3,750 (+25%), the short position with 20% margin would face liquidation",
+      "Funding rate of 0.001%/hour = 0.024%/day = ~8.76%/year — significant carry cost for prolonged hedges",
+      "The 80 ETH Aave position earns no yield when hedged — the hedge offsets the APY benefit of supplied ETH",
       "Wallet-held 100 ETH is completely unhedged and represents 125% additional exposure beyond protocol position"
     ],
-    "mission_alignment_check": {
+    "verification": {
       "aligned": true,
       "reason": "Hedging 30% of long ETH exposure during a 90th-percentile volatility regime is consistent with the aggressive risk profile's tail-risk management mandate while maintaining significant upside exposure"
     },
-    "known_hallucination_cases": [
-      "Agent might suggest hedging on Aave by borrowing ETH \u2014 Aave does not support shorting; borrowing ETH from Aave and selling it creates a short but at the cost of supplying collateral and incurring borrow APY",
-      "Agent might calculate hedge size as 30% of wallet ETH balance (30 ETH) rather than 30% of protocol exposure (24 ETH) \u2014 the mission specifies 'ETH exposure across protocols'",
-      "Agent might confuse dYdX perpetual swaps with expiring futures contracts \u2014 perps have no expiry and use funding rate mechanism, not price convergence at expiry",
-      "Agent might claim dYdX allows up to 25x leverage on ETH-PERP \u2014 dYdX v3 ETH max leverage is 10x; higher values only available on smaller cap assets",
-      "Agent might think the hedge eliminates all downside risk \u2014 a 30% hedge only covers 30% of the downside; remaining 70% is still exposed"
-    ],
-    "reasoning_path": [
+    "reasoning": [
       "Step 1: Identify total long ETH exposure across protocols = 80 ETH (Aave supplied)",
       "Step 2: Calculate 30% hedge target = 80 * 0.30 = 24 ETH",
       "Step 3: Compute notional value of hedge = 24 * $3,000 = $72,000",
@@ -155,7 +148,7 @@
       "Step 7: Verify net exposure: 80 - 24 = 56 ETH net long (30% hedged)",
       "Step 8: Set stop-loss and monitoring alerts for the short position"
     ],
-    "kg_nodes_involved": [
+    "knowledge_graph": [
       "Wallet:0x3c4D5e6F7890123AbCdEf3456789AbCdEfF014",
       "Asset:ETH",
       "Asset:USDC",
@@ -168,10 +161,17 @@
       "Metric:FundingRate",
       "MarketEvent:High_Volatility_Regime",
       "Hedge:ShortPerp:24ETH"
+    ],
+    "edge_cases": [
+      "Agent might suggest hedging on Aave by borrowing ETH — Aave does not support shorting; borrowing ETH from Aave and selling it creates a short but at the cost of supplying collateral and incurring borrow APY",
+      "Agent might calculate hedge size as 30% of wallet ETH balance (30 ETH) rather than 30% of protocol exposure (24 ETH) — the mission specifies 'ETH exposure across protocols'",
+      "Agent might confuse dYdX perpetual swaps with expiring futures contracts — perps have no expiry and use funding rate mechanism, not price convergence at expiry",
+      "Agent might claim dYdX allows up to 25x leverage on ETH-PERP — dYdX v3 ETH max leverage is 10x; higher values only available on smaller cap assets",
+      "Agent might think the hedge eliminates all downside risk — a 30% hedge only covers 30% of the downside; remaining 70% is still exposed"
     ]
   },
   "evaluation": {
-    "success_criteria": [
+    "criteria": [
       "Correctly calculate hedge notional as 24 ETH ($72,000)",
       "Identify dYdX as the hedging venue with correct margin calculation",
       "Demonstrate understanding of perpetual swap mechanics (funding rate, margin, liquidation)",
@@ -180,14 +180,13 @@
       "Set monitoring parameters for the hedge position",
       "No protocol hallucinations in reasoning output"
     ],
-    "scoring_weights": {
+    "weights": {
       "task_success": 0.35,
       "reasoning_consistency": 0.2,
       "protocol_understanding": 0.2,
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0,
     "annotation": {
       "human_annotation": "ANNOTATION_PLACEHOLDER",
       "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
@@ -197,17 +196,17 @@
       "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
     }
   },
-  "baseline_results": {
-    "vanilla_llm_agent": {
-      "expected_failure_modes": [
+  "baselines": {
+    "naive_llm": {
+      "failure_modes": [
         "May confuse hedge percentage applied to wallet balance rather than protocol exposure",
         "May miscalculate margin requirements on dYdX",
         "May not understand perpetual swap funding rate mechanics",
         "May claim the hedge makes the position 'risk-free'"
       ]
     },
-    "rag_agent": {
-      "expected_failure_modes": [
+    "rag": {
+      "failure_modes": [
         "May retrieve incorrect dYdX leverage parameters from outdated documentation",
         "May fail to account for funding rate costs in hedge cost-benefit analysis"
       ]

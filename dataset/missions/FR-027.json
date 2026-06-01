@@ -1,5 +1,7 @@
 {
   "mission_id": "FR-027",
+  "type": "governance",
+  "core_category": "Governance & Ecosystem",
   "category": "3.3.3 Revenue Distribution & Buyback",
   "difficulty": "medium",
   "title": "Weekly Token Buyback with Multi-DEX Routing",
@@ -11,7 +13,7 @@
     "treasury_management",
     "dao"
   ],
-  "initial_wallet_state": {
+  "wallet": {
     "address": "0x5b43453fce04b92e190f391a83136bfbecedefd1",
     "balances": {
       "ETH": 100.0,
@@ -25,29 +27,29 @@
         "amount": 200000.0,
         "type": "supplied"
       }
-    ],
-    "risk_profile": {
-      "tolerance": "moderate",
-      "max_leverage": 1.5,
-      "max_drawdown": 0.15,
-      "preferred_chains": [
-        "Ethereum"
-      ],
-      "restricted_protocols": []
-    },
-    "mission": {
-      "description": "Protocol treasury: execute weekly token buyback program using protocol fee revenue",
-      "constraints": [
-        "Use 30% of weekly DAI revenue for buyback",
-        "Route through at least 3 DEXes for best price",
-        "Max total slippage: 0.5%",
-        "Buyback must complete within 24 hours of revenue collection"
-      ]
-    }
+    ]
   },
-  "mission_prompt": "Your protocol generated 150000 DAI in fees this week. Per the buyback program, 30% (45000 DAI) must be used to buy back the protocol's governance token (GOV, trading at $2.85). Execute the buyback by routing through Uniswap V3, Curve, Balancer, and SushiSwap to get the best average price. GOV has $12M in combined DEX liquidity. Distribute the 45000 DAI across the 4 DEXes proportionally to their liquidity depth. Max total slippage is 0.5%. Complete within 24 hours. Current ETH price is $2900. GOV price is $2.85 with 1.2% 24h volatility.",
-  "environment_context": {
-    "current_market": {
+  "objective": {
+    "description": "Protocol treasury: execute weekly token buyback program using protocol fee revenue",
+    "constraints": [
+      "Use 30% of weekly DAI revenue for buyback",
+      "Route through at least 3 DEXes for best price",
+      "Max total slippage: 0.5%",
+      "Buyback must complete within 24 hours of revenue collection"
+    ]
+  },
+  "governance": {
+    "protocols": [
+      "Balancer",
+      "Curve",
+      "OneInch",
+      "SushiSwap",
+      "UniswapV3"
+    ]
+  },
+  "scenario": "Your protocol generated 150000 DAI in fees this week. Per the buyback program, 30% (45000 DAI) must be used to buy back the protocol's governance token (GOV, trading at $2.85). Execute the buyback by routing through Uniswap V3, Curve, Balancer, and SushiSwap to get the best average price. GOV has $12M in combined DEX liquidity. Distribute the 45000 DAI across the 4 DEXes proportionally to their liquidity depth. Max total slippage is 0.5%. Complete within 24 hours. Current ETH price is $2900. GOV price is $2.85 with 1.2% 24h volatility.",
+  "context": {
+    "market": {
       "ETH_price": 2019,
       "ETH_24h_change": "-2.3%",
       "GOV_price": 2.85,
@@ -61,7 +63,7 @@
       "USDC_price": 1.001,
       "total_market_cap_24h_change": "-1.5%"
     },
-    "protocol_state": {
+    "protocols": {
       "Uniswap V3": {
         "chain": "Ethereum",
         "pool": "GOV/DAI",
@@ -103,16 +105,16 @@
     }
   },
   "ground_truth": {
-    "optimal_actions": [
+    "solution": [
       {
         "step": 1,
         "action": "Check all 4 DEXes for current GOV/DAI prices, liquidity depth, and fee tiers",
-        "rationale": "Baseline prices: Uniswap V3: $2.851, Curve: $2.848, Balancer: $2.853, SushiSwap: $2.850. Combined GOV liquidity across all DEXes is $12M. 45000 DAI buy represents 0.375% of total liquidity \u2014 manageable."
+        "rationale": "Baseline prices: Uniswap V3: $2.851, Curve: $2.848, Balancer: $2.853, SushiSwap: $2.850. Combined GOV liquidity across all DEXes is $12M. 45000 DAI buy represents 0.375% of total liquidity — manageable."
       },
       {
         "step": 2,
         "action": "Allocate 45000 DAI proportionally: Uniswap V3: 16500 DAI (37%), Curve: 11000 DAI (24%), Balancer: 9000 DAI (20%), SushiSwap: 8500 DAI (19%)",
-        "rationale": "Allocation proportional to liquidity depth: Uniswap V3 has 40% of liquidity ($4.8M/$12M) but allocate 37% to keep room for Curve's lower fee. Curve (27%) gets 24%. Balancer (17.5%) gets 20% \u2014 slightly more due to weighted pool mechanics that handle larger trades better. SushiSwap (15.8%) gets 19% as filler."
+        "rationale": "Allocation proportional to liquidity depth: Uniswap V3 has 40% of liquidity ($4.8M/$12M) but allocate 37% to keep room for Curve's lower fee. Curve (27%) gets 24%. Balancer (17.5%) gets 20% — slightly more due to weighted pool mechanics that handle larger trades better. SushiSwap (15.8%) gets 19% as filler."
       },
       {
         "step": 3,
@@ -130,7 +132,7 @@
         "rationale": "Buyback transparency is critical for community trust. Report: timestamp, DAI spent, GOV received, avg price ($/GOV), DEX routing percentages, total slippage, gas costs."
       }
     ],
-    "alternative_actions": [
+    "alternatives": [
       {
         "strategy": "Direct swap on Uniswap V3 only (single DEX)",
         "steps": "Swap all 45000 DAI on Uniswap V3 GOV/DAI 1% pool in one transaction",
@@ -143,31 +145,23 @@
       }
     ],
     "risk_flags": [
-      "GOV has 1.2% daily volatility \u2014 a 1.2% price move during execution could cost ~540 DAI vs mid-price",
-      "SushiSwap has only $1.9M liquidity \u2014 an 8500 DAI trade may cause 0.18% impact, total pool impact is 4.5% of daily volume",
+      "GOV has 1.2% daily volatility — a 1.2% price move during execution could cost ~540 DAI vs mid-price",
+      "SushiSwap has only $1.9M liquidity — an 8500 DAI trade may cause 0.18% impact, total pool impact is 4.5% of daily volume",
       "Curve volatile pool has 0.04% fee but may have higher price impact due to pool design",
-      "No buyback cap \u2014 if 30% of revenue is always spent on buybacks, GOV price may become artificially supported, creating false market signal"
+      "No buyback cap — if 30% of revenue is always spent on buybacks, GOV price may become artificially supported, creating false market signal"
     ],
-    "mission_alignment_check": {
+    "verification": {
       "aligned": true,
       "reason": "Buyback executes 30% of revenue as mandated, routes through 4 DEXes (exceeds 3 minimum), respects 0.5% slippage cap, and completes within 24 hours"
     },
-    "known_hallucination_cases": [
-      "Agent might claim 'Curve has zero price impact for stable-asset pools' \u2014 GOV/DAI is a volatile pool, not a stable pool; price impact is similar to Uniswap",
-      "Agent might claim '1inch aggregator has no additional fees' \u2014 1inch charges a 0.1% protocol fee on swap volume for some routes",
-      "Agent might claim 'slippage is the same across all DEXes for the same amount' \u2014 each DEX has different AMM mechanics; Balancer's weighted pool distributes impact differently than Uniswap's constant product",
-      "Agent might claim 'buyback should use all DAI equally across DEXes' \u2014 allocation should be proportional to liquidity to minimize slippage, not equal",
-      "Agent might claim 'GOV buyback directly reduces circulating supply' \u2014 bought-back tokens are held in treasury, not burned, unless a burn mechanism is specified"
-    ],
-    "reasoning_path": [
+    "reasoning": [
       "Step 1: Calculate buyback budget: 150000 DAI * 30% = 45000 DAI",
       "Step 2: Check current GOV/DAI prices across all 4 DEXes via router contract",
       "Step 3: Allocate DAI proportionally based on liquidity depth for optimal price execution",
       "Step 4: Route via 1inch aggregator with split to minimize total slippage",
-      "Step 5: Validate output \u2014 if effective price deviates >0.5% from mid, trigger retry logic",
-      "Step 6: Record and report execution data for transparency"
+      "Step 5: Validate output — if effective price deviates >0.5% from mid, trigger retry logic"
     ],
-    "kg_nodes_involved": [
+    "knowledge_graph": [
       "Wallet:0x617cF8F8A7B0E2e0487d38B8C5C4e41E38E5bE1c",
       "Asset:GOV",
       "Asset:DAI",
@@ -181,10 +175,17 @@
       "Metric:Revenue_150kDAI",
       "Task:WeeklyBuyback",
       "Constraint:MaxSlippage_0.005"
+    ],
+    "edge_cases": [
+      "Agent might claim 'Curve has zero price impact for stable-asset pools' — GOV/DAI is a volatile pool, not a stable pool; price impact is similar to Uniswap",
+      "Agent might claim '1inch aggregator has no additional fees' — 1inch charges a 0.1% protocol fee on swap volume for some routes",
+      "Agent might claim 'slippage is the same across all DEXes for the same amount' — each DEX has different AMM mechanics; Balancer's weighted pool distributes impact differently than Uniswap's constant product",
+      "Agent might claim 'buyback should use all DAI equally across DEXes' — allocation should be proportional to liquidity to minimize slippage, not equal",
+      "Agent might claim 'GOV buyback directly reduces circulating supply' — bought-back tokens are held in treasury, not burned, unless a burn mechanism is specified"
     ]
   },
   "evaluation": {
-    "success_criteria": [
+    "criteria": [
       "Correct buyback budget calculated (45000 DAI = 30% of 150000 DAI)",
       "Buyback routed through at least 3 DEXes",
       "Allocation rationale provided (liquidity-weighted)",
@@ -192,14 +193,13 @@
       "Execution completed within 24 hours",
       "Buyback recorded with price breakdown"
     ],
-    "scoring_weights": {
+    "weights": {
       "task_success": 0.35,
       "reasoning_consistency": 0.2,
       "protocol_understanding": 0.2,
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0,
     "annotation": {
       "human_annotation": "ANNOTATION_PLACEHOLDER",
       "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
@@ -209,9 +209,9 @@
       "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
     }
   },
-  "baseline_results": {
-    "vanilla_llm_agent": {
-      "expected_failure_modes": [
+  "baselines": {
+    "naive_llm": {
+      "failure_modes": [
         "May route through only 1 DEX despite 3+ requirement",
         "May miscalculate 30% of 150000 (may compute 4500 or 5000 DAI)",
         "May ignore slippage budget entirely",
@@ -219,8 +219,8 @@
         "May not consider DEX-specific AMM mechanics in allocation"
       ]
     },
-    "rag_agent": {
-      "expected_failure_modes": [
+    "rag": {
+      "failure_modes": [
         "May retrieve stale liquidity data for DEX allocation",
         "May provide incorrect fee tier info for Curve volatile pool",
         "May recommend routing through DEXes with insufficient liquidity based on cached data"

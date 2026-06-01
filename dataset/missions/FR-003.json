@@ -1,5 +1,7 @@
 {
   "mission_id": "FR-003",
+  "type": "portfolio",
+  "core_category": "Portfolio & Asset Management",
   "category": "1.1.2 Multi-Asset Portfolio Optimization",
   "difficulty": "medium",
   "title": "Multi-Asset Portfolio Rebalancing via Risk Parity",
@@ -14,38 +16,50 @@
     "uniswap",
     "volatility"
   ],
-  "initial_wallet_state": {
+  "wallet": {
     "address": "0x5b43453fce04b92e190f391a83136bfbecedefd1",
     "balances": {
       "ETH": 20.0,
       "WBTC": 2.0,
       "USDC": 100000
     },
-    "positions": [],
-    "risk_profile": {
-      "tolerance": "moderate",
-      "max_leverage": 2.0,
-      "max_drawdown": 0.2,
-      "preferred_chains": [
-        "Ethereum"
-      ],
-      "restricted_protocols": [
-        "unaudited_protocols"
-      ]
-    },
-    "mission": {
-      "description": "Optimize portfolio allocation using risk-weighted target weights based on historical volatility for capital efficiency",
-      "constraints": [
-        "No leverage > 2x",
-        "No unaudited protocols",
-        "Complete rebalancing within 5 transactions",
-        "Total gas cost must not exceed $100"
-      ]
+    "positions": []
+  },
+  "objective": {
+    "description": "Optimize portfolio allocation using risk-weighted target weights based on historical volatility for capital efficiency",
+    "constraints": [
+      "No leverage > 2x",
+      "No unaudited protocols",
+      "Complete rebalancing within 5 transactions",
+      "Total gas cost must not exceed $100"
+    ]
+  },
+  "portfolio_analysis": {
+    "total_value": 267380.0,
+    "allocation": {
+      "ETH": {
+        "amount": 20.0,
+        "price": 2019,
+        "value": 40380.0,
+        "pct": 15.1
+      },
+      "WBTC": {
+        "amount": 2.0,
+        "price": 63500,
+        "value": 127000.0,
+        "pct": 47.5
+      },
+      "USDC": {
+        "amount": 100000,
+        "price": 1.0,
+        "value": 100000.0,
+        "pct": 37.4
+      }
     }
   },
-  "mission_prompt": "Your portfolio contains 20 ETH ($2,950 each), 2 WBTC ($63,500 each), and 100,000 USDC. Total portfolio: $286,000. Current allocation: ETH 20.6% ($59,000), WBTC 44.4% ($127,000), USDC 35.0% ($100,000). Using historical 90-day volatility (ETH: 68% annualized, WBTC: 52% annualized, USDC: 0.5%), the optimized risk-parity target is: ETH 20% ($57,200), WBTC 30% ($85,800), USDC 50% ($143,000). Rebalance by selling overweight assets on Uniswap V3. ETH/USDC 0.30% pool has $450M TVL; WBTC/USDC 0.30% pool has $180M TVL. Both swaps should have minimal slippage under 0.05%. Rebalance within 5 transactions.",
-  "environment_context": {
-    "current_market": {
+  "scenario": "Your portfolio contains 20 ETH ($2,950 each), 2 WBTC ($63,500 each), and 100,000 USDC. Total portfolio: $286,000. Current allocation: ETH 20.6% ($59,000), WBTC 44.4% ($127,000), USDC 35.0% ($100,000). Using historical 90-day volatility (ETH: 68% annualized, WBTC: 52% annualized, USDC: 0.5%), the optimized risk-parity target is: ETH 20% ($57,200), WBTC 30% ($85,800), USDC 50% ($143,000). Rebalance by selling overweight assets on Uniswap V3. ETH/USDC 0.30% pool has $450M TVL; WBTC/USDC 0.30% pool has $180M TVL. Both swaps should have minimal slippage under 0.05%. Rebalance within 5 transactions.",
+  "context": {
+    "market": {
       "ETH_price": 2019,
       "ETH_24h_change": "-2.3%",
       "ETH_90d_volatility_annualized": 0.68,
@@ -60,7 +74,7 @@
       "ETH_30d_change": "-5.1%",
       "ETH_200ma": 2080
     },
-    "protocol_state": {
+    "protocols": {
       "UniswapV3": {
         "chain": "Ethereum",
         "ETH_USDC_0.30_fee_TVL": 450000000,
@@ -73,7 +87,7 @@
     }
   },
   "ground_truth": {
-    "optimal_actions": [
+    "solution": [
       {
         "step": 1,
         "action": "Fetch current prices and compute portfolio allocation vs risk-weighted targets",
@@ -95,7 +109,7 @@
         "rationale": "Post-rebalance: ETH 19.39 ($57,200 = 20.0%), WBTC 1.351 ($85,788 = 30.0%), USDC ~$142,925 (50.0%). Total: $285,913. All within 0.05% of target allocation. Verify gas costs under $100."
       }
     ],
-    "alternative_actions": [
+    "alternatives": [
       {
         "strategy": "Batch swap via aggregator (1inch/Paraswap)",
         "steps": "Use DEX aggregator to sell both WBTC and ETH in one multi-hop transaction for better price and lower total gas",
@@ -109,32 +123,22 @@
     ],
     "risk_flags": [
       "WBTC and ETH are highly correlated (0.82), reducing diversification benefit",
-      "Historical volatility may not predict future volatility \u2014 model risk in risk-parity weights",
+      "Historical volatility may not predict future volatility — model risk in risk-parity weights",
       "If ETH or WBTC rallies immediately after selling, portfolio may underperform a buy-and-hold strategy",
       "Low float on WBTC/USDC pool could cause higher than estimated slippage during volatile periods"
     ],
-    "mission_alignment_check": {
+    "verification": {
       "aligned": true,
       "reason": "Risk-parity rebalancing reduces concentrated crypto exposure (from 64% to 50% in volatile assets) and increases stablecoins to 50%, consistent with moderate risk tolerance and 20% max drawdown"
     },
-    "known_hallucination_cases": [
-      "Agent might confuse WBTC with BTCB or renBTC and propose incorrect token contract interactions",
-      "Agent might claim Uniswap V3 does not support WBTC/USDC \u2014 the pool exists with $180M+ TVL",
-      "Agent might propose using a lending protocol to borrow USDC instead of selling tokens\u2014this would increase leverage, violating constraints",
-      "Agent might use 30-day volatility (higher) instead of 90-day, yielding different target weights",
-      "Agent might forget that WBTC is an ERC-20 token requiring separate approval before swap"
-    ],
-    "reasoning_path": [
+    "reasoning": [
       "Step 1: Fetch prices from oracle: ETH=$2950, WBTC=$63500, USDC=$1.001",
       "Step 2: Compute current portfolio value and % allocation from wallet balances",
       "Step 3: Retrieve 90d historical vol from KG node Asset:Volatility for each asset",
       "Step 4: Compute risk-parity targets: weight_i = (1/vol_i) / sum(1/vol_j), then scale to match risk tolerance constraints",
-      "Step 5: Compute trade quantities: target_amount - current_amount for each asset",
-      "Step 6: Sort trades: execute sells before buys to maintain conservative cash position",
-      "Step 7: Execute WBTC swap, then ETH swap via Uniswap V3",
-      "Step 8: Verify final allocation and validate against all constraints"
+      "Step 5: Compute trade quantities: target_amount - current_amount for each asset"
     ],
-    "kg_nodes_involved": [
+    "knowledge_graph": [
       "Wallet:0x2b3c4d5e6f7890abcdef1234567890abcdef0123",
       "Asset:ETH",
       "Asset:WBTC",
@@ -148,10 +152,17 @@
       "RiskConstraint:MaxDrawdown",
       "RiskConstraint:MaxLeverage",
       "Portfolio:TargetAllocation"
+    ],
+    "edge_cases": [
+      "Agent might confuse WBTC with BTCB or renBTC and propose incorrect token contract interactions",
+      "Agent might claim Uniswap V3 does not support WBTC/USDC — the pool exists with $180M+ TVL",
+      "Agent might propose using a lending protocol to borrow USDC instead of selling tokens—this would increase leverage, violating constraints",
+      "Agent might use 30-day volatility (higher) instead of 90-day, yielding different target weights",
+      "Agent might forget that WBTC is an ERC-20 token requiring separate approval before swap"
     ]
   },
   "evaluation": {
-    "success_criteria": [
+    "criteria": [
       "Post-rebalance ETH allocation within 1% of 20% target",
       "Post-rebalance WBTC allocation within 1% of 30% target",
       "Post-rebalance USDC allocation within 1% of 50% target",
@@ -159,14 +170,13 @@
       "Total gas cost under $100",
       "Complete within 5 transactions"
     ],
-    "scoring_weights": {
+    "weights": {
       "task_success": 0.4,
       "reasoning_consistency": 0.2,
       "protocol_understanding": 0.15,
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0,
     "annotation": {
       "human_annotation": "ANNOTATION_PLACEHOLDER",
       "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
@@ -176,9 +186,9 @@
       "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
     }
   },
-  "baseline_results": {
-    "vanilla_llm_agent": {
-      "expected_failure_modes": [
+  "baselines": {
+    "naive_llm": {
+      "failure_modes": [
         "May propose buying more WBTC instead of selling (misreading which asset is overweight)",
         "May confuse WBTC token contract or assume it is the native Bitcoin blockchain token",
         "May miscalculate target weights by misapplying risk-parity formula",
@@ -186,8 +196,8 @@
         "May not consider that ETH and WBTC are highly correlated, leading to suboptimal risk targets"
       ]
     },
-    "rag_agent": {
-      "expected_failure_modes": [
+    "rag": {
+      "failure_modes": [
         "May retrieve stale 30-day vol instead of specified 90-day vol",
         "May retrieve WBTC price from a low-liquidity DEX pair instead of the canonical Uniswap V3 pool",
         "May overestimate pool liquidity if retrieving data from a multi-hop Uniswap V2 pool instead of V3"

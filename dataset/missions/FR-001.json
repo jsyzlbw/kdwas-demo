@@ -1,5 +1,7 @@
 {
   "mission_id": "FR-001",
+  "type": "risk",
+  "core_category": "Risk Management",
   "category": "2.2.2 Stop-Loss Execution",
   "difficulty": "medium",
   "title": "Aave Health Factor Recovery",
@@ -10,7 +12,7 @@
     "aave",
     "stop_loss"
   ],
-  "initial_wallet_state": {
+  "wallet": {
     "address": "0xd01607c3c5ecaba394d8be377a08590149325722",
     "balances": {
       "ETH": 8.5,
@@ -30,30 +32,32 @@
         "amount": 9000,
         "type": "borrowed"
       }
-    ],
-    "risk_profile": {
-      "tolerance": "moderate",
-      "max_leverage": 2.0,
-      "max_drawdown": 0.15,
-      "preferred_chains": [
-        "Ethereum"
-      ],
-      "restricted_protocols": [
-        "unaudited_protocols"
-      ]
+    ]
+  },
+  "objective": {
+    "description": "Preserve capital while maintaining moderate yields in DeFi lending markets",
+    "constraints": [
+      "No leverage > 2x",
+      "No unaudited protocols",
+      "Max 20% in volatile assets"
+    ]
+  },
+  "risk_metrics": {
+    "metrics": {
+      "health_factor": 1.48,
+      "liquidation_price": 1363.64,
+      "collateral": "8.0 ETH ($16,152)",
+      "debt": "9,000 USDC"
     },
-    "mission": {
-      "description": "Preserve capital while maintaining moderate yields in DeFi lending markets",
-      "constraints": [
-        "No leverage > 2x",
-        "No unaudited protocols",
-        "Max 20% in volatile assets"
-      ]
+    "thresholds": {
+      "liquidation": 1.0,
+      "warning": 1.1099999999999999,
+      "current": 1.48
     }
   },
-  "mission_prompt": "ETH price has dropped 14% in the past 2 hours, from $2350 to $2019 (current on-chain price). Your Aave position health factor is at 1.35. Take action to bring health factor above 2.0 without selling more than 3 ETH. You have 5 actions max. The Aave LTV is 0.75, liquidation threshold is 0.825.",
-  "environment_context": {
-    "current_market": {
+  "scenario": "ETH price has dropped 14% in the past 2 hours, from $2350 to $2019 (current on-chain price). Your Aave position health factor is at 1.35. Take action to bring health factor above 2.0 without selling more than 3 ETH. You have 5 actions max. The Aave LTV is 0.75, liquidation threshold is 0.825.",
+  "context": {
+    "market": {
       "ETH_price": 2019,
       "ETH_24h_change": "-8.5%",
       "ETH_7d_change": "-15.2%",
@@ -61,7 +65,7 @@
       "USDC_price": 1.001,
       "total_market_cap_24h_change": "-7.2%"
     },
-    "protocol_state": {
+    "protocols": {
       "Aave": {
         "chain": "Ethereum",
         "version": "3",
@@ -81,7 +85,7 @@
     }
   },
   "ground_truth": {
-    "optimal_actions": [
+    "solution": [
       {
         "step": 1,
         "action": "Check current Aave health factor via on-chain data",
@@ -98,37 +102,30 @@
         "rationale": "Debt now 6000 USDC. New health factor = 8 * 2019 * 0.75 / 6000 = 2.019 > 2.0. Mission complete."
       }
     ],
-    "alternative_actions": [
+    "alternatives": [
       {
         "strategy": "Swap ETH for USDC, then repay",
-        "steps": "Swap 2 ETH \u2192 USDC (~$4038), then repay 3000 USDC total",
+        "steps": "Swap 2 ETH → USDC (~$4038), then repay 3000 USDC total",
         "tradeoff": "Burns through ETH sale limit but leaves more USDC flexible"
       }
     ],
     "risk_flags": [
-      "ETH below 200-day moving average ($2080) \u2014 further downside risk",
+      "ETH below 200-day moving average ($2080) — further downside risk",
       "High Aave USDC utilization (72%) may increase borrow rates on next transaction",
-      "Selling ETH would realize a loss \u2014 consider tax implications"
+      "Selling ETH would realize a loss — consider tax implications"
     ],
-    "mission_alignment_check": {
+    "verification": {
       "aligned": true,
       "reason": "Repaying debt reduces leverage, consistent with moderate risk profile and capital preservation mission"
     },
-    "known_hallucination_cases": [
-      "Agent might suggest 'withdrawing ETH from Aave to sell' \u2014 but with debt outstanding, withdrawing ETH requires repaying proportional debt first",
-      "Agent might claim 'flash loan' to repay \u2014 flash loans cannot be used for debt repayment as they must be repaid in same transaction",
-      "Agent might claim Aave has 'instant liquidation protection' \u2014 Aave has no such feature",
-      "Agent might confuse LTV with liquidation threshold when computing health factor"
-    ],
-    "reasoning_path": [
+    "reasoning": [
       "Step 1: Fetch current on-chain health factor via KG Position:Aave:ETH node",
-      "Step 2: Compute required debt reduction: HF = collateral * ETH_price * LTV / debt. Target HF=2.0 \u2192 debt must be <= 8*2019*0.75/2=6057",
+      "Step 2: Compute required debt reduction: HF = collateral * ETH_price * LTV / debt. Target HF=2.0 → debt must be <= 8*2019*0.75/2=6057",
       "Step 3: Check USDC balance (50000 USDC) to confirm sufficient repayment source",
       "Step 4: Validate against mission constraints (max 3 ETH sold = 0 ETH, max leverage = not exceeded)",
-      "Step 5: Execute repayment via Aave contract interaction (repay() function)",
-      "Step 6: Verify post-action health factor exceeds 2.0 threshold using KG update"
+      "Step 5: Execute repayment via Aave contract interaction (repay() function)"
     ],
-    "kg_nodes_involved": [
+    "knowledge_graph": [
       "Wallet:0xd01607c3c5ecaba394d8be377a08590149325722",
       "Asset:ETH",
       "Asset:USDC",
@@ -138,24 +135,29 @@
       "RiskConstraint:MaxDrawdown",
       "RiskConstraint:HealthFactor",
       "MarketEvent:ETH_Price_Drop_10pct"
+    ],
+    "edge_cases": [
+      "Agent might suggest 'withdrawing ETH from Aave to sell' — but with debt outstanding, withdrawing ETH requires repaying proportional debt first",
+      "Agent might claim 'flash loan' to repay — flash loans cannot be used for debt repayment as they must be repaid in same transaction",
+      "Agent might claim Aave has 'instant liquidation protection' — Aave has no such feature",
+      "Agent might confuse LTV with liquidation threshold when computing health factor"
     ]
   },
   "evaluation": {
-    "success_criteria": [
+    "criteria": [
       "Post-action Aave health factor >= 2.0",
       "ETH sold <= 3 ETH (preferably 0 ETH)",
       "Complete within 5 actions",
       "No protocol misunderstanding in reasoning output",
       "Mission alignment score > 0.8"
     ],
-    "scoring_weights": {
+    "weights": {
       "task_success": 0.4,
       "reasoning_consistency": 0.2,
       "protocol_understanding": 0.15,
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0,
     "annotation": {
       "human_annotation": "ANNOTATION_PLACEHOLDER",
       "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
@@ -165,16 +167,16 @@
       "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
     }
   },
-  "baseline_results": {
-    "vanilla_llm_agent": {
-      "expected_failure_modes": [
+  "baselines": {
+    "naive_llm": {
+      "failure_modes": [
         "May miscalculate health factor",
         "May propose withdrawing ETH without understanding debt constraint",
         "May hallucinate Aave features"
       ]
     },
-    "rag_agent": {
-      "expected_failure_modes": [
+    "rag": {
+      "failure_modes": [
         "May retrieve outdated LTV values",
         "Cannot track cross-session state changes"
       ]

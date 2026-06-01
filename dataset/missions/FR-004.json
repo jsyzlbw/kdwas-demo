@@ -1,5 +1,7 @@
 {
   "mission_id": "FR-004",
+  "type": "portfolio",
+  "core_category": "Portfolio & Asset Management",
   "category": "1.1.3 Yield Optimization",
   "difficulty": "medium",
   "title": "USDC Yield Migration from Compound to Aave",
@@ -12,7 +14,7 @@
     "lending",
     "apy_comparison"
   ],
-  "initial_wallet_state": {
+  "wallet": {
     "address": "0xd01607c3c5ecaba394d8be377a08590149325722",
     "balances": {
       "ETH": 5.0,
@@ -25,31 +27,43 @@
         "amount": 150000.0,
         "type": "supplied"
       }
-    ],
-    "risk_profile": {
-      "tolerance": "moderate",
-      "max_leverage": 1.5,
-      "max_drawdown": 0.15,
-      "preferred_chains": [
-        "Ethereum"
-      ],
-      "restricted_protocols": [
-        "unaudited_protocols"
-      ]
-    },
-    "mission": {
-      "description": "Maximize yield on USDC holdings while maintaining capital safety through audited lending protocols",
-      "constraints": [
-        "No leverage > 1.5x",
-        "No unaudited protocols",
-        "Max 20% ETH allocation",
-        "No staking or liquidity pool exposure \u2014 only lending market deposits"
-      ]
+    ]
+  },
+  "objective": {
+    "description": "Maximize yield on USDC holdings while maintaining capital safety through audited lending protocols",
+    "constraints": [
+      "No leverage > 1.5x",
+      "No unaudited protocols",
+      "Max 20% ETH allocation",
+      "No staking or liquidity pool exposure — only lending market deposits"
+    ]
+  },
+  "portfolio_analysis": {
+    "total_value": 360095.0,
+    "allocation": {
+      "ETH": {
+        "amount": 5.0,
+        "price": 2019,
+        "value": 10095.0,
+        "pct": 2.8
+      },
+      "USDC": {
+        "amount": 200000,
+        "price": 1.0,
+        "value": 200000.0,
+        "pct": 55.5
+      },
+      "USDC(supplied)": {
+        "amount": 150000.0,
+        "price": 1.0,
+        "value": 150000.0,
+        "pct": 41.7
+      }
     }
   },
-  "mission_prompt": "You have 150,000 USDC supplied on Compound earning 3.2% APY, 200,000 USDC idle in wallet earning nothing, and 5 ETH ($3,050 each). Check the current USDC supply APY on Aave. If it is higher than Compound's rate, withdraw from Compound and re-deposit on Aave. Also consider depositing the idle 200,000 USDC. ETH allocation should stay below 20%. Current idle USDC is losing ~$17.50/day in opportunity cost at Aave rates. Estimated gas for withdraw + deposit: ~$30-50. Verify the yield improvement justifies the gas before executing.",
-  "environment_context": {
-    "current_market": {
+  "scenario": "You have 150,000 USDC supplied on Compound earning 3.2% APY, 200,000 USDC idle in wallet earning nothing, and 5 ETH ($3,050 each). Check the current USDC supply APY on Aave. If it is higher than Compound's rate, withdraw from Compound and re-deposit on Aave. Also consider depositing the idle 200,000 USDC. ETH allocation should stay below 20%. Current idle USDC is losing ~$17.50/day in opportunity cost at Aave rates. Estimated gas for withdraw + deposit: ~$30-50. Verify the yield improvement justifies the gas before executing.",
+  "context": {
+    "market": {
       "ETH_price": 2019,
       "ETH_24h_change": "-2.3%",
       "ETH_7d_change": "+1.8%",
@@ -60,7 +74,7 @@
       "ETH_30d_change": "-5.1%",
       "ETH_200ma": 2080
     },
-    "protocol_state": {
+    "protocols": {
       "Compound": {
         "chain": "Ethereum",
         "USDC_supply_APY": 3.8
@@ -73,7 +87,7 @@
     }
   },
   "ground_truth": {
-    "optimal_actions": [
+    "solution": [
       {
         "step": 1,
         "action": "Query current USDC supply APYs on Compound and Aave",
@@ -97,10 +111,10 @@
       {
         "step": 5,
         "action": "Verify post-migration yields and check ETH allocation",
-        "rationale": "USDC earning $15,750/year. ETH allocation: 5 * 3050 = $15,250 out of total $365,250 = 4.2% (< 20% constraint \u2713). No leverage used \u2713."
+        "rationale": "USDC earning $15,750/year. ETH allocation: 5 * 3050 = $15,250 out of total $365,250 = 4.2% (< 20% constraint ✓). No leverage used ✓."
       }
     ],
-    "alternative_actions": [
+    "alternatives": [
       {
         "strategy": "Split between Aave and Compound for diversification",
         "steps": "Deposit 175k on Aave (4.5%) and keep 175k on Compound (3.2%)",
@@ -115,30 +129,22 @@
     "risk_flags": [
       "Aave USDC APY may drop after migration (APYs are variable and utilization-dependent)",
       "Single-protocol concentration: 350k USDC all on Aave increases smart contract risk",
-      "Compound's utilization at 68% suggests rates could rise \u2014 opportunity cost of leaving Compound",
-      "No ETH held on Aave for gas \u2014 ensure wallet has sufficient ETH for future transactions",
-      "No bridge or withdrawal mechanism tested \u2014 Aave withdrawal could fail under extreme conditions"
+      "Compound's utilization at 68% suggests rates could rise — opportunity cost of leaving Compound",
+      "No ETH held on Aave for gas — ensure wallet has sufficient ETH for future transactions",
+      "No bridge or withdrawal mechanism tested — Aave withdrawal could fail under extreme conditions"
     ],
-    "mission_alignment_check": {
+    "verification": {
       "aligned": true,
       "reason": "Migration increases yield from $4,800 to $15,750/year while staying within moderate risk profile (no leverage, audited protocols only, ETH allocation well under 20%)"
     },
-    "known_hallucination_cases": [
-      "Agent might claim Aave USDC deposit has withdrawal fees \u2014 Aave has no deposit or withdrawal fees beyond gas",
-      "Agent might suggest supplying USDC as collateral and borrowing ETH to 'double yield' \u2014 this introduces leverage violating the 1.5x constraint",
-      "Agent might claim Compound has a timelock on withdrawals \u2014 Compound has no timelock for standard withdrawals",
-      "Agent might confuse USDC with USDT or DAI and check the wrong market's APY",
-      "Agent might claim 'impermanent loss' for lending market deposits \u2014 IL only applies to LP positions, not lending"
-    ],
-    "reasoning_path": [
+    "reasoning": [
       "Step 1: Query protocol APYs: Compound USDC supply APY (3.2%) and Aave USDC supply APY (4.5%) via Protocol:Compound and Protocol:Aave KG nodes",
-      "Step 2: Compare: 4.5% > 3.2% by 1.3pp \u2192 migration is financially justified",
+      "Step 2: Compare: 4.5% > 3.2% by 1.3pp → migration is financially justified",
       "Step 3: Calculate annual yield difference: 150000 * (0.045 - 0.032) = $1,950 and additional gain from idle: 200000 * 0.045 = $9,000",
       "Step 4: Check constraints: no debt on Compound (unconditional withdrawal), ETH allocation (4.2% < 20%), protocol is audited",
-      "Step 5: Execute Compound withdraw() via cUSDC contract, then Aave deposit() via aUSDC contract",
-      "Step 6: Verify new Aave position and total yield estimate"
+      "Step 5: Execute Compound withdraw() via cUSDC contract, then Aave deposit() via aUSDC contract"
     ],
-    "kg_nodes_involved": [
+    "knowledge_graph": [
       "Wallet:0x3c4d5e6f7890abcdef1234567890abcdef012345",
       "Asset:USDC",
       "Asset:ETH",
@@ -149,26 +155,31 @@
       "YieldRate:Aave:USDC_APY",
       "RiskConstraint:MaxETHAllocation",
       "RiskConstraint:MaxLeverage"
+    ],
+    "edge_cases": [
+      "Agent might claim Aave USDC deposit has withdrawal fees — Aave has no deposit or withdrawal fees beyond gas",
+      "Agent might suggest supplying USDC as collateral and borrowing ETH to 'double yield' — this introduces leverage violating the 1.5x constraint",
+      "Agent might claim Compound has a timelock on withdrawals — Compound has no timelock for standard withdrawals",
+      "Agent might confuse USDC with USDT or DAI and check the wrong market's APY",
+      "Agent might claim 'impermanent loss' for lending market deposits — IL only applies to LP positions, not lending"
     ]
   },
   "evaluation": {
-    "success_criteria": [
+    "criteria": [
       "Confirmed Aave USDC supply APY exceeds Compound USDC supply APY",
       "150,000 USDC successfully withdrawn from Compound",
       "At minimum 150,000 USDC deposited on Aave",
       "Bonus: idle 200,000 USDC also deposited on Aave for maximum yield",
       "Yield improvement >= $1,500/year over current strategy",
-      "ETH allocation remains under 20%",
-      "No leverage introduced"
+      "ETH allocation remains under 20%"
     ],
-    "scoring_weights": {
+    "weights": {
       "task_success": 0.4,
       "reasoning_consistency": 0.2,
       "protocol_understanding": 0.15,
       "mission_alignment": 0.15,
       "risk_awareness": 0.1
     },
-    "weight_in_overall": 1.0,
     "annotation": {
       "human_annotation": "ANNOTATION_PLACEHOLDER",
       "annotator_trust_score": "ANNOTATION_PLACEHOLDER",
@@ -178,17 +189,17 @@
       "error_type_if_applicable": "ANNOTATION_PLACEHOLDER"
     }
   },
-  "baseline_results": {
-    "vanilla_llm_agent": {
-      "expected_failure_modes": [
+  "baselines": {
+    "naive_llm": {
+      "failure_modes": [
         "May hallucinate APY values instead of querying on-chain rates",
-        "May propose supplying ETH and borrowing USDC to arbitrage rates \u2014 violates leverage constraint",
+        "May propose supplying ETH and borrowing USDC to arbitrage rates — violates leverage constraint",
         "May forget to check that no debt exists on Compound before withdrawing",
         "May unnecessarily split the deposit into multiple separate Aave deposit transactions"
       ]
     },
-    "rag_agent": {
-      "expected_failure_modes": [
+    "rag": {
+      "failure_modes": [
         "May retrieve cached APY that is hours old and has already changed",
         "May not factor in the opportunity cost of idle USDC during the multi-day migration process",
         "May incorrectly compute blended APY if splitting across protocols"
