@@ -1,0 +1,32 @@
+{
+  "protocol": "aave_v3",
+  "name": "Aave V3",
+  "category": "Lending / Borrowing",
+  "supported_assets": [
+    "WETH",
+    "USDC",
+    "DAI"
+  ],
+  "supported_markets": [
+    "WETH reserve",
+    "USDC reserve",
+    "DAI reserve"
+  ],
+  "supported_actions": [
+    "get_reserve_data",
+    "get_health_factor",
+    "get_user_position",
+    "approve",
+    "supply",
+    "borrow",
+    "repay",
+    "withdraw"
+  ],
+  "policy_focus": [
+    "health factor",
+    "LTV",
+    "liquidation threshold",
+    "borrow cap",
+    "collateral risk"
+  ]
+}

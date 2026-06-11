@@ -1,0 +1,19 @@
+{
+  "protocol": "pendle",
+  "chain": "ethereum",
+  "chain_id": 1,
+  "block_number": 19876543,
+  "fork_engine": "anvil",
+  "deterministic_reset": true,
+  "wallet_scenario": {
+    "wallet_alias": "wallet_pendle_001",
+    "balances": {
+      "USDC": "10000",
+      "PT-sUSDe": "1200",
+      "YT-sUSDe": "0",
+      "SY-sUSDe": "0"
+    },
+    "allowances": {},
+    "positions": "see scenarios.jsonl for task-specific initial positions"
+  }
+}

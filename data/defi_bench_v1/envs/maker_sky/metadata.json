@@ -1,0 +1,31 @@
+{
+  "protocol": "maker_sky",
+  "name": "Maker / Sky",
+  "category": "Stablecoin / CDP",
+  "supported_assets": [
+    "ETH",
+    "WETH",
+    "DAI",
+    "USDS"
+  ],
+  "supported_markets": [
+    "ETH-A vault",
+    "ETH-B vault"
+  ],
+  "supported_actions": [
+    "get_vault_state",
+    "get_collateral_ratio",
+    "get_liquidation_price",
+    "open_vault",
+    "deposit_collateral",
+    "draw_stablecoin",
+    "repay_debt",
+    "withdraw_collateral"
+  ],
+  "policy_focus": [
+    "collateral ratio",
+    "liquidation price",
+    "debt ceiling",
+    "stability fee"
+  ]
+}

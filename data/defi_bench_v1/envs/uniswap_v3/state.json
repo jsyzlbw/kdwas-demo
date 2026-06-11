@@ -1,0 +1,19 @@
+{
+  "protocol": "uniswap_v3",
+  "chain": "ethereum",
+  "chain_id": 1,
+  "block_number": 19876543,
+  "fork_engine": "anvil",
+  "deterministic_reset": true,
+  "wallet_scenario": {
+    "wallet_alias": "wallet_uniswap_v3_001",
+    "balances": {
+      "ETH": "3",
+      "WETH": "2",
+      "USDC": "10000",
+      "DAI": "5000"
+    },
+    "allowances": {},
+    "positions": "see scenarios.jsonl for task-specific initial positions"
+  }
+}

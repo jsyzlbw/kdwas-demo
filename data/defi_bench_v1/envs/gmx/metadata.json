@@ -1,0 +1,31 @@
+{
+  "protocol": "gmx",
+  "name": "GMX",
+  "category": "Derivatives / Hedging",
+  "supported_assets": [
+    "USDC",
+    "ETH",
+    "BTC"
+  ],
+  "supported_markets": [
+    "ETH/USD perp",
+    "BTC/USD perp"
+  ],
+  "supported_actions": [
+    "get_market_price",
+    "get_position",
+    "get_liquidation_price",
+    "open_long",
+    "open_short",
+    "increase_collateral",
+    "decrease_position",
+    "close_position"
+  ],
+  "policy_focus": [
+    "leverage",
+    "liquidation price",
+    "funding fee",
+    "oracle price",
+    "collateral loss"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "protocol": "lido",
+  "chain": "ethereum",
+  "chain_id": 1,
+  "block_number": 19876543,
+  "fork_engine": "anvil",
+  "deterministic_reset": true,
+  "wallet_scenario": {
+    "wallet_alias": "wallet_lido_001",
+    "balances": {
+      "ETH": "3",
+      "stETH": "2",
+      "wstETH": "0"
+    },
+    "allowances": {},
+    "positions": "see scenarios.jsonl for task-specific initial positions"
+  }
+}

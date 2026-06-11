@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "protocol",
+    "chain",
+    "chain_id",
+    "block_number",
+    "fork_engine",
+    "wallet_scenario"
+  ],
+  "properties": {
+    "protocol": {
+      "type": "string",
+      "minLength": 1
+    },
+    "chain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "chain_id": {
+      "type": "integer"
+    },
+    "block_number": {
+      "type": "integer"
+    },
+    "fork_engine": {
+      "type": "string",
+      "minLength": 1
+    },
+    "wallet_scenario": {
+      "type": "object"
+    }
+  }
+}

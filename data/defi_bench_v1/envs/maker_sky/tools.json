@@ -1,0 +1,328 @@
+{
+  "protocol": "maker_sky",
+  "tools": [
+    {
+      "name": "get_wallet_balance",
+      "type": "read",
+      "description": "Read-only tool for Maker / Sky: get_wallet_balance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "balance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_allowance",
+      "type": "read",
+      "description": "Read-only tool for Maker / Sky: get_allowance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token",
+          "spender"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          },
+          "spender": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "allowance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_vault_state",
+      "type": "read",
+      "description": "Read-only tool for Maker / Sky: get_vault_state.",
+      "parameters": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "collateral": {
+            "description": "object",
+            "type": "object"
+          },
+          "debt": {
+            "description": "object",
+            "type": "object"
+          },
+          "vault_type": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_collateral_ratio",
+      "type": "read",
+      "description": "Read-only tool for Maker / Sky: get_collateral_ratio.",
+      "parameters": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "collateral_ratio": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_liquidation_price",
+      "type": "read",
+      "description": "Read-only tool for Maker / Sky: get_liquidation_price.",
+      "parameters": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          },
+          "hypothetical_size_usd": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "liquidation_price": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "open_vault",
+      "type": "write",
+      "description": "State-changing tool for Maker / Sky: open_vault.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "vault_type"
+        ],
+        "properties": {
+          "vault_type": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "vault_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "deposit_collateral",
+      "type": "write",
+      "description": "State-changing tool for Maker / Sky: deposit_collateral.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset",
+          "amount"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "collateral_delta": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "draw_stablecoin",
+      "type": "write",
+      "description": "State-changing tool for Maker / Sky: draw_stablecoin.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset",
+          "amount"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "debt_delta": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "collateral_ratio": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "repay_debt",
+      "type": "write",
+      "description": "State-changing tool for Maker / Sky: repay_debt.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset",
+          "amount"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "debt_repaid": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "collateral_ratio": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "withdraw_collateral",
+      "type": "write",
+      "description": "State-changing tool for Maker / Sky: withdraw_collateral.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset",
+          "amount"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "collateral_delta": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "collateral_ratio": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  ]
+}

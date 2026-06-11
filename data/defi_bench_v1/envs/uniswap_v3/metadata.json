@@ -1,0 +1,31 @@
+{
+  "protocol": "uniswap_v3",
+  "name": "Uniswap V3",
+  "category": "DEX / Swap",
+  "supported_assets": [
+    "USDC",
+    "WETH",
+    "DAI"
+  ],
+  "supported_markets": [
+    "USDC/WETH 0.05%",
+    "USDC/WETH 0.30%",
+    "USDC/WETH 1.00%"
+  ],
+  "supported_actions": [
+    "get_pool_state",
+    "quote_swap",
+    "get_lp_position",
+    "approve",
+    "swap_exact_in",
+    "add_liquidity",
+    "remove_liquidity"
+  ],
+  "policy_focus": [
+    "slippage",
+    "price impact",
+    "fee tier",
+    "LP range",
+    "impermanent loss"
+  ]
+}

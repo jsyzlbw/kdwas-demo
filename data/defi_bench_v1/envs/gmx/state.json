@@ -1,0 +1,18 @@
+{
+  "protocol": "gmx",
+  "chain": "ethereum",
+  "chain_id": 1,
+  "block_number": 19876543,
+  "fork_engine": "anvil",
+  "deterministic_reset": true,
+  "wallet_scenario": {
+    "wallet_alias": "wallet_gmx_001",
+    "balances": {
+      "ETH": "3",
+      "USDC": "10000",
+      "BTC": "0"
+    },
+    "allowances": {},
+    "positions": "see scenarios.jsonl for task-specific initial positions"
+  }
+}

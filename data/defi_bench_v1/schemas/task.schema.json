@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "task_id",
+    "protocol",
+    "difficulty",
+    "task_type",
+    "user_request",
+    "task_parameters",
+    "initial_observation",
+    "available_tools"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "protocol": {
+      "type": "string",
+      "minLength": 1
+    },
+    "difficulty": {
+      "enum": [
+        "L1",
+        "L2",
+        "L3"
+      ]
+    },
+    "task_type": {
+      "enum": [
+        "deterministic",
+        "optimization"
+      ]
+    },
+    "user_request": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_parameters": {
+      "type": "object"
+    },
+    "initial_observation": {
+      "type": "object"
+    },
+    "available_tools": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    }
+  }
+}

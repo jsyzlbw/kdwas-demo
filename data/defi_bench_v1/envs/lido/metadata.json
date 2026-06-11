@@ -1,0 +1,28 @@
+{
+  "protocol": "lido",
+  "name": "Lido",
+  "category": "Staking / LST",
+  "supported_assets": [
+    "ETH",
+    "stETH",
+    "wstETH"
+  ],
+  "supported_markets": [
+    "Lido staking",
+    "withdrawal queue"
+  ],
+  "supported_actions": [
+    "get_staking_rate",
+    "get_steth_balance",
+    "get_withdrawal_status",
+    "stake_eth",
+    "wrap_steth",
+    "request_withdrawal"
+  ],
+  "policy_focus": [
+    "stETH discount",
+    "withdrawal delay",
+    "staking irreversibility",
+    "liquidity risk"
+  ]
+}

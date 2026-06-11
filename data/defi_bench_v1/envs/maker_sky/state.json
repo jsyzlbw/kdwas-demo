@@ -1,0 +1,19 @@
+{
+  "protocol": "maker_sky",
+  "chain": "ethereum",
+  "chain_id": 1,
+  "block_number": 19876543,
+  "fork_engine": "anvil",
+  "deterministic_reset": true,
+  "wallet_scenario": {
+    "wallet_alias": "wallet_maker_sky_001",
+    "balances": {
+      "ETH": "5",
+      "WETH": "2",
+      "DAI": "5000",
+      "USDS": "0"
+    },
+    "allowances": {},
+    "positions": "see scenarios.jsonl for task-specific initial positions"
+  }
+}

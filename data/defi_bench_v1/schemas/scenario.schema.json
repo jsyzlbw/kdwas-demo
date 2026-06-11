@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "task_id",
+    "scenario_id",
+    "wallet_state"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "wallet_state": {
+      "type": "object",
+      "required": [
+        "wallet_alias",
+        "balances",
+        "allowances",
+        "positions"
+      ],
+      "properties": {
+        "wallet_alias": {
+          "type": "string",
+          "minLength": 1
+        },
+        "balances": {
+          "type": "object"
+        },
+        "allowances": {
+          "type": "object"
+        },
+        "positions": {
+          "type": "array"
+        }
+      }
+    }
+  }
+}

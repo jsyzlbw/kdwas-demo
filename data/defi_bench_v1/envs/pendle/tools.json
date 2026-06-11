@@ -1,0 +1,323 @@
+{
+  "protocol": "pendle",
+  "tools": [
+    {
+      "name": "get_wallet_balance",
+      "type": "read",
+      "description": "Read-only tool for Pendle: get_wallet_balance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "balance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_allowance",
+      "type": "read",
+      "description": "Read-only tool for Pendle: get_allowance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token",
+          "spender"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          },
+          "spender": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "allowance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_market_state",
+      "type": "read",
+      "description": "Read-only tool for Pendle: get_market_state.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "market"
+        ],
+        "properties": {
+          "market": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "maturity": {
+            "description": "date",
+            "type": "string"
+          },
+          "liquidity": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_implied_apy",
+      "type": "read",
+      "description": "Read-only tool for Pendle: get_implied_apy.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "market"
+        ],
+        "properties": {
+          "market": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "implied_apy": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "quote_pt_trade",
+      "type": "read",
+      "description": "Read-only tool for Pendle: quote_pt_trade.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "market",
+          "side"
+        ],
+        "properties": {
+          "market": {
+            "description": "string",
+            "type": "string"
+          },
+          "side": {
+            "description": "buy|sell",
+            "type": "string"
+          },
+          "amount_in": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "pt_amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "price_impact": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "amount_out": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "buy_pt",
+      "type": "write",
+      "description": "State-changing tool for Pendle: buy_pt.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "market",
+          "input_asset",
+          "amount_in"
+        ],
+        "properties": {
+          "market": {
+            "description": "string",
+            "type": "string"
+          },
+          "input_asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount_in": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "pt_received": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "sell_pt",
+      "type": "write",
+      "description": "State-changing tool for Pendle: sell_pt.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "market",
+          "pt_amount"
+        ],
+        "properties": {
+          "market": {
+            "description": "string",
+            "type": "string"
+          },
+          "pt_amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "asset_received": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "add_liquidity",
+      "type": "write",
+      "description": "State-changing tool for Pendle: add_liquidity.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "pool"
+        ],
+        "properties": {
+          "pool": {
+            "description": "string",
+            "type": "string"
+          },
+          "lower_tick": {
+            "description": "integer",
+            "type": "integer"
+          },
+          "upper_tick": {
+            "description": "integer",
+            "type": "integer"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "remove_liquidity",
+      "type": "write",
+      "description": "State-changing tool for Pendle: remove_liquidity.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "position_id"
+        ],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          },
+          "percentage": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "tokens_returned": {
+            "description": "object",
+            "type": "object"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  ]
+}

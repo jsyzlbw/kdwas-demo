@@ -1,0 +1,236 @@
+{
+  "protocol": "lido",
+  "tools": [
+    {
+      "name": "get_wallet_balance",
+      "type": "read",
+      "description": "Read-only tool for Lido: get_wallet_balance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "balance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_allowance",
+      "type": "read",
+      "description": "Read-only tool for Lido: get_allowance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token",
+          "spender"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          },
+          "spender": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "allowance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_staking_rate",
+      "type": "read",
+      "description": "Read-only tool for Lido: get_staking_rate.",
+      "parameters": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "staking_apy": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_steth_balance",
+      "type": "read",
+      "description": "Read-only tool for Lido: get_steth_balance.",
+      "parameters": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "steth": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "wsteth": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_withdrawal_status",
+      "type": "read",
+      "description": "Read-only tool for Lido: get_withdrawal_status.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "request_id"
+        ],
+        "properties": {
+          "request_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "status": {
+            "description": "pending|claimable|none",
+            "type": "string"
+          },
+          "estimated_wait_days": {
+            "description": "integer",
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "stake_eth",
+      "type": "write",
+      "description": "State-changing tool for Lido: stake_eth.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "amount_eth"
+        ],
+        "properties": {
+          "amount_eth": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "steth_received": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "wrap_steth",
+      "type": "write",
+      "description": "State-changing tool for Lido: wrap_steth.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "amount_steth"
+        ],
+        "properties": {
+          "amount_steth": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "wsteth_received": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "request_withdrawal",
+      "type": "write",
+      "description": "State-changing tool for Lido: request_withdrawal.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "amount_steth"
+        ],
+        "properties": {
+          "amount_steth": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "request_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  ]
+}

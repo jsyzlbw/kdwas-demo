@@ -1,0 +1,42 @@
+{
+  "dataset": "defi_bench_v1",
+  "version": "1.0.0",
+  "description": "Single-protocol DeFi Wallet Agent benchmark dataset.",
+  "isolation_note": "This dataset is independent from data/tasks and current pilot experiments.",
+  "protocols": [
+    "uniswap_v3",
+    "aave_v3",
+    "maker_sky",
+    "lido",
+    "pendle",
+    "gmx"
+  ],
+  "total_tasks": 72,
+  "total_scenarios": 72,
+  "tasks_per_protocol": {
+    "uniswap_v3": 12,
+    "aave_v3": 12,
+    "maker_sky": 12,
+    "lido": 12,
+    "pendle": 12,
+    "gmx": 12
+  },
+  "difficulty_counts": {
+    "L1": 24,
+    "L2": 24,
+    "L3": 24
+  },
+  "runs_per_task": 3,
+  "primary_metrics": [
+    "safe_task_success",
+    "economic_regret_for_optimization_tasks",
+    "pass^1",
+    "pass^3"
+  ],
+  "utility_scope": "Utility values are comparable only within the same task.",
+  "utility_source": "deterministic_local_simulator",
+  "paths": {
+    "schemas": "schemas/",
+    "envs": "envs/"
+  }
+}

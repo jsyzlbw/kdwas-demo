@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "task_id",
+    "reference_actions",
+    "success_conditions",
+    "hard_constraints",
+    "forbidden_conditions",
+    "economic_regret_applicable"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reference_actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "success_conditions": {
+      "type": "object"
+    },
+    "hard_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "forbidden_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "economic_regret_applicable": {
+      "type": "boolean"
+    },
+    "economic_regret_config": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

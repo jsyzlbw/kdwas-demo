@@ -1,0 +1,32 @@
+{
+  "protocol": "pendle",
+  "name": "Pendle",
+  "category": "Yield / Strategy",
+  "supported_assets": [
+    "USDC",
+    "PT-sUSDe",
+    "YT-sUSDe",
+    "SY-sUSDe"
+  ],
+  "supported_markets": [
+    "sUSDe Jun 2026",
+    "sUSDe Sep 2026",
+    "sUSDe Dec 2026"
+  ],
+  "supported_actions": [
+    "get_market_state",
+    "get_implied_apy",
+    "quote_pt_trade",
+    "buy_pt",
+    "sell_pt",
+    "add_liquidity",
+    "remove_liquidity"
+  ],
+  "policy_focus": [
+    "maturity",
+    "PT/YT price",
+    "fixed yield",
+    "liquidity",
+    "duration risk"
+  ]
+}

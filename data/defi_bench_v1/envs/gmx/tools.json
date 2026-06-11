@@ -1,0 +1,363 @@
+{
+  "protocol": "gmx",
+  "tools": [
+    {
+      "name": "get_wallet_balance",
+      "type": "read",
+      "description": "Read-only tool for GMX: get_wallet_balance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "balance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_allowance",
+      "type": "read",
+      "description": "Read-only tool for GMX: get_allowance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token",
+          "spender"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          },
+          "spender": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "allowance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_market_price",
+      "type": "read",
+      "description": "Read-only tool for GMX: get_market_price.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "market"
+        ],
+        "properties": {
+          "market": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "index_price": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "oracle_price": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_position",
+      "type": "read",
+      "description": "Read-only tool for GMX: get_position.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "position_id"
+        ],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "direction": {
+            "description": "long|short",
+            "type": "string"
+          },
+          "size_usd": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "collateral": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "leverage": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_liquidation_price",
+      "type": "read",
+      "description": "Read-only tool for GMX: get_liquidation_price.",
+      "parameters": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          },
+          "hypothetical_size_usd": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "liquidation_price": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "open_long",
+      "type": "write",
+      "description": "State-changing tool for GMX: open_long.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "market",
+          "collateral_asset",
+          "collateral_amount",
+          "size_usd"
+        ],
+        "properties": {
+          "market": {
+            "description": "string",
+            "type": "string"
+          },
+          "collateral_asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "collateral_amount": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "size_usd": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "open_short",
+      "type": "write",
+      "description": "State-changing tool for GMX: open_short.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "market",
+          "collateral_asset",
+          "collateral_amount",
+          "size_usd"
+        ],
+        "properties": {
+          "market": {
+            "description": "string",
+            "type": "string"
+          },
+          "collateral_asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "collateral_amount": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "size_usd": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "increase_collateral",
+      "type": "write",
+      "description": "State-changing tool for GMX: increase_collateral.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "position_id",
+          "collateral_asset",
+          "amount"
+        ],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          },
+          "collateral_asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "collateral_added": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "decrease_position",
+      "type": "write",
+      "description": "State-changing tool for GMX: decrease_position.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "position_id",
+          "size_delta_usd"
+        ],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          },
+          "size_delta_usd": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "remaining_size_usd": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "close_position",
+      "type": "write",
+      "description": "State-changing tool for GMX: close_position.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "position_id"
+        ],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "position_closed": {
+            "description": "boolean",
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  ]
+}

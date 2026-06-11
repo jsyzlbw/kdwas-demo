@@ -1,0 +1,357 @@
+{
+  "protocol": "uniswap_v3",
+  "tools": [
+    {
+      "name": "get_wallet_balance",
+      "type": "read",
+      "description": "Read-only tool for Uniswap V3: get_wallet_balance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "balance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_allowance",
+      "type": "read",
+      "description": "Read-only tool for Uniswap V3: get_allowance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token",
+          "spender"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          },
+          "spender": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "allowance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_pool_state",
+      "type": "read",
+      "description": "Read-only tool for Uniswap V3: get_pool_state.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "pool"
+        ],
+        "properties": {
+          "pool": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "price": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "current_tick": {
+            "description": "integer",
+            "type": "integer"
+          },
+          "liquidity": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "quote_swap",
+      "type": "read",
+      "description": "Read-only tool for Uniswap V3: quote_swap.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "input_token",
+          "output_token",
+          "amount_in"
+        ],
+        "properties": {
+          "input_token": {
+            "description": "string",
+            "type": "string"
+          },
+          "output_token": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount_in": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "fee_tier": {
+            "description": "integer",
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "amount_out": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "price_impact": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "suggested_min_out": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_lp_position",
+      "type": "read",
+      "description": "Read-only tool for Uniswap V3: get_lp_position.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "position_id"
+        ],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "liquidity": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "lower_tick": {
+            "description": "integer",
+            "type": "integer"
+          },
+          "upper_tick": {
+            "description": "integer",
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "approve",
+      "type": "write",
+      "description": "State-changing tool for Uniswap V3: approve.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token",
+          "spender",
+          "amount"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          },
+          "spender": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "allowance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "swap_exact_in",
+      "type": "write",
+      "description": "State-changing tool for Uniswap V3: swap_exact_in.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "input_token",
+          "output_token",
+          "amount_in"
+        ],
+        "properties": {
+          "input_token": {
+            "description": "string",
+            "type": "string"
+          },
+          "output_token": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount_in": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "min_out": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "fee_tier": {
+            "description": "integer",
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "amount_out": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "tx_status": {
+            "description": "success|revert",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "add_liquidity",
+      "type": "write",
+      "description": "State-changing tool for Uniswap V3: add_liquidity.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "pool"
+        ],
+        "properties": {
+          "pool": {
+            "description": "string",
+            "type": "string"
+          },
+          "lower_tick": {
+            "description": "integer",
+            "type": "integer"
+          },
+          "upper_tick": {
+            "description": "integer",
+            "type": "integer"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "remove_liquidity",
+      "type": "write",
+      "description": "State-changing tool for Uniswap V3: remove_liquidity.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "position_id"
+        ],
+        "properties": {
+          "position_id": {
+            "description": "string",
+            "type": "string"
+          },
+          "percentage": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "tokens_returned": {
+            "description": "object",
+            "type": "object"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  ]
+}

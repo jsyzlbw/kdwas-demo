@@ -1,0 +1,344 @@
+{
+  "protocol": "aave_v3",
+  "tools": [
+    {
+      "name": "get_wallet_balance",
+      "type": "read",
+      "description": "Read-only tool for Aave V3: get_wallet_balance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "balance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_allowance",
+      "type": "read",
+      "description": "Read-only tool for Aave V3: get_allowance.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token",
+          "spender"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          },
+          "spender": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "allowance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_reserve_data",
+      "type": "read",
+      "description": "Read-only tool for Aave V3: get_reserve_data.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "ltv": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "liquidation_threshold": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "available_liquidity": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_health_factor",
+      "type": "read",
+      "description": "Read-only tool for Aave V3: get_health_factor.",
+      "parameters": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "health_factor": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "get_user_position",
+      "type": "read",
+      "description": "Read-only tool for Aave V3: get_user_position.",
+      "parameters": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "supplied": {
+            "description": "object",
+            "type": "object"
+          },
+          "borrowed": {
+            "description": "object",
+            "type": "object"
+          },
+          "health_factor": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "approve",
+      "type": "write",
+      "description": "State-changing tool for Aave V3: approve.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "token",
+          "spender",
+          "amount"
+        ],
+        "properties": {
+          "token": {
+            "description": "string",
+            "type": "string"
+          },
+          "spender": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "allowance": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "supply",
+      "type": "write",
+      "description": "State-changing tool for Aave V3: supply.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset",
+          "amount"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "a_token_balance_delta": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "borrow",
+      "type": "write",
+      "description": "State-changing tool for Aave V3: borrow.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset",
+          "amount"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "debt_delta": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "health_factor": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "repay",
+      "type": "write",
+      "description": "State-changing tool for Aave V3: repay.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset",
+          "amount"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "debt_repaid": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "health_factor": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "withdraw",
+      "type": "write",
+      "description": "State-changing tool for Aave V3: withdraw.",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "asset",
+          "amount"
+        ],
+        "properties": {
+          "asset": {
+            "description": "string",
+            "type": "string"
+          },
+          "amount": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "returns": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "withdrawn": {
+            "description": "decimal string",
+            "type": "string"
+          },
+          "health_factor": {
+            "description": "decimal string",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  ]
+}
