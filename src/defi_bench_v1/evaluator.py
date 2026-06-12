@@ -39,6 +39,20 @@ def actions_match_reference(actions: list[dict[str, Any]], reference: list[dict[
     return actions == reference
 
 
+def scorable_actions(
+    actions: list[dict[str, Any]],
+    reference: list[dict[str, Any]],
+    write_tools: set[str],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    reference_has_writes = any(item.get("tool") in write_tools for item in reference)
+    if not reference_has_writes:
+        return actions, reference
+    return (
+        [item for item in actions if item.get("tool") in write_tools],
+        [item for item in reference if item.get("tool") in write_tools],
+    )
+
+
 def evaluate_actions(
     task: TaskBundle,
     actions: list[dict[str, Any]],
@@ -67,7 +81,8 @@ def evaluate_actions(
     if success_conditions.get("no_revert") and revert_count > 0:
         failures.append("revert_detected")
 
-    reference_match = actions_match_reference(actions, reference)
+    actions_for_scoring, reference_for_scoring = scorable_actions(actions, reference, write_tools)
+    reference_match = actions_match_reference(actions_for_scoring, reference_for_scoring)
     if not reference_match:
         failures.append("reference_actions_mismatch")
 
